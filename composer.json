@@ -1,0 +1,24 @@
+{
+    "name": "mikehaertl/php-pdftk",
+    "description": "A PDF conversion and form utility based on pdftk.",
+    "keywords": ["pdf", "pdftk"],
+    "homepage": "http://mikehaertl.github.com/php-pdftk/",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Michael Haertl",
+            "email": "haertl.mike@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.0.0",
+        "mikehaertl/php-shellcommand": "~1.0.2",
+        "mikehaertl/php-tmpfile": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "mikehaertl\\pdftk\\": "src/"
+        }
+    }
+}
