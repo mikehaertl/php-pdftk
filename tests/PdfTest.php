@@ -164,6 +164,8 @@ class PdfTest extends \PHPUnit_Framework_TestCase
         chdir($dir);
         $pdf = new Pdf($document);
         $this->assertTrue($pdf->burst());
+        print_r(glob(__DIR__.'/*'));
+        print_r(glob(__DIR__.'/../*'));
         for ($x=1; $x<=5; $x++) {
             $filename = sprintf($filepattern, $x);
             $this->assertFileExists($filename);
