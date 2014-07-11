@@ -188,7 +188,7 @@ class Pdf
         $this->constrainSingleFile();
         $command = $this->getCommand();
         $command->setOperation('burst');
-        $this->_output = $filepattern===null ? false : $filepattern;
+        $this->_output = $filepattern===null ? 'pg_%04d.pdf' : $filepattern;
         return $this->execute();
     }
 
