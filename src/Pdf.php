@@ -1,7 +1,6 @@
 <?php
 namespace mikehaertl\pdftk;
 
-use mikehaertl\shellcommand\Command;
 use mikehaertl\tmp\File;
 
 /**
@@ -18,54 +17,23 @@ use mikehaertl\tmp\File;
  */
 class Pdf
 {
-    // The prefix for temporary PDF files
+    // The prefix for temporary files
     const TMP_PREFIX = 'tmp_php_pdftk_';
 
     /**
-     * @var string the name of the `pdftk` binary. Default is `pdftk`. You can also
-     * configure a full path here.
-     */
-    public $binary = 'pdftk';
-
-    /**
-     * @var array options to pass to the Command constructor. Default is none.
-     */
-    public $commandOptions = array();
-
-    /**
-     * @var bool whether to ignore any errors if some PDF file was still created. Default is false.
+     * @var bool whether to ignore any errors if some non-empty output file was still created. Default is false.
      */
     public $ignoreWarnings = false;
 
     /**
-     * @var array list of files to process as array('name' => $filename, 'password' => $pw)
+     * @var mikehaertl\tmp\File the temporary output file
      */
-    protected $_files = array();
+    protected $_tmpFile;
 
     /**
-     * @var bool whether the Pdf was already processed
+     * @var string the content type of the tmp output
      */
-    protected $_processed = false;
-
-    /**
-     * @var string the applied operation.
-     */
-    protected $_operation;
-
-    /**
-     * @var string|array list of operation args, e.g. page ranges or single arg, e.g. filename
-     */
-    protected $_operationArgs = array();
-
-    /**
-     * @var bool whether to escape the operation argument
-     */
-    protected $_escapeOperationArg = false;
-
-    /**
-     * @var mikehaertl\tmp\File the temporary PDF file
-     */
-    protected $_tmpPdfFile;
+    protected $_tmpOutputContentType = 'application/pdf';
 
     /**
      * @var Command the command instance that executes pdftk
@@ -82,37 +50,62 @@ class Pdf
      */
     protected $_error = '';
 
-    public function __construct($pdf = null)
+    /**
+     * @var string|null the output filename. If null (default) a tmp file is used as output. If false,
+     * no output option is added at all.
+     */
+    protected $_output;
+
+    /**
+     * @var string the PDF data as returned from getData()
+     */
+    protected $_data;
+    protected $_data_utf8;
+
+    /**
+     * @var string the PDF form field data as returned from getDataFields()
+     */
+    protected $_dataFields;
+    protected $_dataFields_utf8;
+
+    /**
+     * @param string|array $pdf a pdf filename or an array of filenames indexed by a handle.
+     * The array values can also be arrays of the form array($filename, $password) if some
+     * files are password protected.
+     * @param array $options Options to pass to set on the Command instance, e.g. the pdftk binary path
+     */
+    public function __construct($pdf = null, $options = array())
     {
+        $command = $this->getCommand();
+        if ($options!==array()) {
+            $command->setOptions($options);
+        }
         if (is_string($pdf)) {
-            $this->addFile($pdf);
+            $command->addFile($pdf, $this->nextHandle());
         } elseif (is_array($pdf)) {
             foreach ($pdf as $handle => $file) {
-                $this->addFile($file, $handle);
+                if (is_array($file)) {
+                    $command->addFile($file[0], $handle, $file[1]);
+                } else {
+                    $command->addFile($file, $handle);
+                }
             }
         }
     }
 
     /**
      * @param string $name the PDF file to add for processing
-     * @param string|null $handle an uppercase letter between A-Z to reference this file later.
-     * Newer versions of pdftk also accept a word built from those characteers. If no handle is
-     * provided, a internal handle is still autocreated, starting from Z, then Y, X, ...
+     * @param string|null $handle an uppercase letter A..Z to reference this file later.
+     * If no handle is provided, an internal handle is autocreated, consuming the range Z..A
      * @param string|null $password the owner (or user) password if any
-     * @return string the handle for this PDF file which may be required for later reference
+     * @return Pdf the pdf instance for method chaining
      */
     public function addFile($name, $handle = null, $password = null)
     {
-        $file = array(
-            'name' => $name,
-            'password' => $password,
-        );
         if ($handle===null) {
             $handle = $this->nextHandle();
-        } elseif (!in_array($handle, range('A','Z'))) {
-            throw new Exception("Invalid handle provided: '$handle'");
         }
-        $this->_files[$handle] = $file;
+        $this->getCommand()->addFile($name, $handle, $password);
         return $this;
     }
 
@@ -121,7 +114,7 @@ class Pdf
      *
      * Values for rotation are (in degrees): N: 0, E: 90, S: 180, W: 270, L: -90, R: +90,
      * D: +180. L, R and D make relative adjustments to a page's rotation.
-     * Newer pdftk versions use north, east, south, west, left, right and down instead.
+     * Note: Newer pdftk versions use north, east, south, west, left, right and down instead.
      *
      * Example:
      *
@@ -144,8 +137,9 @@ class Pdf
      */
     public function cat($start, $end = null, $handle = null, $qualifier = null, $rotation = null)
     {
-        $this->constrainOperation('cat');
-        $this->_operationArgs[] = $this->processPageRange($start, $end, $handle, $qualifier, $rotation);
+        $this->getCommand()
+            ->setOperation('cat')
+            ->addPageRange($start, $end, $handle, $qualifier, $rotation);
         return $this;
     }
 
@@ -176,20 +170,26 @@ class Pdf
      */
     public function shuffle($start, $end = null, $handle = null, $qualifier = null, $rotation = null)
     {
-        $this->constrainOperation('shuffle');
-        $this->_operationArgs[] = $this->processPageRange($start, $end, $handle, $qualifier, $rotation);
+        $this->getCommand()
+            ->setOperation('shuffle')
+            ->addPageRange($start, $end, $handle, $qualifier, $rotation);
         return $this;
     }
 
     /**
      * Split the PDF document into pages
      *
-     * @param string|null $name the output name in sprintf format or null for default 'pg_%04d.pdf'
-     * @return Pdf the pdf instance for method chaining
+     * @param string|null $filepattern the output name in sprintf format or null for default 'pg_%04d.pdf'
+     * @return bool whether the burst command was successful
+     * @return bool whether the burst operation was successful
      */
-    public function burst($name = null)
+    public function burst($filepattern = null)
     {
-        throw new \Exception('Not implemented yet');
+        $this->constrainSingleFile();
+        $command = $this->getCommand();
+        $command->setOperation('burst');
+        $this->_output = $filepattern===null ? false : $filepattern;
+        return $this->execute();
     }
 
     /**
@@ -200,7 +200,11 @@ class Pdf
      */
     public function generateFdfFile($name)
     {
-        throw new \Exception('Not implemented yet');
+        $this->constrainSingleFile();
+        $command = $this->getCommand();
+        $command->setOperation('generate_fdf');
+        $this->_output = $name;
+        return $this->execute();
     }
 
     /**
@@ -212,10 +216,10 @@ class Pdf
      */
     public function fillForm($data, $encoding = 'UTF-8')
     {
-        $this->constrainOperation('fill_form');
         $this->constrainSingleFile();
-        $this->_operationArgs = is_array($data) ? new FdfFile($data, null, null, null, $encoding) : $data;
-        $this->_escapeOperationArg = true;
+        $this->getCommand()
+            ->setOperation('fill_form')
+            ->setOperationArgument(is_array($data) ? new FdfFile($data, null, null, null, $encoding) : $data, true);
         return $this;
     }
 
@@ -229,7 +233,10 @@ class Pdf
      */
     public function background($file)
     {
-        $this->constrainOperation('background');
+        $this->constrainSingleFile();
+        $this->getCommand()
+            ->setOperation('background')
+            ->setOperationArgument($file, true);
         return $this;
     }
 
@@ -243,35 +250,95 @@ class Pdf
      */
     public function multiBackground($file)
     {
-        $this->constrainOperation('multibackground');
+        $this->getCommand()
+            ->setOperation('multibackground')
+            ->setOperationArgument($file, true);
         return $this;
     }
 
     /**
-     * Apply a PDF as stamp on top of a single PDF file.
+     * Add $file as overlay to a single PDF file.
      *
      * The $file should have a transparent background.
      *
-     * @param string $file name of the stamp PDF file. Only the first page is used.
+     * @param string $file name of the PDF file to add as overlay. Only the first page is used.
      * @return Pdf the pdf instance for method chaining
      */
     public function stamp($file)
     {
-        $this->constrainOperation('stamp');
+        $this->constrainSingleFile();
+        $this->getCommand()
+            ->setOperation('stamp')
+            ->setOperationArgument($file, true);
         return $this;
     }
 
     /**
-     * Apply multiple stamps on top of each corresponding page of a single PDF file.
+     * Add multiple pages from $file as overlay to the corresponding pages of a single PDF file.
      *
-     * If $file has fewer pages than the PDF file then the last page is repeated as stamp.
+     * If $file has fewer pages than the PDF file then the last page is repeated as overlay.
      *
-     * @param string $file name of the stamp PDF file.
+     * @param string $file name of the PDF file to add as overlay
      * @return Pdf the pdf instance for method chaining
      */
     public function multiStamp($file)
     {
-        $this->constrainOperation('multistamp');
+        $this->getCommand()
+            ->setOperation('multistamp')
+            ->setOperationArgument($file, true);
+        return $this;
+    }
+
+    /**
+     * @param bool $utf8 whether to dump the data UTF-8 encoded. Default is true.
+     * @return string|bool meta data about the PDF or false on failure
+     */
+    public function getData($utf8 = true)
+    {
+        $property = $utf8 ? '_data_utf8' : '_data';
+        if ($this->$property===null) {
+            $command = $this->getCommand();
+            $command->setOperation($utf8 ? 'dump_data_utf8' : 'dump_data');
+            if (!$command->execute()) {
+                return false;
+            } else {
+                $this->$property = $command->getOutput();
+            }
+        }
+        return $this->$property;
+    }
+
+    /**
+     * @param bool $utf8 whether to dump the data UTF-8 encoded. Default is true.
+     * @return string|bool data about the PDF form fields or false on failure
+     */
+    public function getDataFields($utf8 = true)
+    {
+        $property = $utf8 ? '_dataFields_utf8' : '_dataFields';
+        if ($this->$property===null) {
+            $command = $this->getCommand();
+            $command->setOperation($utf8 ? 'dump_data_fields_utf8' : 'dump_data_fields');
+            if (!$command->execute()) {
+                return false;
+            } else {
+                $this->$property = $command->getOutput();
+            }
+        }
+        return $this->$property;
+    }
+
+    /**
+     * Set PDF permissions
+     *
+     * The available permissions are Printing, DegradedPrinting, ModifyContents, Assembly,
+     * CopyContents, ScreenReaders, ModifyAnnotations, FillIn, AllFeatures.
+     * @param string|null $permissions list of space separated permissions or null for none.
+     * @return Pdf the pdf instance for method chaining
+     */
+    public function allow($permissions = null)
+    {
+        $this->getCommand()
+            ->addOption('allow', $permissions, false);
         return $this;
     }
 
@@ -282,6 +349,21 @@ class Pdf
      */
     public function flatten()
     {
+        $this->getCommand()
+            ->addOption('flatten');
+        return $this;
+    }
+
+    /**
+     * Restore/remove compression
+     *
+     * @param bool $compress whether to restore (default) or remove the compression
+     * @return Pdf the pdf instance for method chaining
+     */
+    public function compress($compress = true)
+    {
+        $this->getCommand()
+            ->addOption($compress ? 'compress' : 'uncompress');
         return $this;
     }
 
@@ -294,6 +376,8 @@ class Pdf
      */
     public function keepId($id = 'first')
     {
+        $this->getCommand()
+            ->addOption($id==='first' ? 'keep_first_id' : 'keep_final_id');
         return $this;
     }
 
@@ -304,32 +388,43 @@ class Pdf
      */
     public function dropXfa()
     {
+        $this->getCommand()
+            ->addOption('drop_xfa');
         return $this;
     }
 
     /**
-     * @param string $password the owner password to set on the PDF
-     * @param int $strength in bit. Either 128 (default) or 40. Note that this will override any strength
-     * that was set with setUserPassword() before.
+     * @param string $password the owner password to set on the output PDF
      * @return Pdf the pdf instance for method chaining
      */
-    public function setPassword($password, $strength = 128)
+    public function setPassword($password)
     {
+        $this->getCommand()
+            ->addOption('owner_pw', $password, true);
         return $this;
     }
 
     /**
-     * @param string $password the owner password to set on the PDF
-     * @param int $strength in bit. Either 128 (default) or 40. Note that this will override any strength
-     * that was set with setPassword() before.
+     * @param string $password the user password to set on the output PDF
      * @return Pdf the pdf instance for method chaining
      */
-    public function setUserPassword($password, $strength = 128)
+    public function setUserPassword($password)
     {
+        $this->getCommand()
+            ->addOption('user_pw', $password, true);
         return $this;
     }
 
-
+    /**
+     * @param int $strength the password encryption strength. Default is 128
+     * @return Pdf the pdf instance for method chaining
+     */
+    public function passwordEncryption($strength = 128)
+    {
+        $this->getCommand()
+            ->addOption($strength==128 ? 'encrypt_128bit' : 'encrypt_40bit');
+        return $this;
+    }
 
     /**
      * Execute the operation and save the output file
@@ -339,10 +434,10 @@ class Pdf
      */
     public function saveAs($name)
     {
-        if (!$this->_processed && !$this->process()) {
+        if (!$this->getCommand()->getExecuted() && !$this->execute()) {
             return false;
         }
-        if (!copy($this->getPdfFilename(),$name)) {
+        if (!copy((string) $this->getTmpFile(),$name)) {
             $this->_error = "Could not copy PDF from tmp location '$tmpFile' to '$filename'";
             return false;
         }
@@ -358,37 +453,33 @@ class Pdf
      */
     public function send($filename=null,$inline=false)
     {
-        if (!$this->_processed && !$this->process()) {
+        if (!$this->getCommand()->getExecuted() && !$this->execute()) {
             return false;
         }
-        $this->_tmpPdfFile->send($filename, 'application/pdf', $inline);
+        $this->getTmpFile()->send($filename, $this->_tmpOutputContentType, $inline);
         return true;
     }
 
     /**
-     * @return mikehaertl\shellcommand\Command the command instance that executes pdftk
+     * @return Command the command instance that executes pdftk
      */
     public function getCommand()
     {
         if ($this->_command===null) {
-            $options = $this->commandOptions;
-            if (!isset($options['command'])) {
-                $options['command'] = $this->binary;
-            }
-            $this->_command = new Command($options);
+            $this->_command = new Command;
         }
         return $this->_command;
     }
 
     /**
-     * @return string the filename of the temporary PDF file
+     * @return mikehaertl\tmp\File the temporary output file instance
      */
-    public function getPdfFilename()
+    public function getTmpFile()
     {
-        if ($this->_tmpPdfFile===null) {
-            $this->_tmpPdfFile = new File('', '.pdf', self::TMP_PREFIX);
+        if ($this->_tmpFile===null) {
+            $this->_tmpFile = new File('', '.pdf', self::TMP_PREFIX);
         }
-        return $this->_tmpPdfFile->getFileName();
+        return $this->_tmpFile;
     }
 
     /**
@@ -400,50 +491,23 @@ class Pdf
     }
 
     /**
-     * Convert the page range into a pdftk compatible form
-     *
-     * @param int|string|array $start the start page number or an array of page numbers. If an array, the other
-     * arguments will be ignored. $start can also be bigger than $end for pages in reverse order.
-     * @param int|string|null $end the end page number or null for single page (or list if $start is an array)
-     * @param string|null $handle the handle of the file to use. Can be null if only a single file was added.
-     * @param string|null $qualifier the page number qualifier, either 'even' or 'odd' or null for none
-     * @param string $rotation the rotation to apply to the pages.
-     * @return string the page range for pdftk
+     * @return bool whether the command was executed successfully
      */
-    protected function processPageRange($start, $end = null, $handle = null, $qualifier = null, $rotation = null)
+    protected function execute()
     {
-        if (is_array($start)) {
-            if ($handle!==null) {
-                $start = array_map($start, function ($p) use ($handle) { return $handle.$p; });
-            }
-            return implode(' ', $start);
-        } else {
-            $range = $handle.$start;
-            if ($end) {
-                $range .= '-'.$end;
-            }
-            return $range.$qualifier.$rotation;
-        }
-    }
-
-    /**
-     * @return bool whether the file was processed successfully
-     */
-    protected function process()
-    {
-        if ($this->_processed) {
+        $command = $this->getCommand();
+        if ($command->getExecuted()) {
             return false;
         }
-        $command = $this->getCommand();
-        $this->addInputFileArguments();
-        $this->addOperationArgument();
 
-        $fileName = $this->getPdfFilename();
-        $command->addArg('output', $fileName);
-
-        if (!$command->execute()) {
+        if ($this->_output===false) {
+            $filename = null;
+        } else {
+            $filename = $this->_output ? $this->_output : (string) $this->getTmpFile();
+        }
+        if (!$command->execute($filename)) {
             $this->_error = $command->getError();
-            if (!(file_exists($fileName) && filesize($fileName)!==0 && $this->ignoreWarnings)) {
+            if ($filename && !(file_exists($filename) && filesize($filename)!==0 && $this->ignoreWarnings)) {
                 return false;
             }
         }
@@ -451,61 +515,11 @@ class Pdf
     }
 
     /**
-     * Add the arguments for PDF input files to the command instance
-     */
-    protected function addInputFileArguments()
-    {
-        $command = $this->getCommand();
-        $passwords = array();
-        foreach ($this->_files as $handle => $file) {
-            $command->addArg($handle.'=',$file['name']);
-            if ($file['password']!==null) {
-                $passwords[$handle] = $file['password'];
-            }
-        }
-        if ($passwords!==array()) {
-            $command->addArg('input_pw');
-            foreach ($passwords as $handle => $password) {
-                $command->addArg($handle.'=', $password);
-            }
-        }
-    }
-
-    /**
-     * Add the arguments for the pdftk operation
-     */
-    protected function addOperationArgument()
-    {
-        if ($this->_operation!==null) {
-            $value = $this->_operationArgs ? $this->_operationArgs : null;
-            if ($value instanceof TmpFile) {
-                $value = (string) $value;
-            }
-            $this->getCommand()->addArg($this->_operation, $value, $this->_escapeOperationArg);
-        }
-    }
-
-    /**
-     * Make sure, that only one type of operation is applied on a Pdf
-     * @param string $name of the operation
-     */
-    protected function constrainOperation($name)
-    {
-        if ($this->_processed) {
-            throw new \Exception('Another operation can not be performed after the file was already processed');
-        }
-        if ($this->_operation!==null && $this->_operation!==$name) {
-            throw new \Exception('Only one operation type can be applied to an Pdf object');
-        }
-        $this->_operation = $name;
-    }
-
-    /**
      * Make sure, that only one file is present
      */
     protected function constrainSingleFile()
     {
-        if (count($this->_files)>1) {
+        if ($this->getCommand()->getFileCount()>1) {
             throw new \Exception('This operation can only process single files');
         }
     }
@@ -515,6 +529,9 @@ class Pdf
      */
     protected function nextHandle()
     {
+        if ($this->_handle>26) {
+            throw new \Exception('Ran out of hanldes for input PDFs');
+        }
         $chars = range('Z','A');
         return $chars[$this->_handle++];
     }

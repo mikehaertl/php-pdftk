@@ -1,0 +1,9 @@
+InfoKey: Creator
+InfoValue: Writer
+InfoKey: Producer
+InfoValue: LibreOffice 4.2
+InfoKey: CreationDate
+InfoValue: D:20140709121536+02'00'
+PdfID0: 8b93f76ab28b720d0dee9a6eb2a78a
+PdfID1: 8b93f76ab28b720d0dee9a6eb2a78a
+NumberOfPages: 5
