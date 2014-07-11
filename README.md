@@ -2,8 +2,15 @@ php-pdftk
 =========
 
 [![Build Status](https://secure.travis-ci.org/mikehaertl/php-pdftk.png)](http://travis-ci.org/mikehaertl/php-pdftk)
+[![Latest Stable Version](https://poser.pugx.org/mikehaertl/php-pdftk/v/stable.svg)](https://packagist.org/packages/mikehaertl/php-pdftk)
+[![Total Downloads](https://poser.pugx.org/mikehaertl/php-pdftk/downloads.svg)](https://packagist.org/packages/mikehaertl/php-pdftk)
+[![Latest Unstable Version](https://poser.pugx.org/mikehaertl/php-pdftk/v/unstable.svg)](https://packagist.org/packages/mikehaertl/php-pdftk)
+[![HHVM Status](http://hhvm.h4cc.de/badge/yiisoft/yii2-dev.png)](http://hhvm.h4cc.de/package/mikehaertl/php-pdftk)
+[![License](https://poser.pugx.org/mikehaertl/php-pdftk/license.svg)](https://packagist.org/packages/mikehaertl/php-pdftk)
 
 A PDF conversion and form utility based on pdftk.
+
+### This is still WIP so not all pdftk features are implemented yet!
 
 ## Features
 
