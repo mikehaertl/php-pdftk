@@ -491,9 +491,11 @@ class Pdf
     }
 
     /**
+     * Execute the pdftk command and store the output file to a temporary location or $this->_output if set.
+     * You should probably never call this method unless you only need a temporary PDF file as result.
      * @return bool whether the command was executed successfully
      */
-    protected function execute()
+    public function execute()
     {
         $command = $this->getCommand();
         if ($command->getExecuted()) {
