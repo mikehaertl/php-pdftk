@@ -10,7 +10,7 @@ use mikehaertl\shellcommand\Command as BaseCommand;
  * and adds pdftk specific features to add options and operations.
  *
  * @author Michael Härtl <haertl.mike@gmail.com>
- * @version 0.1.0
+ * @version 0.1.1
  * @license http://www.opensource.org/licenses/MIT
  */
 class Command extends BaseCommand

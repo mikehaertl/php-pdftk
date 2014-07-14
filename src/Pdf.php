@@ -12,7 +12,7 @@ use mikehaertl\tmp\File;
  * but you may have to use slightly different page ranges options (e.g 'east' instead 'E').
  *
  * @author Michael Härtl <haertl.mike@gmail.com>
- * @version 0.1.0
+ * @version 0.1.1
  * @license http://www.opensource.org/licenses/MIT
  */
 class Pdf
