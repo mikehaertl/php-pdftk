@@ -2,7 +2,6 @@
     "name": "mikehaertl/php-pdftk",
     "description": "A PDF conversion and form utility based on pdftk.",
     "keywords": ["pdf", "pdftk"],
-    "homepage": "http://mikehaertl.github.com/php-pdftk/",
     "type": "library",
     "license": "MIT",
     "authors": [
