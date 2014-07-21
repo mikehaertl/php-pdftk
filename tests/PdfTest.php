@@ -13,6 +13,7 @@ class PdfTest extends \PHPUnit_Framework_TestCase
     }
 
 
+
     public function testCanPassDocumentToConstructor()
     {
         $document = $this->getDocument1();
@@ -25,7 +26,26 @@ class PdfTest extends \PHPUnit_Framework_TestCase
         $tmpFile = (string) $pdf->getTmpFile();
         $this->assertEquals("pdftk Z='$document' output '$tmpFile'", (string) $pdf->getCommand());
     }
+    public function testCanPassPdfInstanceToConstructor()
+    {
+        $document = $this->getDocument1();
+        $file = $this->getOutFile();
 
+        $pdf = new Pdf($document);
+        $this->assertInstanceOf('mikehaertl\pdftk\Pdf', $pdf->cat(1,5));
+        $this->assertFalse($pdf->getCommand()->getExecuted());
+
+        $pdf2 = new Pdf($pdf);
+        $this->assertTrue($pdf->getCommand()->getExecuted());
+        $outFile1 = (string) $pdf->getTmpFile();
+        $this->assertFileExists($outFile1);
+
+        $this->assertTrue($pdf2->saveAs($file));
+        $this->assertFileExists($file);
+
+        $tmpFile = (string) $pdf2->getTmpFile();
+        $this->assertEquals("pdftk Z='$outFile1' output '$tmpFile'", (string) $pdf2->getCommand());
+    }
     public function testCanPassDocumentsToConstructor()
     {
         $document1 = $this->getDocument1();
@@ -41,6 +61,36 @@ class PdfTest extends \PHPUnit_Framework_TestCase
 
         $tmpFile = (string) $pdf->getTmpFile();
         $this->assertEquals("pdftk A='$document1' B='$document2' output '$tmpFile'", (string) $pdf->getCommand());
+    }
+    public function testCanPassPdfInstancesToConstructor()
+    {
+        $document1 = $this->getDocument1();
+        $document2 = $this->getDocument2();
+        $file = $this->getOutFile();
+
+        $pdf1 = new Pdf($document1);
+        $pdf2 = new Pdf($document2);
+        $this->assertInstanceOf('mikehaertl\pdftk\Pdf', $pdf1->cat(1,5));
+        $this->assertInstanceOf('mikehaertl\pdftk\Pdf', $pdf2->cat(2,3));
+        $this->assertFalse($pdf1->getCommand()->getExecuted());
+        $this->assertFalse($pdf2->getCommand()->getExecuted());
+
+        $pdf = new Pdf(array(
+            'A' => $pdf1,
+            'B' => $pdf2,
+        ));
+        $this->assertTrue($pdf1->getCommand()->getExecuted());
+        $this->assertTrue($pdf2->getCommand()->getExecuted());
+        $outFile1 = (string) $pdf1->getTmpFile();
+        $outFile2 = (string) $pdf2->getTmpFile();
+        $this->assertFileExists($outFile1);
+        $this->assertFileExists($outFile2);
+
+        $this->assertTrue($pdf->saveAs($file));
+        $this->assertFileExists($file);
+
+        $tmpFile = (string) $pdf->getTmpFile();
+        $this->assertEquals("pdftk A='$outFile1' B='$outFile2' output '$tmpFile'", (string) $pdf->getCommand());
     }
     public function testCanPassDocumentsWithPasswordToConstructor()
     {
@@ -58,8 +108,6 @@ class PdfTest extends \PHPUnit_Framework_TestCase
         $tmpFile = (string) $pdf->getTmpFile();
         $this->assertEquals("pdftk A='$document1' B='$document2' input_pw A='complex'\''\"password' output '$tmpFile'", (string) $pdf->getCommand());
     }
-
-
     public function testCanAddFiles()
     {
         $document1 = $this->getDocument1();

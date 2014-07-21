@@ -10,17 +10,21 @@ php-pdftk
 
 A PDF conversion and form utility based on pdftk.
 
-### This is still WIP so not all pdftk features are implemented yet!
+> Note: This library is written for pdftk 1.x versions. Unfortunately they did
+> some changes to the CLI in 2.x so not all of the features below may work.
+> Most notable changes where in the naming of handles (more than one letter
+> allowed in 2.x) and the orientations ('north' instead of 'N', etc.).
 
 ## Features
 
-*php-pdftk* brings the full power of `pdftk` to PHP.
+*php-pdftk* brings the full power of `pdftk` to PHP - and more.
 
- * Fill forms, either from a FDF file or from a data array (UTF-8 aware!)
+ * Fill forms, either from a FDF file or from a data array (UTF-8 safe!)
+ * Create FDF files from PHP arrays (UTF-8 safe!)
+ * Create FDF files from filled PDF forms
  * Combine pages from several PDF files into a new PDF file
  * Split a PDF into one file per page
  * Add background or overlay PDFs
- * Create FDF files from filled PDF forms
  * Read out meta data about PDF and form fields
  * Set passwords and permissions
 
@@ -28,7 +32,7 @@ A PDF conversion and form utility based on pdftk.
 
 ### Operations
 
-> Note: You can always only perform **one** of the following operations on a PDF.
+> Note: You can always only perform **one** of the following operations on a single PDF instance.
 
 #### Fill Form
 
@@ -46,6 +50,17 @@ $pdf->fillForm(array('name'=>'ÄÜÖ äüö мирано čárka'))
 $pdf = new Pdf('form.pdf');
 $pdf->fillForm('data.fdf')
     ->saveAs('filled.pdf');
+```
+
+#### Create a FDF file from a PHP array
+
+> Note: This is a bonus feature that is not available from `pdftk`.
+
+```php
+use mikehaertl\pdftk\FdfFile;
+
+$fdf = new FdfFile(['name'=>'Jürgen мирано']);
+$fdf->saveAs('data.fdf');
 ```
 
 #### Cat
@@ -163,6 +178,29 @@ $data = $pdf->getData();
 $pdf = new Pdf('my.pdf');
 $data = $pdf->getDataFields();
 ```
+
+#### How to perform more than one operation on a PDF
+
+As stated above, you can only perform one of the preceeding operations on a single PDF instance.
+If you need more than one operation you can do it like this:
+
+```php
+use mikehaertl\pdftk\Pdf;
+
+// Extract pages 1-5 and 7,4,9 into a new file
+$pdf = new Pdf('my.pdf');
+$pdf->cat(1, 5)
+    ->cat(array(7, 4, 9));
+
+// We now use the above PDF as source file for a new PDF
+$pdf2 = new Pdf($pdf);
+$pdf2->fillForm(array('name'=>'ÄÜÖ äüö мирано čárka'))
+    ->saveAs('filled.pdf');
+```
+
+> Note: It's important that you don't unset the reference to `$pdf` until `$pdf2`
+> was processed. Otherwhise the temporary output file of `$pdf` will be deleted
+> and `$pdf2->saveAs()` will fail.
 
 ### Options
 

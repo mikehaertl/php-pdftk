@@ -12,7 +12,7 @@ use mikehaertl\tmp\File;
  * but you may have to use slightly different page ranges options (e.g 'east' instead 'E').
  *
  * @author Michael Härtl <haertl.mike@gmail.com>
- * @version 0.1.1
+ * @version 0.1.2-dev
  * @license http://www.opensource.org/licenses/MIT
  */
 class Pdf
@@ -69,7 +69,7 @@ class Pdf
     protected $_dataFields_utf8;
 
     /**
-     * @param string|array $pdf a pdf filename or an array of filenames indexed by a handle.
+     * @param string|Pdf|array $pdf a pdf filename or Pdf instance or an array of filenames/instances indexed by a handle.
      * The array values can also be arrays of the form array($filename, $password) if some
      * files are password protected.
      * @param array $options Options to pass to set on the Command instance, e.g. the pdftk binary path
@@ -80,21 +80,21 @@ class Pdf
         if ($options!==array()) {
             $command->setOptions($options);
         }
-        if (is_string($pdf)) {
-            $command->addFile($pdf, $this->nextHandle());
+        if (is_string($pdf) || $pdf instanceof Pdf) {
+            $this->addFile($pdf);
         } elseif (is_array($pdf)) {
             foreach ($pdf as $handle => $file) {
                 if (is_array($file)) {
-                    $command->addFile($file[0], $handle, $file[1]);
+                    $this->addFile($file[0], $handle, $file[1]);
                 } else {
-                    $command->addFile($file, $handle);
+                    $this->addFile($file, $handle);
                 }
             }
         }
     }
 
     /**
-     * @param string $name the PDF file to add for processing
+     * @param string|Pdf $name the PDF filename or Pdf instance to add for processing
      * @param string|null $handle an uppercase letter A..Z to reference this file later.
      * If no handle is provided, an internal handle is autocreated, consuming the range Z..A
      * @param string|null $password the owner (or user) password if any
@@ -104,6 +104,13 @@ class Pdf
     {
         if ($handle===null) {
             $handle = $this->nextHandle();
+        }
+        if ($name instanceof Pdf) {
+            if (!$name->getCommand()->getExecuted()) {
+                // @todo: Catch errors!
+                $name->execute();
+            }
+            $name = (string) $name->getTmpFile();
         }
         $this->getCommand()->addFile($name, $handle, $password);
         return $this;
