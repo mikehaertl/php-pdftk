@@ -49,6 +49,7 @@ class Command extends BaseCommand
      * @param string $name the PDF file to add for processing
      * @param string $handle an uppercase letter A..Z to reference this file later.
      * @param string|null $password the owner (or user) password if any
+     * @throws \Exception
      * @return Command the command instance for method chaining
      */
     public function addFile($name, $handle, $password = null)
@@ -59,7 +60,7 @@ class Command extends BaseCommand
             'password' => $password,
         );
         if (!in_array($handle, range('A','Z'))) {
-            throw new Exception("Invalid handle provided: '$handle'");
+            throw new \Exception("Invalid handle provided: '$handle'");
         }
         $this->_files[$handle] = $file;
         return $this;
