@@ -76,15 +76,17 @@ $pdf->cat(1, 5)
     ->cat(array(7, 4, 9))
     ->saveAs('new.pdf');
 
-// Combine pages from several files
+// Combine pages from several files, demonstrating several ways how to add files
 $pdf = new Pdf(array(
-    'A' => 'file1.pdf',     // Reference file as 'A'
-    'B' => 'file2.pdf',     // Reference file as 'B'
+    'A' => 'file1.pdf',                 // Reference file as 'A'
+    'B' => ['file2.pdf','pass**word'],  // Reference file as 'B'
 ));
+$pdf->addFile('file3.pdf','C','**secret**pw');  // Reference file as 'C'
 $pdf->cat(1, 5, 'A')                // pages 1-5 from A
     ->cat(3, null, 'B')             // page 3 from B
     ->cat(7, 'end', 'B', null, 'E') // pages 7-end from B, rotated East
     ->cat('end',3,'A','even')       // even pages 3-end in reverse order from A
+    ->cat([2,3,7], 'C')             // pages 2,3 and 7 from C
     ->saveAs('new.pdf');
 ```
 
