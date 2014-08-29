@@ -10,7 +10,7 @@ use mikehaertl\tmp\File;
  * with valid unicode characters.
  *
  * @author Michael Härtl <haertl.mike@gmail.com>
- * @version 0.1.2-dev
+ * @version 0.1.2
  * @license http://www.opensource.org/licenses/MIT
  */
 class FdfFile extends File
