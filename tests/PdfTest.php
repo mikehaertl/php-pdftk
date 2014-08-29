@@ -217,6 +217,7 @@ class PdfTest extends \PHPUnit_Framework_TestCase
             $this->assertFileExists($filename);
             @unlink($filename);
         }
+        @unlink($dir.'/doc_data.txt');
     }
 
     public function testCanBurstWithFilePattern()
@@ -233,6 +234,7 @@ class PdfTest extends \PHPUnit_Framework_TestCase
             $this->assertFileExists($filename);
             @unlink($filename);
         }
+        @unlink($dir.'/doc_data.txt');
     }
 
     public function testCanCreateFdfFileFromPdf()
@@ -254,7 +256,7 @@ class PdfTest extends \PHPUnit_Framework_TestCase
         $filled = $this->getFilledForm();
         $file = $this->getOutFile();
         $data = array(
-            'name' => 'ÄÜÖ äüö мирано čárka',
+            'name' => ')ÄÜÖ äüö мирано čárka',
             'email' => 'test@email.com',
             'checkbox 1' => 'Yes',
             'checkbox 2' => 0,
@@ -538,21 +540,25 @@ class PdfTest extends \PHPUnit_Framework_TestCase
 
     protected function getForm()
     {
+        // Empty form
         return __DIR__.'/files/form.pdf';
     }
 
     protected function getFilledForm()
     {
+        // Form filled with data from testCanFillFormFromData()
         return __DIR__.'/files/filledform.pdf';
     }
 
     protected function getFdf()
     {
+        // Data from testCanFillFormFromData()
         return __DIR__.'/files/data.fdf';
     }
 
     protected function getOutFile()
     {
+        // tmp out file
         return __DIR__.'/test.pdf';
     }
 

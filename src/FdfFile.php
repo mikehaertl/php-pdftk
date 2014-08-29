@@ -56,7 +56,10 @@ FDF;
         foreach ($data as $key=>$value) {
             // Create UTF-16BE string encode as ASCII hex
             // See http://blog.tremily.us/posts/PDF_forms/
-            $fields .= "<</T($key)/V(".chr(0xFE).chr(0xFF).mb_convert_encoding($value,'UTF-16BE', $encoding).")>>\n";
+            $utf16Value = mb_convert_encoding($value,'UTF-16BE', $encoding);
+            // Escape parenthesis
+            $utf16Value = strtr($utf16Value, array('(' => '\\(', ')'=>'\\)'));
+            $fields .= "<</T($key)/V(".chr(0xFE).chr(0xFF).$utf16Value.")>>\n";
         }
 
         // Use fwrite, since file_put_contents() messes around with character encoding
