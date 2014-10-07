@@ -19,7 +19,7 @@ A PDF conversion and form utility based on pdftk.
 
 *php-pdftk* brings the full power of `pdftk` to PHP - and more.
 
- * Fill forms, either from a FDF file or from a data array (UTF-8 safe!)
+ * Fill forms, either from a FDF file or from a data array (~~UTF-8 safe!~~ This is broken!! See discussion in [issue 4](https://github.com/mikehaertl/php-pdftk/issues/4).)
  * Create FDF files from PHP arrays (UTF-8 safe!)
  * Create FDF files from filled PDF forms
  * Combine pages from several PDF files into a new PDF file
