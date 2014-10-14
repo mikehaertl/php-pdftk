@@ -13,11 +13,14 @@
     "require": {
         "php": ">=5.0.0",
         "mikehaertl/php-shellcommand": "~1.0.2",
-        "mikehaertl/php-tmpfile": "*"
+        "mikehaertl/php-tmpfile": "1.0.*"
     },
     "autoload": {
         "psr-4": {
             "mikehaertl\\pdftk\\": "src/"
         }
+    },
+    "suggest": {
+        "mikehaertl/pdftk2-precise-amd64": "pdftk 2 binary for Ubuntu 12.04 LTS (amd64)"
     }
 }

@@ -7,3 +7,5 @@ php:
 install:
   - sudo apt-get install pdftk
   - composer install
+  - composer require mikehaertl/pdftk2-precise-amd64
+  - sudo cp vendor/bin/pdftk /usr/bin/
