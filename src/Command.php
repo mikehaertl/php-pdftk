@@ -10,7 +10,7 @@ use mikehaertl\shellcommand\Command as BaseCommand;
  * and adds pdftk specific features to add options and operations.
  *
  * @author Michael Härtl <haertl.mike@gmail.com>
- * @version 0.1.3-dev
+ * @version 0.2.0-dev
  * @license http://www.opensource.org/licenses/MIT
  */
 class Command extends BaseCommand
@@ -47,7 +47,7 @@ class Command extends BaseCommand
 
     /**
      * @param string $name the PDF file to add for processing
-     * @param string $handle an uppercase letter A..Z to reference this file later.
+     * @param string $handle one or more uppercase letters A..Z to reference this file later.
      * @param string|null $password the owner (or user) password if any
      * @throws \Exception
      * @return Command the command instance for method chaining
@@ -59,9 +59,6 @@ class Command extends BaseCommand
             'name' => $name,
             'password' => $password,
         );
-        if (!in_array($handle, range('A','Z'))) {
-            throw new \Exception("Invalid handle provided: '$handle'");
-        }
         $this->_files[$handle] = $file;
         return $this;
     }

@@ -74,19 +74,19 @@ class CommandTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf('mikehaertl\pdftk\Command', $command->addPageRange(1,null,'A'));
         $this->assertInstanceOf('mikehaertl\pdftk\Command', $command->addPageRange(1,3));
         $this->assertInstanceOf('mikehaertl\pdftk\Command', $command->addPageRange(1,3,null,'even'));
-        $this->assertInstanceOf('mikehaertl\pdftk\Command', $command->addPageRange(1,3,null,'even','N'));
-        $this->assertInstanceOf('mikehaertl\pdftk\Command', $command->addPageRange(1,3,null,null,'N'));
+        $this->assertInstanceOf('mikehaertl\pdftk\Command', $command->addPageRange(1,3,null,'even','north'));
+        $this->assertInstanceOf('mikehaertl\pdftk\Command', $command->addPageRange(1,3,null,null,'north'));
         $this->assertInstanceOf('mikehaertl\pdftk\Command', $command->addPageRange(1,3,'A'));
         $this->assertInstanceOf('mikehaertl\pdftk\Command', $command->addPageRange(1,3,'A','even'));
-        $this->assertInstanceOf('mikehaertl\pdftk\Command', $command->addPageRange(1,3,'A','odd','E'));
-        $this->assertInstanceOf('mikehaertl\pdftk\Command', $command->addPageRange(1,3,'A',null,'E'));
-        $this->assertInstanceOf('mikehaertl\pdftk\Command', $command->addPageRange(1,3,null,null,'E'));
+        $this->assertInstanceOf('mikehaertl\pdftk\Command', $command->addPageRange(1,3,'A','odd','east'));
+        $this->assertInstanceOf('mikehaertl\pdftk\Command', $command->addPageRange(1,3,'A',null,'east'));
+        $this->assertInstanceOf('mikehaertl\pdftk\Command', $command->addPageRange(1,3,null,null,'east'));
         $this->assertInstanceOf('mikehaertl\pdftk\Command', $command->addPageRange(array(1,3)));
         $this->assertInstanceOf('mikehaertl\pdftk\Command', $command->addPageRange(array(1,3),null,'A'));
         $this->assertTrue($command->execute($file));
         $this->assertFileExists($file);
 
-        $this->assertEquals("pdftk A='$document1' cat 1 A1 1-3 1-3even 1-3evenN 1-3N A1-3 A1-3even A1-3oddE A1-3E 1-3E 1 3 A1 A3 output '$file'", (string) $command);
+        $this->assertEquals("pdftk A='$document1' cat 1 A1 1-3 1-3even 1-3evennorth 1-3north A1-3 A1-3even A1-3oddeast A1-3east 1-3east 1 3 A1 A3 output '$file'", (string) $command);
     }
 
     protected function getDocument1()

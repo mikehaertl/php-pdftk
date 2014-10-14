@@ -8,11 +8,11 @@ use mikehaertl\tmp\File;
  *
  * This class is a wrapper around pdftk.
  *
- * The class was developed for pdftk 1.44 but should also work with newer versions,
- * but you may have to use slightly different page ranges options (e.g 'east' instead 'E').
+ * The class was developed for pdftk 2.x but should also work with older versions,
+ * but you may have to use slightly different page rotation options (e.g 'E' instead 'east').
  *
  * @author Michael Härtl <haertl.mike@gmail.com>
- * @version 0.1.3-dev
+ * @version 0.2.0-dev
  * @license http://www.opensource.org/licenses/MIT
  */
 class Pdf
@@ -95,7 +95,7 @@ class Pdf
 
     /**
      * @param string|Pdf $name the PDF filename or Pdf instance to add for processing
-     * @param string|null $handle an uppercase letter A..Z to reference this file later.
+     * @param string|null $handle one or more uppercase letters A..Z to reference this file later.
      * If no handle is provided, an internal handle is autocreated, consuming the range Z..A
      * @param string|null $password the owner (or user) password if any
      * @return Pdf the pdf instance for method chaining
@@ -119,9 +119,9 @@ class Pdf
     /**
      * Assemble (catenate) pages from the input files.
      *
-     * Values for rotation are (in degrees): N: 0, E: 90, S: 180, W: 270, L: -90, R: +90,
-     * D: +180. L, R and D make relative adjustments to a page's rotation.
-     * Note: Newer pdftk versions use north, east, south, west, left, right and down instead.
+     * Values for rotation are (in degrees): north: 0, east: 90, south: 180, west: 270, left: -90,
+     * right: +90, down: +180. left, right and down make relative adjustments to a page's rotation.
+     * Note: Older pdftk versions use N, E, S, W, L, R, and D instead.
      *
      * Example:
      *
@@ -131,7 +131,7 @@ class Pdf
      *      ->cat(array(1,3),'B'))          // pages 1 and 3 of file B
      *      ->cat(1, 5, 'A', 'odd')         // pages 1, 3, 5 of file A
      *      ->cat('end', 5, 'B')            // pages 5 to end of file B in reverse order
-     *      ->cat(null, null, 'B', 'E')     // All pages from file B rotated by 90 degree
+     *      ->cat(null, null, 'B', 'east')  // All pages from file B rotated by 90 degree
      *      ->saveAs('out.pdf');
      *
      * @param int|string|array $start the start page number or an array of page numbers. If an array, the other
@@ -170,9 +170,7 @@ class Pdf
      * @param int|array $start the start page number or an array of page numbers.
      * @param int|null $end the end page number or null for single page (or list if $start is an array)
      * @param string|null $qualifier the page number qualifier, either 'even' or 'odd' or null for none
-     * @param string $rotation the rotation to apply to the pages. One of north(0°), east(90°), south(180°),
-     * west(270°), left(-90°), right(+90°), down(+180°). Left, right and down make relative adjustments to
-     * a page's orientation
+     * @param string $rotation the rotation to apply to the pages. See cat() for more details.
      * @return Pdf the pdf instance for method chaining
      */
     public function shuffle($start, $end = null, $handle = null, $qualifier = null, $rotation = null)
@@ -193,8 +191,7 @@ class Pdf
     public function burst($filepattern = null)
     {
         $this->constrainSingleFile();
-        $command = $this->getCommand();
-        $command->setOperation('burst');
+        $this->getCommand()->setOperation('burst');
         $this->_output = $filepattern===null ? 'pg_%04d.pdf' : $filepattern;
         return $this->execute();
     }
@@ -208,8 +205,7 @@ class Pdf
     public function generateFdfFile($name)
     {
         $this->constrainSingleFile();
-        $command = $this->getCommand();
-        $command->setOperation('generate_fdf');
+        $this->getCommand()->setOperation('generate_fdf');
         $this->_output = $name;
         return $this->execute();
     }
@@ -219,14 +215,18 @@ class Pdf
      *
      * @param string|array $data either a FDF filename or an array with form field data (name => value)
      * @param string the encoding of the data. Default is 'UTF-8'.
+     * @param bool whether to drop XFA forms (see dropXfa()). Default is true.
      * @return Pdf the pdf instance for method chaining
      */
-    public function fillForm($data, $encoding = 'UTF-8')
+    public function fillForm($data, $encoding = 'UTF-8', $dropXfa = true)
     {
         $this->constrainSingleFile();
         $this->getCommand()
             ->setOperation('fill_form')
             ->setOperationArgument(is_array($data) ? new FdfFile($data, null, null, null, $encoding) : $data, true);
+        if ($dropXfa) {
+            $this->dropXfa();
+        }
         return $this;
     }
 
@@ -389,7 +389,27 @@ class Pdf
     }
 
     /**
-     * Drop XFA data from forms created with Acrobat 7 or Adobe Designer.
+     * Set need_appearances flag in PDF
+     *
+     * This flag makes sure, that a PDF reader takes care of rendering form field content, even
+     * if it contains non ASCII characters. You should always use this option if you fill in forms
+     * e.g. with Unicode characters. You can't combine this option with flatten() though!
+     *
+     * @return Pdf the pdf instance for method chaining
+     */
+    public function needAppearances()
+    {
+        $this->getCommand()
+            ->addOption('need_appearances');
+        return $this;
+    }
+
+    /**
+     * Drop XFA data from forms created with newer Acrobat.
+     *
+     * Newer PDF forms contain both, the newer XFA and the older AcroForm form fields. PDF readers
+     * can use both, but will prefer XFA if present. Since pdftk can only fill in AcroForm data you
+     * should always add this option when filling in forms with pdftk.
      *
      * @return Pdf the pdf instance for method chaining
      */
@@ -397,6 +417,22 @@ class Pdf
     {
         $this->getCommand()
             ->addOption('drop_xfa');
+        return $this;
+    }
+
+    /**
+     * Drop XMP meta data
+     *
+     * Newer PDFs can contain both, new style XMP data and old style info directory. PDF readers
+     * can use both, but will prefer XMP if present. Since pdftk can only update the info directory
+     * you should always add this option when updating PDF info.
+     *
+     * @return Pdf the pdf instance for method chaining
+     */
+    public function dropXmp()
+    {
+        $this->getCommand()
+            ->addOption('drop_xmp');
         return $this;
     }
 

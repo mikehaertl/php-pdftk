@@ -10,16 +10,15 @@ php-pdftk
 
 A PDF conversion and form utility based on pdftk.
 
-> Note: This library is written for pdftk 1.x versions. Unfortunately they did
-> some changes to the CLI in 2.x so not all of the features below may work.
-> Most notable changes where in the naming of handles (more than one letter
-> allowed in 2.x) and the orientations ('north' instead of 'N', etc.).
+> Note: This library is written for pdftk 2.x versions. You should be able to
+> use it with pdftk 1.x but not all methods will work there. For details consult
+> the man page of pdftk on your system.
 
 ## Features
 
 *php-pdftk* brings the full power of `pdftk` to PHP - and more.
 
- * Fill forms, either from a FDF file or from a data array (~~UTF-8 safe!~~ This is broken!! See discussion in [issue 4](https://github.com/mikehaertl/php-pdftk/issues/4).)
+ * Fill forms, either from a FDF file or from a data array (UTF-8 safe for unflattened forms, requires pdftk 2.x !)
  * Create FDF files from PHP arrays (UTF-8 safe!)
  * Create FDF files from filled PDF forms
  * Combine pages from several PDF files into a new PDF file
@@ -44,6 +43,7 @@ use mikehaertl\pdftk\Pdf;
 // Fill form with data array
 $pdf = new Pdf('form.pdf');
 $pdf->fillForm(array('name'=>'ÄÜÖ äüö мирано čárka'))
+    ->needAppearances()
     ->saveAs('filled.pdf');
 
 // Fill form from FDF
@@ -51,6 +51,10 @@ $pdf = new Pdf('form.pdf');
 $pdf->fillForm('data.fdf')
     ->saveAs('filled.pdf');
 ```
+
+> Note: When filling in UTF-8 data, you should always add the needAppearnaces() option.
+> This will make sure, the the PDF reader takes care of using the right fonts for rendering,
+> something that pdftk can't do for you.
 
 #### Create a FDF file from a PHP array
 
@@ -84,7 +88,7 @@ $pdf = new Pdf(array(
 $pdf->addFile('file3.pdf','C','**secret**pw');  // Reference file as 'C'
 $pdf->cat(1, 5, 'A')                // pages 1-5 from A
     ->cat(3, null, 'B')             // page 3 from B
-    ->cat(7, 'end', 'B', null, 'E') // pages 7-end from B, rotated East
+    ->cat(7, 'end', 'B', null, 'east') // pages 7-end from B, rotated East
     ->cat('end',3,'A','even')       // even pages 3-end in reverse order from A
     ->cat([2,3,7], 'C')             // pages 2,3 and 7 from C
     ->saveAs('new.pdf');
@@ -217,7 +221,9 @@ $pdf->allow('AllFeatures')      // Change permissions
     ->flatten()                 // Merge form data into document
     ->compress($value)          // Compress/Uncompress
     ->keepId('first')           // Keep first/last Id of combined files
-    ->dropXfa()                 // Drop XFA from older PDFs
+    ->dropXfa()                 // Drop newer XFA form from PDF
+    ->dropXmp()                 // Drop newer XMP data from PDF
+    ->needAppearances()         // Make clients create appearance for form fields
     ->setPassword($pw)          // Set owner password
     ->setUserPassword($pw)      // Set user password
     ->passwordEncryption(128)   // Set password encryption strength

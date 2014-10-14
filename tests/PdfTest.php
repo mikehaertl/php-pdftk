@@ -1,5 +1,6 @@
 <?php
 use mikehaertl\pdftk\Pdf;
+use mikehaertl\pdftk\FdfFile;
 
 class PdfTest extends \PHPUnit_Framework_TestCase
 {
@@ -106,7 +107,10 @@ class PdfTest extends \PHPUnit_Framework_TestCase
         $this->assertFileExists($file);
 
         $tmpFile = (string) $pdf->getTmpFile();
-        $this->assertEquals("pdftk A='$document1' B='$document2' input_pw A='complex'\''\"password' output '$tmpFile'", (string) $pdf->getCommand());
+        $this->assertEquals(
+            "pdftk A='$document1' B='$document2' input_pw A='complex'\''\"password' output '$tmpFile'",
+            (string) $pdf->getCommand()
+        );
     }
     public function testCanAddFiles()
     {
@@ -121,7 +125,10 @@ class PdfTest extends \PHPUnit_Framework_TestCase
         $this->assertFileExists($file);
 
         $tmpFile = (string) $pdf->getTmpFile();
-        $this->assertEquals("pdftk Z='$document1' D='$document2' input_pw Z='complex'\''\"password' output '$tmpFile'", (string) $pdf->getCommand());
+        $this->assertEquals(
+            "pdftk Z='$document1' D='$document2' input_pw Z='complex'\''\"password' output '$tmpFile'",
+            (string) $pdf->getCommand()
+        );
     }
 
     public function testCanPerformEmptyOperation()
@@ -135,7 +142,10 @@ class PdfTest extends \PHPUnit_Framework_TestCase
         $this->assertFileExists($file);
 
         $tmpFile = (string) $pdf->getTmpFile();
-        $this->assertEquals("pdftk Z='$document1' input_pw Z='complex'\''\"password' output '$tmpFile'", (string) $pdf->getCommand());
+        $this->assertEquals(
+            "pdftk Z='$document1' input_pw Z='complex'\''\"password' output '$tmpFile'",
+            (string) $pdf->getCommand()
+        );
     }
 
     public function testCanCatFile()
@@ -147,14 +157,17 @@ class PdfTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf('mikehaertl\pdftk\Pdf', $pdf->cat(1,5));
         $this->assertInstanceOf('mikehaertl\pdftk\Pdf', $pdf->cat(array(2,3,4)));
         $this->assertInstanceOf('mikehaertl\pdftk\Pdf', $pdf->cat('end','2',null,'even'));
-        $this->assertInstanceOf('mikehaertl\pdftk\Pdf', $pdf->cat(3,5,null,null,'E'));
-        $this->assertInstanceOf('mikehaertl\pdftk\Pdf', $pdf->cat(4,8,null,'even','E'));
-        $this->assertInstanceOf('mikehaertl\pdftk\Pdf', $pdf->cat(1,null,null,null,'S'));
+        $this->assertInstanceOf('mikehaertl\pdftk\Pdf', $pdf->cat(3,5,null,null,'east'));
+        $this->assertInstanceOf('mikehaertl\pdftk\Pdf', $pdf->cat(4,8,null,'even','east'));
+        $this->assertInstanceOf('mikehaertl\pdftk\Pdf', $pdf->cat(1,null,null,null,'south'));
         $this->assertTrue($pdf->saveAs($file));
         $this->assertFileExists($file);
 
         $tmpFile = (string) $pdf->getTmpFile();
-        $this->assertEquals("pdftk Z='$document' cat 1-5 2 3 4 end-2even 3-5E 4-8evenE 1S output '$tmpFile'", (string) $pdf->getCommand());
+        $this->assertEquals(
+            "pdftk Z='$document' cat 1-5 2 3 4 end-2even 3-5east 4-8eveneast 1south output '$tmpFile'",
+            (string) $pdf->getCommand()
+        );
     }
 
     public function testCanCatFiles()
@@ -170,14 +183,17 @@ class PdfTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf('mikehaertl\pdftk\Pdf', $pdf->cat(1,5,'A'));
         $this->assertInstanceOf('mikehaertl\pdftk\Pdf', $pdf->cat(array(2,3,4),'A'));
         $this->assertInstanceOf('mikehaertl\pdftk\Pdf', $pdf->cat('end','2','B','even'));
-        $this->assertInstanceOf('mikehaertl\pdftk\Pdf', $pdf->cat(3,5,'A',null,'E'));
-        $this->assertInstanceOf('mikehaertl\pdftk\Pdf', $pdf->cat(4,8,'B','even','E'));
-        $this->assertInstanceOf('mikehaertl\pdftk\Pdf', $pdf->cat(1,null,'A',null,'S'));
+        $this->assertInstanceOf('mikehaertl\pdftk\Pdf', $pdf->cat(3,5,'A',null,'east'));
+        $this->assertInstanceOf('mikehaertl\pdftk\Pdf', $pdf->cat(4,8,'B','even','east'));
+        $this->assertInstanceOf('mikehaertl\pdftk\Pdf', $pdf->cat(1,null,'A',null,'south'));
         $this->assertTrue($pdf->saveAs($file));
         $this->assertFileExists($file);
 
         $tmpFile = (string) $pdf->getTmpFile();
-        $this->assertEquals("pdftk A='$document1' B='$document2' cat A1-5 2 3 4 Bend-2even A3-5E B4-8evenE A1S output '$tmpFile'", (string) $pdf->getCommand());
+        $this->assertEquals(
+            "pdftk A='$document1' B='$document2' cat A1-5 2 3 4 Bend-2even A3-5east B4-8eveneast A1south output '$tmpFile'",
+            (string) $pdf->getCommand()
+        );
     }
 
     public function testCanShuffleFiles()
@@ -193,14 +209,17 @@ class PdfTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf('mikehaertl\pdftk\Pdf', $pdf->shuffle(1,5,'A'));
         $this->assertInstanceOf('mikehaertl\pdftk\Pdf', $pdf->shuffle(array(2,3,4),'B'));
         $this->assertInstanceOf('mikehaertl\pdftk\Pdf', $pdf->shuffle('end','2','B','even'));
-        $this->assertInstanceOf('mikehaertl\pdftk\Pdf', $pdf->shuffle(3,5,'A',null,'E'));
-        $this->assertInstanceOf('mikehaertl\pdftk\Pdf', $pdf->shuffle(4,8,'B','even','E'));
-        $this->assertInstanceOf('mikehaertl\pdftk\Pdf', $pdf->shuffle(1,null,'A',null,'S'));
+        $this->assertInstanceOf('mikehaertl\pdftk\Pdf', $pdf->shuffle(3,5,'A',null,'east'));
+        $this->assertInstanceOf('mikehaertl\pdftk\Pdf', $pdf->shuffle(4,8,'B','even','east'));
+        $this->assertInstanceOf('mikehaertl\pdftk\Pdf', $pdf->shuffle(1,null,'A',null,'south'));
         $this->assertTrue($pdf->saveAs($file));
         $this->assertFileExists($file);
 
         $tmpFile = (string) $pdf->getTmpFile();
-        $this->assertEquals("pdftk A='$document1' B='$document2' shuffle A1-5 2 3 4 Bend-2even A3-5E B4-8evenE A1S output '$tmpFile'", (string) $pdf->getCommand());
+        $this->assertEquals(
+            "pdftk A='$document1' B='$document2' shuffle A1-5 2 3 4 Bend-2even A3-5east B4-8eveneast A1south output '$tmpFile'",
+            (string) $pdf->getCommand()
+        );
     }
 
     public function testCanBurstWithoutPattern()
@@ -252,11 +271,12 @@ class PdfTest extends \PHPUnit_Framework_TestCase
 
     public function testCanFillFormFromData()
     {
+
         $form = $this->getForm();
         $filled = $this->getFilledForm();
         $file = $this->getOutFile();
         $data = array(
-            'name' => ')ÄÜÖ äüö мирано čárka',
+            'name' => 'Jürgen čárka čČćĆđĐ мирано',
             'email' => 'test@email.com',
             'checkbox 1' => 'Yes',
             'checkbox 2' => 0,
@@ -265,13 +285,17 @@ class PdfTest extends \PHPUnit_Framework_TestCase
 
         $pdf = new Pdf($form);
         $this->assertInstanceOf('mikehaertl\pdftk\Pdf', $pdf->fillForm($data));
+        $this->assertInstanceOf('mikehaertl\pdftk\Pdf', $pdf->needAppearances());
         $this->assertTrue($pdf->saveAs($file));
 
         $this->assertFileExists($file);
         $this->assertFileEquals($file, $filled);
 
         $tmpFile = (string) $pdf->getTmpFile();
-        $this->assertRegExp("#pdftk Z='$form' fill_form '/tmp/[^ ]+\.fdf' output '$tmpFile'#", (string) $pdf->getCommand());
+        $this->assertRegExp(
+            "#pdftk Z='$form' fill_form '/tmp/[^ ]+\.fdf' output '$tmpFile' drop_xfa need_appearances#",
+            (string) $pdf->getCommand()
+        );
     }
 
     public function testCanFillFormFromFile()
@@ -283,13 +307,17 @@ class PdfTest extends \PHPUnit_Framework_TestCase
 
         $pdf = new Pdf($form);
         $this->assertInstanceOf('mikehaertl\pdftk\Pdf', $pdf->fillForm($fdf));
+        $this->assertInstanceOf('mikehaertl\pdftk\Pdf', $pdf->needAppearances());
         $this->assertTrue($pdf->saveAs($file));
 
         $this->assertFileExists($file);
-        $this->assertFileEquals($file, $filled);
+        $this->assertFileEquals($filled, $file);
 
         $tmpFile = (string) $pdf->getTmpFile();
-        $this->assertRegExp("#pdftk Z='$form' fill_form '$fdf' output '$tmpFile'#", (string) $pdf->getCommand());
+        $this->assertRegExp(
+            "#pdftk Z='$form' fill_form '$fdf' output '$tmpFile' drop_xfa need_appearances#",
+            (string) $pdf->getCommand()
+        );
     }
 
     public function testCanSetBackground()
@@ -525,7 +553,7 @@ class PdfTest extends \PHPUnit_Framework_TestCase
         $pdf = new Pdf($form);
         $data = $pdf->getDataFields();
         $this->assertInternalType('string', $data);
-        $this->assertEquals($data, $this->formDataFields);
+        $this->assertEquals($this->formDataFields, $data);
     }
 
     protected function getDocument1()
@@ -563,54 +591,82 @@ class PdfTest extends \PHPUnit_Framework_TestCase
     }
 
     protected $document1Data = <<<EOD
+InfoBegin
 InfoKey: Creator
 InfoValue: Writer
+InfoBegin
 InfoKey: Producer
 InfoValue: LibreOffice 4.2
+InfoBegin
 InfoKey: CreationDate
 InfoValue: D:20140709121536+02'00'
-PdfID0: 8b93f76ab28b720d0dee9a6eb2a78a
-PdfID1: 8b93f76ab28b720d0dee9a6eb2a78a
+PdfID0: 8b93f76a0b28b720d0dee9a6eb2a780a
+PdfID1: 8b93f76a0b28b720d0dee9a6eb2a780a
 NumberOfPages: 5
+PageMediaBegin
+PageMediaNumber: 1
+PageMediaRotation: 0
+PageMediaRect: 0 0 595 842
+PageMediaDimensions: 595 842
+PageMediaBegin
+PageMediaNumber: 2
+PageMediaRotation: 0
+PageMediaRect: 0 0 595 842
+PageMediaDimensions: 595 842
+PageMediaBegin
+PageMediaNumber: 3
+PageMediaRotation: 0
+PageMediaRect: 0 0 595 842
+PageMediaDimensions: 595 842
+PageMediaBegin
+PageMediaNumber: 4
+PageMediaRotation: 0
+PageMediaRect: 0 0 595 842
+PageMediaDimensions: 595 842
+PageMediaBegin
+PageMediaNumber: 5
+PageMediaRotation: 0
+PageMediaRect: 0 0 595 842
+PageMediaDimensions: 595 842
 
 EOD;
 
     protected $formDataFields = <<<EOD
 ---
-FieldType: Text
-FieldName: name
+FieldType: Button
+FieldName: checkbox 1
 FieldFlags: 0
+FieldValue: On
 FieldJustification: Left
+FieldStateOption: Off
+FieldStateOption: On
+---
+FieldType: Button
+FieldName: checkbox 2
+FieldFlags: 0
+FieldValue: On
+FieldJustification: Left
+FieldStateOption: Off
+FieldStateOption: On
+---
+FieldType: Button
+FieldName: radio 1
+FieldFlags: 49152
+FieldValue: 2
+FieldJustification: Left
+FieldStateOption: 1
+FieldStateOption: 2
+FieldStateOption: Off
 ---
 FieldType: Text
 FieldName: email
 FieldFlags: 0
 FieldJustification: Left
 ---
-FieldType: Button
-FieldName: checkbox 1
+FieldType: Text
+FieldName: name
 FieldFlags: 0
-FieldValue: Off
 FieldJustification: Left
-FieldStateOption: Off
-FieldStateOption: Yes
----
-FieldType: Button
-FieldName: checkbox 2
-FieldFlags: 0
-FieldValue: Off
-FieldJustification: Left
-FieldStateOption: Off
-FieldStateOption: Yes
----
-FieldType: Button
-FieldName: radio 1
-FieldFlags: 49152
-FieldValue: Off
-FieldJustification: Left
-FieldStateOption: 1
-FieldStateOption: 2
-FieldStateOption: Off
 
 EOD;
 
