@@ -12,7 +12,7 @@ use mikehaertl\tmp\File;
  * but you may have to use slightly different page rotation options (e.g 'E' instead 'east').
  *
  * @author Michael Härtl <haertl.mike@gmail.com>
- * @version 0.2.0
+ * @version 0.2.1-dev
  * @license http://www.opensource.org/licenses/MIT
  */
 class Pdf
