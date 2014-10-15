@@ -52,7 +52,7 @@ $pdf->fillForm('data.fdf')
     ->saveAs('filled.pdf');
 ```
 
-> Note: When filling in UTF-8 data, you should always add the needAppearnaces() option.
+> Note: When filling in UTF-8 data, you should always add the needAppearances() option.
 > This will make sure, the the PDF reader takes care of using the right fonts for rendering,
 > something that pdftk can't do for you.
 
