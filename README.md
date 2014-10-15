@@ -201,6 +201,7 @@ $pdf->cat(1, 5)
 // We now use the above PDF as source file for a new PDF
 $pdf2 = new Pdf($pdf);
 $pdf2->fillForm(array('name'=>'ÄÜÖ äüö мирано čárka'))
+    ->needAppearances()
     ->saveAs('filled.pdf');
 ```
 
