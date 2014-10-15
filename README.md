@@ -204,10 +204,6 @@ $pdf2->fillForm(array('name'=>'ÄÜÖ äüö мирано čárka'))
     ->saveAs('filled.pdf');
 ```
 
-> Note: It's important that you don't unset the reference to `$pdf` until `$pdf2`
-> was processed. Otherwhise the temporary output file of `$pdf` will be deleted
-> and `$pdf2->saveAs()` will fail.
-
 ### Options
 
 You can combine the above operations with one or more of the following options.

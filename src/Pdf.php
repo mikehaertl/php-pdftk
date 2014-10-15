@@ -12,7 +12,7 @@ use mikehaertl\tmp\File;
  * but you may have to use slightly different page rotation options (e.g 'E' instead 'east').
  *
  * @author Michael Härtl <haertl.mike@gmail.com>
- * @version 0.2.1-dev
+ * @version 0.2.1
  * @license http://www.opensource.org/licenses/MIT
  */
 class Pdf
@@ -69,6 +69,12 @@ class Pdf
     protected $_dataFields_utf8;
 
     /**
+     * @var Pdf|null if the input was an instance, we keep a reference here, so that it won't get
+     * unlinked before this object gets destroyed
+     */
+    protected $_pdf;
+
+    /**
      * @param string|Pdf|array $pdf a pdf filename or Pdf instance or an array of filenames/instances indexed by a handle.
      * The array values can also be arrays of the form array($filename, $password) if some
      * files are password protected.
@@ -106,6 +112,8 @@ class Pdf
             $handle = $this->nextHandle();
         }
         if ($name instanceof Pdf) {
+            // Keep a reference to the object to prevent unlinking
+            $this->_pdf = $name;
             if (!$name->getCommand()->getExecuted()) {
                 // @todo: Catch errors!
                 $name->execute();
