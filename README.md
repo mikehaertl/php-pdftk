@@ -37,6 +37,10 @@ in detail and which options are available.
 > Note: You can always only perform **one** of the following operations on a single PDF instance.
 > Below you can find a workaround if you need multiple operations.
 
+For all operations you can either save the PDF locally through `saveAs($name)` or send it to the
+browser with `send()`. If you pass a filename to `send($name)` the client browser will open a download
+dialogue whereas without a filename it will usually display the PDF inline.
+
 #### Fill Form
 
 Fill a PDF form with data from a PHP array or an FDF file.
