@@ -31,7 +31,11 @@ A PDF conversion and form utility based on pdftk.
 
 ### Operations
 
+Please consult the `pdftk` man page for each operation to find out how each operation works
+in detail and which options are available.
+
 > Note: You can always only perform **one** of the following operations on a single PDF instance.
+> Below you can find a workaround if you need multiple operations.
 
 #### Fill Form
 
@@ -53,7 +57,7 @@ $pdf->fillForm('data.fdf')
 ```
 
 > Note: When filling in UTF-8 data, you should always add the needAppearances() option.
-> This will make sure, the the PDF reader takes care of using the right fonts for rendering,
+> This will make sure, that the PDF reader takes care of using the right fonts for rendering,
 > something that pdftk can't do for you.
 
 #### Create a FDF file from a PHP array
@@ -173,6 +177,8 @@ $pdf->generateFdfFile('data.fdf');
 
 #### Get PDF data
 
+Read out metadata or form field information from a PDF file.
+
 ```php
 use mikehaertl\pdftk\Pdf;
 
@@ -188,7 +194,7 @@ $data = $pdf->getDataFields();
 #### How to perform more than one operation on a PDF
 
 As stated above, you can only perform one of the preceeding operations on a single PDF instance.
-If you need more than one operation you can do it like this:
+If you need more than one operation you can feed one `Pdf` instance into another:
 
 ```php
 use mikehaertl\pdftk\Pdf;
@@ -241,5 +247,4 @@ $pdf->addPage('my.pdf', null, 'some**password')
 
 ## API
 
-Please consult the source file for a full documentation of each method. Also check out the man page
-of `pdftk` for a more detailled explanation of each operation and option.
+Please consult the source files for a full documentation of each method.
