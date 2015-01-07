@@ -317,7 +317,7 @@ class Pdf
             if (!$command->execute()) {
                 return false;
             } else {
-                $this->$property = $command->getOutput();
+                $this->$property = trim($command->getOutput());
             }
         }
         return $this->$property;
@@ -336,7 +336,7 @@ class Pdf
             if (!$command->execute()) {
                 return false;
             } else {
-                $this->$property = $command->getOutput();
+                $this->$property = trim($command->getOutput());
             }
         }
         return $this->$property;

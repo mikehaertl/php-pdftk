@@ -543,7 +543,7 @@ class PdfTest extends \PHPUnit_Framework_TestCase
         $pdf = new Pdf($document);
         $data = $pdf->getData();
         $this->assertInternalType('string', $data);
-        $this->assertEquals($data, $this->document1Data);
+        $this->assertEquals($this->document1Data, $data);
     }
 
     public function testCanGetDataFields()
@@ -628,7 +628,6 @@ PageMediaNumber: 5
 PageMediaRotation: 0
 PageMediaRect: 0 0 595 842
 PageMediaDimensions: 595 842
-
 EOD;
 
     protected $formDataFields = <<<EOD
@@ -667,7 +666,6 @@ FieldType: Text
 FieldName: name
 FieldFlags: 0
 FieldJustification: Left
-
 EOD;
 
 }
