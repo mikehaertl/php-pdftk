@@ -582,7 +582,7 @@ class Pdf
      */
     protected function nextHandle()
     {
-        if ($this->_handle>26) {
+        if ($this->_handle>25) {
             throw new \Exception('Ran out of hanldes for input PDFs');
         }
         $chars = range('Z','A');
