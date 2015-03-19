@@ -578,14 +578,18 @@ class Pdf
     }
 
     /**
-     * @return string the next handle in the series Z, Y, X, ..
+     * @return string the next handle in the series A, B, C, ... Z, AA, AB...
      */
     protected function nextHandle()
     {
-        if ($this->_handle>25) {
-            throw new \Exception('Ran out of hanldes for input PDFs');
+        // N.B. Multi-character handles are only available in pdftk 1.45+
+
+        $i = $this->_handle++;
+        $char = 'A';
+        while ($i-- > 0) {
+            $char++;
         }
-        $chars = range('Z','A');
-        return $chars[$this->_handle++];
+
+        return $char;
     }
 }
