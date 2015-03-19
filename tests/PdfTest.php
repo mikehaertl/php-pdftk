@@ -25,7 +25,7 @@ class PdfTest extends \PHPUnit_Framework_TestCase
         $this->assertFileExists($file);
 
         $tmpFile = (string) $pdf->getTmpFile();
-        $this->assertEquals("pdftk Z='$document' output '$tmpFile'", (string) $pdf->getCommand());
+        $this->assertEquals("pdftk A='$document' output '$tmpFile'", (string) $pdf->getCommand());
     }
     public function testCanPassPdfInstanceToConstructor()
     {
@@ -45,7 +45,7 @@ class PdfTest extends \PHPUnit_Framework_TestCase
         $this->assertFileExists($file);
 
         $tmpFile = (string) $pdf2->getTmpFile();
-        $this->assertEquals("pdftk Z='$outFile1' output '$tmpFile'", (string) $pdf2->getCommand());
+        $this->assertEquals("pdftk A='$outFile1' output '$tmpFile'", (string) $pdf2->getCommand());
     }
     public function testCanPassDocumentsToConstructor()
     {
@@ -126,7 +126,7 @@ class PdfTest extends \PHPUnit_Framework_TestCase
 
         $tmpFile = (string) $pdf->getTmpFile();
         $this->assertEquals(
-            "pdftk Z='$document1' D='$document2' input_pw Z='complex'\''\"password' output '$tmpFile'",
+            "pdftk A='$document1' D='$document2' input_pw A='complex'\''\"password' output '$tmpFile'",
             (string) $pdf->getCommand()
         );
     }
@@ -143,7 +143,7 @@ class PdfTest extends \PHPUnit_Framework_TestCase
 
         $tmpFile = (string) $pdf->getTmpFile();
         $this->assertEquals(
-            "pdftk Z='$document1' input_pw Z='complex'\''\"password' output '$tmpFile'",
+            "pdftk A='$document1' input_pw A='complex'\''\"password' output '$tmpFile'",
             (string) $pdf->getCommand()
         );
     }
@@ -165,7 +165,7 @@ class PdfTest extends \PHPUnit_Framework_TestCase
 
         $tmpFile = (string) $pdf->getTmpFile();
         $this->assertEquals(
-            "pdftk Z='$document' cat 1-5 2 3 4 end-2even 3-5east 4-8eveneast 1south output '$tmpFile'",
+            "pdftk A='$document' cat 1-5 2 3 4 end-2even 3-5east 4-8eveneast 1south output '$tmpFile'",
             (string) $pdf->getCommand()
         );
     }
@@ -293,7 +293,7 @@ class PdfTest extends \PHPUnit_Framework_TestCase
 
         $tmpFile = (string) $pdf->getTmpFile();
         $this->assertRegExp(
-            "#pdftk Z='$form' fill_form '/tmp/[^ ]+\.fdf' output '$tmpFile' drop_xfa need_appearances#",
+            "#pdftk A='$form' fill_form '/tmp/[^ ]+\.fdf' output '$tmpFile' drop_xfa need_appearances#",
             (string) $pdf->getCommand()
         );
     }
@@ -315,7 +315,7 @@ class PdfTest extends \PHPUnit_Framework_TestCase
 
         $tmpFile = (string) $pdf->getTmpFile();
         $this->assertRegExp(
-            "#pdftk Z='$form' fill_form '$fdf' output '$tmpFile' drop_xfa need_appearances#",
+            "#pdftk A='$form' fill_form '$fdf' output '$tmpFile' drop_xfa need_appearances#",
             (string) $pdf->getCommand()
         );
     }
@@ -332,7 +332,7 @@ class PdfTest extends \PHPUnit_Framework_TestCase
         $this->assertFileExists($file);
 
         $tmpFile = (string) $pdf->getTmpFile();
-        $this->assertEquals("pdftk Z='$document1' background '$document2' output '$tmpFile'", (string) $pdf->getCommand());
+        $this->assertEquals("pdftk A='$document1' background '$document2' output '$tmpFile'", (string) $pdf->getCommand());
     }
 
     public function testCanSetMultiBackground()
@@ -347,7 +347,7 @@ class PdfTest extends \PHPUnit_Framework_TestCase
         $this->assertFileExists($file);
 
         $tmpFile = (string) $pdf->getTmpFile();
-        $this->assertEquals("pdftk Z='$document1' multibackground '$document2' output '$tmpFile'", (string) $pdf->getCommand());
+        $this->assertEquals("pdftk A='$document1' multibackground '$document2' output '$tmpFile'", (string) $pdf->getCommand());
     }
 
     public function testCanStamp()
@@ -362,7 +362,7 @@ class PdfTest extends \PHPUnit_Framework_TestCase
         $this->assertFileExists($file);
 
         $tmpFile = (string) $pdf->getTmpFile();
-        $this->assertEquals("pdftk Z='$document1' stamp '$document2' output '$tmpFile'", (string) $pdf->getCommand());
+        $this->assertEquals("pdftk A='$document1' stamp '$document2' output '$tmpFile'", (string) $pdf->getCommand());
     }
 
     public function testCanMultiStamp()
@@ -377,7 +377,7 @@ class PdfTest extends \PHPUnit_Framework_TestCase
         $this->assertFileExists($file);
 
         $tmpFile = (string) $pdf->getTmpFile();
-        $this->assertEquals("pdftk Z='$document1' multistamp '$document2' output '$tmpFile'", (string) $pdf->getCommand());
+        $this->assertEquals("pdftk A='$document1' multistamp '$document2' output '$tmpFile'", (string) $pdf->getCommand());
     }
 
     public function testCanRemovePermissions()
@@ -391,7 +391,7 @@ class PdfTest extends \PHPUnit_Framework_TestCase
         $this->assertFileExists($file);
 
         $tmpFile = (string) $pdf->getTmpFile();
-        $this->assertEquals("pdftk Z='$document' output '$tmpFile' allow", (string) $pdf->getCommand());
+        $this->assertEquals("pdftk A='$document' output '$tmpFile' allow", (string) $pdf->getCommand());
     }
 
     public function testCanSetPermissions()
@@ -405,7 +405,7 @@ class PdfTest extends \PHPUnit_Framework_TestCase
         $this->assertFileExists($file);
 
         $tmpFile = (string) $pdf->getTmpFile();
-        $this->assertEquals("pdftk Z='$document' output '$tmpFile' allow Assembly CopyContents", (string) $pdf->getCommand());
+        $this->assertEquals("pdftk A='$document' output '$tmpFile' allow Assembly CopyContents", (string) $pdf->getCommand());
     }
 
     public function testCanFlatten()
@@ -419,7 +419,7 @@ class PdfTest extends \PHPUnit_Framework_TestCase
         $this->assertFileExists($file);
 
         $tmpFile = (string) $pdf->getTmpFile();
-        $this->assertEquals("pdftk Z='$document' output '$tmpFile' flatten", (string) $pdf->getCommand());
+        $this->assertEquals("pdftk A='$document' output '$tmpFile' flatten", (string) $pdf->getCommand());
     }
 
     public function testCanCompress()
@@ -433,7 +433,7 @@ class PdfTest extends \PHPUnit_Framework_TestCase
         $this->assertFileExists($file);
 
         $tmpFile = (string) $pdf->getTmpFile();
-        $this->assertEquals("pdftk Z='$document' output '$tmpFile' compress", (string) $pdf->getCommand());
+        $this->assertEquals("pdftk A='$document' output '$tmpFile' compress", (string) $pdf->getCommand());
     }
 
     public function testCanUncompress()
@@ -447,7 +447,7 @@ class PdfTest extends \PHPUnit_Framework_TestCase
         $this->assertFileExists($file);
 
         $tmpFile = (string) $pdf->getTmpFile();
-        $this->assertEquals("pdftk Z='$document' output '$tmpFile' uncompress", (string) $pdf->getCommand());
+        $this->assertEquals("pdftk A='$document' output '$tmpFile' uncompress", (string) $pdf->getCommand());
     }
 
     public function testCanKeepFirstId()
@@ -461,7 +461,7 @@ class PdfTest extends \PHPUnit_Framework_TestCase
         $this->assertFileExists($file);
 
         $tmpFile = (string) $pdf->getTmpFile();
-        $this->assertEquals("pdftk Z='$document' output '$tmpFile' keep_first_id", (string) $pdf->getCommand());
+        $this->assertEquals("pdftk A='$document' output '$tmpFile' keep_first_id", (string) $pdf->getCommand());
     }
 
     public function testCanKeepFinalId()
@@ -475,7 +475,7 @@ class PdfTest extends \PHPUnit_Framework_TestCase
         $this->assertFileExists($file);
 
         $tmpFile = (string) $pdf->getTmpFile();
-        $this->assertEquals("pdftk Z='$document' output '$tmpFile' keep_final_id", (string) $pdf->getCommand());
+        $this->assertEquals("pdftk A='$document' output '$tmpFile' keep_final_id", (string) $pdf->getCommand());
     }
 
     public function testCanDropXfa()
@@ -489,7 +489,7 @@ class PdfTest extends \PHPUnit_Framework_TestCase
         $this->assertFileExists($file);
 
         $tmpFile = (string) $pdf->getTmpFile();
-        $this->assertEquals("pdftk Z='$document' output '$tmpFile' drop_xfa", (string) $pdf->getCommand());
+        $this->assertEquals("pdftk A='$document' output '$tmpFile' drop_xfa", (string) $pdf->getCommand());
     }
 
     public function testCanSetPasswords()
@@ -504,7 +504,7 @@ class PdfTest extends \PHPUnit_Framework_TestCase
         $this->assertFileExists($file);
 
         $tmpFile = (string) $pdf->getTmpFile();
-        $this->assertEquals("pdftk Z='$document' output '$tmpFile' owner_pw '\"'\''**' user_pw '**\"'\'''", (string) $pdf->getCommand());
+        $this->assertEquals("pdftk A='$document' output '$tmpFile' owner_pw '\"'\''**' user_pw '**\"'\'''", (string) $pdf->getCommand());
     }
 
     public function testSet128BitEncryption()
@@ -518,7 +518,7 @@ class PdfTest extends \PHPUnit_Framework_TestCase
         $this->assertFileExists($file);
 
         $tmpFile = (string) $pdf->getTmpFile();
-        $this->assertEquals("pdftk Z='$document' output '$tmpFile' encrypt_128bit", (string) $pdf->getCommand());
+        $this->assertEquals("pdftk A='$document' output '$tmpFile' encrypt_128bit", (string) $pdf->getCommand());
     }
 
     public function testSet40BitEncryption()
@@ -532,7 +532,7 @@ class PdfTest extends \PHPUnit_Framework_TestCase
         $this->assertFileExists($file);
 
         $tmpFile = (string) $pdf->getTmpFile();
-        $this->assertEquals("pdftk Z='$document' output '$tmpFile' encrypt_40bit", (string) $pdf->getCommand());
+        $this->assertEquals("pdftk A='$document' output '$tmpFile' encrypt_40bit", (string) $pdf->getCommand());
     }
 
 
