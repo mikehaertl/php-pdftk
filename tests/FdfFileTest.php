@@ -18,6 +18,8 @@ class FdfFileTest extends \PHPUnit_Framework_TestCase
 
         $oFdfFile = new FdfFile($data, null, null, __DIR__);
         $sFdfFilename = $oFdfFile->getFileName();
+        
         $this->assertFileExists($sFdfFilename);
+        $this->assertFileEquals($sFdfFilename, __DIR__."/files/FdfFileTest.fdf");
     }
 }
