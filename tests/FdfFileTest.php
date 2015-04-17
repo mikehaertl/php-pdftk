@@ -1,5 +1,4 @@
 <?php
-use mikehaertl\pdftk\Pdf;
 use mikehaertl\pdftk\FdfFile;
 
 class FdfFileTest extends \PHPUnit_Framework_TestCase
