@@ -145,7 +145,7 @@ $pdf->background('back.pdf')
 
 // Set background from another PDF (one page each)
 $pdf = new Pdf('my.pdf');
-$pdf->backgroundMulti('back_pages.pdf')
+$pdf->multiBackground('back_pages.pdf')
     ->saveAs('watermarked.pdf');
 ```
 
