@@ -221,7 +221,7 @@ class Command extends BaseCommand
     }
 
     /**
-     * Ensure that the command was not exectued yet. Throws exception otherwhise.
+     * Ensure that the command was not exectued yet. Throws exception otherwise.
      */
     protected function checkExecutionStatus()
     {
