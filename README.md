@@ -249,6 +249,18 @@ $pdf->addPage('my.pdf', null, 'some**password')
     ->saveAs('new.pdf');
 ```
 
+The class uses [php-shellcommand](https://github.com/mikehaertl/php-shellcommand) to execute
+`pdftk`. You can pass `$options` for its `Command` class as second argument to the constructor:
+
+```php
+use mikehaertl\pdftk\Pdf;
+
+$pdf = new Pdf('my.pdf', [
+    'command' => '/some/other/path/to/pdftk',
+    'useExec' => true,
+]);
+```
+
 ## API
 
 Please consult the source files for a full documentation of each method.
