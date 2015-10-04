@@ -27,6 +27,14 @@ A PDF conversion and form utility based on pdftk.
  * Read out meta data about PDF and form fields
  * Set passwords and permissions
 
+## Installation
+
+You should use use [composer](https://getcomposer.org/) to install this library.
+
+```
+composer require mikehaertl/php-pdftk
+```
+
 ## Examples
 
 ### Operations
