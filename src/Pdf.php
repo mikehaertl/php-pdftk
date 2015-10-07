@@ -488,8 +488,9 @@ class Pdf
         if (!$this->getCommand()->getExecuted() && !$this->execute()) {
             return false;
         }
-        if (!copy((string) $this->getTmpFile(),$name)) {
-            $this->_error = "Could not copy PDF from tmp location '$tmpFile' to '$filename'";
+        $tmpFile = (string) $this->getTmpFile();
+        if (!copy($tmpFile, $name)) {
+            $this->_error = "Could not copy PDF from tmp location '$tmpFile' to '$name'";
             return false;
         }
         return true;
