@@ -5,6 +5,7 @@ php:
   - "5.3"
   - "hhvm"
 install:
+  - sudo apt-get update
   - sudo apt-get install pdftk
   - composer self-update
   - composer install
