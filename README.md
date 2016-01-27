@@ -10,6 +10,8 @@ php-pdftk
 
 A PDF conversion and form utility based on pdftk.
 
+**The `pdftk` command must be installed and working on your system.**
+
 > Note: This library is written for pdftk 2.x versions. You should be able to
 > use it with pdftk 1.x but not all methods will work there. For details consult
 > the man page of pdftk on your system.
