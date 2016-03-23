@@ -173,7 +173,7 @@ $pdf->stamp('overlay.pdf')
 
 // Stamp with another PDF (one page each)
 $pdf = new Pdf('my.pdf');
-$pdf->stampMulti('overlay_pages.pdf')
+$pdf->multiStamp('overlay_pages.pdf')
     ->saveAs('stamped.pdf');
 ```
 
