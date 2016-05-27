@@ -231,7 +231,7 @@ class Pdf
         $this->constrainSingleFile();
         $this->getCommand()
             ->setOperation('fill_form')
-            ->setOperationArgument(is_array($data) ? new FdfFile($data, null, null, null, $encoding) : $data, true);
+            ->setOperationArgument(is_array($data) ? new XfdfFile($data, null, null, null, $encoding) : $data, true);
         if ($dropXfa) {
             $this->dropXfa();
         }
