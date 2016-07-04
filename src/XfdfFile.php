@@ -51,7 +51,7 @@ FDF;
         rename($this->_fileName, $newName);
         $this->_fileName = $newName;
 
-        $fields = [];
+        $fields = array();
         foreach ($data as $key=>$value) {
             // Always convert to UTF-8
             if ($encoding!=='UTF-8') {
