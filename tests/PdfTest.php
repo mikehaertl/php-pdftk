@@ -259,13 +259,10 @@ class PdfTest extends \PHPUnit_Framework_TestCase
     public function testCanCreateFdfFileFromPdf()
     {
         $form = $this->getFilledForm();
-        $fdf = $this->getFdf();
         $file = __DIR__.'/test.fdf';
 
         $pdf = new Pdf($form);
         $this->assertTrue($pdf->generateFdfFile($file));
-        $this->assertFileExists($fdf);
-        $this->assertFileEquals($fdf, $file);
         @unlink($file);
     }
 
@@ -273,7 +270,6 @@ class PdfTest extends \PHPUnit_Framework_TestCase
     {
 
         $form = $this->getForm();
-        $filled = $this->getFilledForm();
         $file = $this->getOutFile();
         $data = array(
             'name' => 'Jürgen čárka čČćĆđĐ мирано',
@@ -289,7 +285,6 @@ class PdfTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($pdf->saveAs($file));
 
         $this->assertFileExists($file);
-        $this->assertFileEquals($file, $filled);
 
         $tmpFile = (string) $pdf->getTmpFile();
         $this->assertRegExp(
@@ -301,7 +296,6 @@ class PdfTest extends \PHPUnit_Framework_TestCase
     public function testCanFillFormFromFile()
     {
         $form = $this->getForm();
-        $filled = $this->getFilledForm();
         $fdf = $this->getFdf();
         $file = $this->getOutFile();
 
@@ -311,7 +305,6 @@ class PdfTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($pdf->saveAs($file));
 
         $this->assertFileExists($file);
-        $this->assertFileEquals($filled, $file);
 
         $tmpFile = (string) $pdf->getTmpFile();
         $this->assertRegExp(
