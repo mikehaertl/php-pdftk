@@ -20,8 +20,8 @@ A PDF conversion and form utility based on pdftk.
 
 *php-pdftk* brings the full power of `pdftk` to PHP - and more.
 
- * Fill forms, either from a FDF file or from a data array (UTF-8 safe for unflattened forms, requires pdftk 2.x !)
- * Create FDF files from PHP arrays (UTF-8 safe!)
+ * Fill forms, either from a XFDF/FDF file or from a data array (UTF-8 safe for unflattened forms, requires pdftk 2.x !)
+ * Create XFDF or FDF files from PHP arrays (UTF-8 safe!)
  * Create FDF files from filled PDF forms
  * Combine pages from several PDF files into a new PDF file
  * Split a PDF into one file per page
@@ -53,7 +53,7 @@ dialogue whereas without a filename it will usually display the PDF inline.
 
 #### Fill Form
 
-Fill a PDF form with data from a PHP array or an FDF file.
+Fill a PDF form with data from a PHP array or an XFDF/FDF file.
 
 ```php
 use mikehaertl\pdftk\Pdf;
@@ -66,7 +66,7 @@ $pdf->fillForm(array('name'=>'ÄÜÖ äüö мирано čárka'))
 
 // Fill form from FDF
 $pdf = new Pdf('form.pdf');
-$pdf->fillForm('data.fdf')
+$pdf->fillForm('data.xfdf')
     ->saveAs('filled.pdf');
 ```
 
@@ -74,12 +74,15 @@ $pdf->fillForm('data.fdf')
 > This will make sure, that the PDF reader takes care of using the right fonts for rendering,
 > something that pdftk can't do for you.
 
-#### Create a FDF file from a PHP array
+#### Create a XFDF/FDF file from a PHP array
 
 > Note: This is a bonus feature that is not available from `pdftk`.
 
 ```php
 use mikehaertl\pdftk\FdfFile;
+
+$fdf = new XfdfFile(['name'=>'Jürgen мирано']);
+$fdf->saveAs('data.xfdf');
 
 $fdf = new FdfFile(['name'=>'Jürgen мирано']);
 $fdf->saveAs('data.fdf');

@@ -221,17 +221,24 @@ class Pdf
     /**
      * Fill a PDF form
      *
-     * @param string|array $data either a FDF filename or an array with form field data (name => value)
+     * @param string|array $data either a XFDF/FDF filename or an array with form field data (name => value)
      * @param string the encoding of the data. Default is 'UTF-8'.
      * @param bool whether to drop XFA forms (see dropXfa()). Default is true.
+     * @param string the file format to use for form filling when passing an array in `$data`. This can be
+     * `xfdf` or `fdf`. `xfdf` should give best results so you should not have to change the default.
      * @return Pdf the pdf instance for method chaining
      */
-    public function fillForm($data, $encoding = 'UTF-8', $dropXfa = true)
+    public function fillForm($data, $encoding = 'UTF-8', $dropXfa = true, $format = 'xfdf')
     {
         $this->constrainSingleFile();
+        if (is_array($data)) {
+            $className = '\mikehaertl\pdftk\\'. ($format==='xfdf' ? 'XfdfFile' : 'FdfFile');
+            $data = new $className($data, null, null, null, $encoding);
+        }
         $this->getCommand()
             ->setOperation('fill_form')
-            ->setOperationArgument(is_array($data) ? new XfdfFile($data, null, null, null, $encoding) : $data, true);
+            ->setOperationArgument($data, true);
+
         if ($dropXfa) {
             $this->dropXfa();
         }

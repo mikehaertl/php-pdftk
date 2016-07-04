@@ -1,9 +1,9 @@
 <?php
-use mikehaertl\pdftk\FdfFile;
+use mikehaertl\pdftk\XfdfFile;
 
-class FdfFileTest extends \PHPUnit_Framework_TestCase
+class XfdfFileTest extends \PHPUnit_Framework_TestCase
 {
-    public function testFdfFileCreation() {
+    public function testXfdfFileCreation() {
         $data = array(
             'name' => 'Jürgen čárka čČćĆđĐ мирано',
             'email' => 'test@email.com',
@@ -16,10 +16,10 @@ class FdfFileTest extends \PHPUnit_Framework_TestCase
             "€ key" => "special in key",
         );
 
-        $oFdfFile = new FdfFile($data, null, null, __DIR__);
-        $sFdfFilename = $oFdfFile->getFileName();
+        $oXfdfFile = new XfdfFile($data, null, null, __DIR__);
+        $sXfdfFilename = $oXfdfFile->getFileName();
 
-        $this->assertFileExists($sFdfFilename);
-        $this->assertFileEquals($sFdfFilename, __DIR__."/files/FdfFileTest.fdf");
+        $this->assertFileExists($sXfdfFilename);
+        $this->assertFileEquals($sXfdfFilename, __DIR__."/files/XfdfFileTest.xfdf");
     }
 }
