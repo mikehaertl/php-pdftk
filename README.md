@@ -10,12 +10,6 @@ php-pdftk
 
 A PDF conversion and form utility based on pdftk.
 
-**The `pdftk` command must be installed and working on your system.**
-
-> Note: This library is written for pdftk 2.x versions. You should be able to
-> use it with pdftk 1.x but not all methods will work there. For details consult
-> the man page of pdftk on your system.
-
 ## Features
 
 *php-pdftk* brings the full power of `pdftk` to PHP - and more.
@@ -28,6 +22,12 @@ A PDF conversion and form utility based on pdftk.
  * Add background or overlay PDFs
  * Read out meta data about PDF and form fields
  * Set passwords and permissions
+
+## Requirements
+
+ * The `pdftk` command must be installed and working on your system
+ * This library is written for pdftk 2.x versions. You should be able to use it with pdftk 1.x but not all methods will work there.
+   For details consult the man page of pdftk on your system.
 
 ## Installation
 
@@ -44,12 +44,12 @@ composer require mikehaertl/php-pdftk
 Please consult the `pdftk` man page for each operation to find out how each operation works
 in detail and which options are available.
 
-> Note: You can always only perform **one** of the following operations on a single PDF instance.
-> Below you can find a workaround if you need multiple operations.
-
 For all operations you can either save the PDF locally through `saveAs($name)` or send it to the
 browser with `send()`. If you pass a filename to `send($name)` the client browser will open a download
 dialogue whereas without a filename it will usually display the PDF inline.
+
+**IMPORTANT:** You can always only perform **one** of the following operations on a single PDF instance.
+Below you can find a workaround if you need multiple operations.
 
 #### Fill Form
 
@@ -70,13 +70,14 @@ $pdf->fillForm('data.xfdf')
     ->saveAs('filled.pdf');
 ```
 
-> Note: When filling in UTF-8 data, you should always add the needAppearances() option.
-> This will make sure, that the PDF reader takes care of using the right fonts for rendering,
-> something that pdftk can't do for you.
+**Note:** When filling in UTF-8 data, you should always add the `needAppearances()` option.
+This will make sure, that the PDF reader takes care of using the right fonts for rendering,
+something that pdftk can't do for you. Also note that `flatten()` doesn't really work well
+if you have special characters in your data.
 
 #### Create a XFDF/FDF file from a PHP array
 
-> Note: This is a bonus feature that is not available from `pdftk`.
+This is a bonus feature that is not available from `pdftk`.
 
 ```php
 use mikehaertl\pdftk\FdfFile;
@@ -123,11 +124,12 @@ stream at a time.
 ```php
 use mikehaertl\pdftk\Pdf;
 
-// new.pdf will have pages A1, B3, A2, B4, A3, B5, ...
 $pdf = new Pdf(array(
     'A' => 'file1.pdf',     // Reference file as 'A'
     'B' => 'file2.pdf',     // Reference file as 'B'
 ));
+
+// new.pdf will have pages A1, B3, A2, B4, A3, B5, ...
 $pdf->shuffle(1, 5, 'A')    // pages 1-5 from A
     ->shuffle(3, 8, 'B')    // pages 3-8 from B
     ->saveAs('new.pdf');
@@ -238,7 +240,7 @@ use mikehaertl\pdftk\Pdf;
 $pdf = new Pdf('my.pdf');
 
 $pdf->allow('AllFeatures')      // Change permissions
-    ->flatten()                 // Merge form data into document
+    ->flatten()                 // Merge form data into document (doesn't work well with UTF-8!)
     ->compress($value)          // Compress/Uncompress
     ->keepId('first')           // Keep first/last Id of combined files
     ->dropXfa()                 // Drop newer XFA form from PDF
@@ -262,6 +264,8 @@ $pdf->addPage('my.pdf', null, 'some**password')
     ->saveAs('new.pdf');
 ```
 
+### Execution
+
 The class uses [php-shellcommand](https://github.com/mikehaertl/php-shellcommand) to execute
 `pdftk`. You can pass `$options` for its `Command` class as second argument to the constructor:
 
@@ -270,7 +274,7 @@ use mikehaertl\pdftk\Pdf;
 
 $pdf = new Pdf('my.pdf', [
     'command' => '/some/other/path/to/pdftk',
-    'useExec' => true,
+    'useExec' => true,  // May help on Windows systems if execution fails
 ]);
 ```
 
