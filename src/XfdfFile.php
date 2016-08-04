@@ -11,7 +11,7 @@ use mikehaertl\tmp\File;
  *
  * @author Tomas Holy <holy@interconnect.cz>
  * @author Michael Härtl <haertl.mike@gmail.com>
- * @version 0.2.2
+ * @version 0.2.3-dev
  * @license http://www.opensource.org/licenses/MIT
  */
 class XfdfFile extends File
@@ -54,7 +54,7 @@ FDF;
         $fields = array();
         foreach ($data as $key=>$value) {
             // Always convert to UTF-8
-            if ($encoding!=='UTF-8') {
+            if ($encoding!=='UTF-8' && function_exists('mb_convert_encoding')) {
                 $value = mb_convert_encoding($value,'UTF-8', $encoding);
                 $key = mb_convert_encoding($key,'UTF-8', $encoding);
             }
@@ -63,14 +63,48 @@ FDF;
             $sanitizedKey = defined('ENT_XML1') ? htmlspecialchars($key, ENT_XML1, 'UTF-8') : htmlspecialchars($key);
             $sanitizedValue = defined('ENT_XML1') ? htmlspecialchars($value, ENT_XML1, 'UTF-8') : htmlspecialchars($value);
 
-            $fields[] = "<field name=\"$sanitizedKey\">\n<value>$sanitizedValue</value>\n</field>\n";
+            // Key can be in dot notation like 'Address.name'
+            $keys = explode('.', $sanitizedKey);
+            $final = array_pop($keys);
+            if (count($keys)===0) {
+                $fields[$final] = $sanitizedValue;
+            } else {
+                $target =& $fields;
+                foreach ($keys as $part) {
+                    if (!isset($target[$part])) {
+                        $target[$part] = array();
+                    }
+                    $target =& $target[$part];
+                }
+                $target[$final] = $sanitizedValue;
+            }
         }
 
         // Use fwrite, since file_put_contents() messes around with character encoding
         $fp = fopen($this->_fileName, 'w');
         fwrite($fp, self::XFDF_HEADER);
-        fwrite($fp, implode("\n", $fields));
+        $this->writeFields($fp, $fields);
         fwrite($fp, self::XFDF_FOOTER);
         fclose($fp);
+    }
+
+    /**
+     * Write the fields to the given filepointer
+     *
+     * @param int $fp
+     * @param mixed[] $fields an array of field values. A value can also be another array
+     * in which case a nested field is written.
+     */
+    protected function writeFields($fp, $fields)
+    {
+        foreach ($fields as $key => $value) {
+            if (is_array($value)) {
+                fwrite($fp, "<field name=\"$key\">\n");
+                $this->writeFields($fp, $value);
+                fwrite($fp, "</field>\n");
+            } else {
+                fwrite($fp, "<field name=\"$key\">\n<value>$value</value>\n</field>\n");
+            }
+        }
     }
 }

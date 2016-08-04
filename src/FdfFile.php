@@ -10,7 +10,7 @@ use mikehaertl\tmp\File;
  * with valid unicode characters.
  *
  * @author Michael Härtl <haertl.mike@gmail.com>
- * @version 0.2.2
+ * @version 0.2.3-dev
  * @license http://www.opensource.org/licenses/MIT
  */
 class FdfFile extends File
@@ -51,6 +51,10 @@ FDF;
         $newName = $this->_fileName.$suffix;
         rename($this->_fileName, $newName);
         $this->_fileName = $newName;
+
+        if (!function_exists('mb_convert_encoding')) {
+            throw new \Exception('MB extension required.');
+        }
 
         $fields = '';
         foreach ($data as $key=>$value) {

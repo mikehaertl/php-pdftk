@@ -3,35 +3,35 @@
 <fields><field name="name">
 <value>Jürgen čárka čČćĆđĐ мирано</value>
 </field>
-
 <field name="email">
 <value>test@email.com</value>
 </field>
-
 <field name="checkbox 1">
 <value>Yes</value>
 </field>
-
+<field name="address">
+<field name="name">
+<value>some name</value>
+</field>
+<field name="street">
+<value>some street</value>
+</field>
+</field>
 <field name="checkbox 2">
 <value>0</value>
 </field>
-
 <field name="radio 1">
 <value>2</value>
 </field>
-
 <field name="umlauts-in-value">
 <value>öäüÖÄÜ</value>
 </field>
-
 <field name="öäüÖÄÜ">
 <value>umlauts in key</value>
 </field>
-
 <field name="special-in-value">
 <value>€ß&amp;()</value>
 </field>
-
 <field name="€ key">
 <value>special in key</value>
 </field>

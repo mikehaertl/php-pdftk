@@ -8,8 +8,10 @@ class XfdfFileTest extends \PHPUnit_Framework_TestCase
             'name' => 'Jürgen čárka čČćĆđĐ мирано',
             'email' => 'test@email.com',
             'checkbox 1' => 'Yes',
+            'address.name' => 'some name',
             'checkbox 2' => 0,
             'radio 1' => 2,
+            'address.street' => 'some street',
             "umlauts-in-value" => "öäüÖÄÜ",
             "öäüÖÄÜ" => "umlauts in key",
             "special-in-value" => "€ß&()",
@@ -20,6 +22,6 @@ class XfdfFileTest extends \PHPUnit_Framework_TestCase
         $sXfdfFilename = $oXfdfFile->getFileName();
 
         $this->assertFileExists($sXfdfFilename);
-        $this->assertFileEquals($sXfdfFilename, __DIR__."/files/XfdfFileTest.xfdf");
+        $this->assertFileEquals(__DIR__."/files/XfdfFileTest.xfdf", $sXfdfFilename);
     }
 }
