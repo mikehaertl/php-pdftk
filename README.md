@@ -60,7 +60,10 @@ use mikehaertl\pdftk\Pdf;
 
 // Fill form with data array
 $pdf = new Pdf('form.pdf');
-$pdf->fillForm(array('name'=>'ÄÜÖ äüö мирано čárka'))
+$pdf->fillForm(array(
+        'name'=>'ÄÜÖ äüö мирано čárka',
+        'nested.name' => 'valX',
+    ))
     ->needAppearances()
     ->saveAs('filled.pdf');
 

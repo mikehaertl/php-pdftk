@@ -13,6 +13,8 @@ class XfdfFileTest extends \PHPUnit_Framework_TestCase
             'radio 1' => 2,
             'address.street' => 'some street',
             "umlauts-in-value" => "öäüÖÄÜ",
+            'some.other.value' => 'val1',
+            'some.other.value2' => 'val2',
             "öäüÖÄÜ" => "umlauts in key",
             "special-in-value" => "€ß&()",
             "€ key" => "special in key",

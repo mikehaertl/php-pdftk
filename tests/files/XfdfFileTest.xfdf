@@ -26,6 +26,16 @@
 <field name="umlauts-in-value">
 <value>öäüÖÄÜ</value>
 </field>
+<field name="some">
+<field name="other">
+<field name="value">
+<value>val1</value>
+</field>
+<field name="value2">
+<value>val2</value>
+</field>
+</field>
+</field>
 <field name="öäüÖÄÜ">
 <value>umlauts in key</value>
 </field>

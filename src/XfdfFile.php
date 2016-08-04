@@ -11,7 +11,6 @@ use mikehaertl\tmp\File;
  *
  * @author Tomas Holy <holy@interconnect.cz>
  * @author Michael Härtl <haertl.mike@gmail.com>
- * @version 0.2.3-dev
  * @license http://www.opensource.org/licenses/MIT
  */
 class XfdfFile extends File
