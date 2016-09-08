@@ -10,9 +10,15 @@
             "email": "haertl.mike@gmail.com"
         }
     ],
+	"repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/mu4ddi3/php-shellcommand"
+        }
+    ],
     "require": {
         "php": ">=5.0.0",
-        "mikehaertl/php-shellcommand": "^1.0.2",
+        "mikehaertl/php-shellcommand": "dev-master",
         "mikehaertl/php-tmpfile": "^1.0.0"
     },
     "autoload": {
