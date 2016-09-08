@@ -75,6 +75,20 @@ class Command extends BaseCommand
     }
 
     /**
+     * 
+     * @param string $argument
+     * @param string|null $value
+     * @param string|null $separator
+     * @param null|bool whether to escape the operation argument. Default is null meaning use Command default setting.
+     * @return Command the command instance for method chaining
+     */
+    public function addOperationArgument($argument, $value = null, $separator = null, $escape = null)
+    {
+        $this->_operationArgument[] = $value===null ? $argument : array($argument, $value, $separator, $escape);
+        return $this;
+    }
+
+    /**
      * @param string $operation the operation to perform
      * @return Command the command instance for method chaining
      */
@@ -150,6 +164,20 @@ class Command extends BaseCommand
             $range .= $qualifier.$rotation;
         }
         $this->_operationArgument[] = $range;
+        return $this;
+    }
+
+    /**
+     * Add a to_page argument used by attach_files operation
+     * @param int|string|null $toPage files are attached to the given page number (you can use "end" here also)
+     * @return Command the command instance for method chaining
+     */
+    public function addToPage($toPage = null)
+    {
+        $this->checkExecutionStatus();
+        if ($toPage!==null) {
+            $this->addOperationArgument('to_page', $toPage, ' ', false);
+        }
         return $this;
     }
 

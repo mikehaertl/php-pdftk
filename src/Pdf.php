@@ -97,6 +97,35 @@ class Pdf
             }
         }
     }
+    
+    /**
+     * Attach files to the input file.
+     * Example:
+     *
+     *  $pdf = new Pdf;
+     *  $pdf->addFile('file1.pdf', 'A')
+     *      ->attachFiles(['attachment.pdf','image.jpg']);
+     *      ->saveAs('out.pdf');
+     * 
+     *  $pdf = new Pdf;
+     *  $pdf->addFile('file1.pdf', 'A')
+     *      ->attachFiles(['attachment.pdf','image.jpg'], 1);
+     *      ->saveAs('out.pdf');
+     *
+     * @param string|array $files the file name or an array of file names.
+     * @param int|string|null $toPage files are attached to the given page number 
+     * (you can use "end" here to specify the last page or you can 
+     * ommit this value - then attachements will be added globally.
+     * @return Pdf the pdf instance for method chaining
+     */
+    public function attachFiles($files, $toPage = null)
+    {
+        $this->getCommand()
+            ->setOperation('attach_files')
+            ->setOperationArgument($files, true)
+            ->addToPage($toPage);
+        return $this;
+    }
 
     /**
      * @param string|Pdf $name the PDF filename or Pdf instance to add for processing

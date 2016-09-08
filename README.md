@@ -20,6 +20,7 @@ A PDF conversion and form utility based on pdftk.
  * Combine pages from several PDF files into a new PDF file
  * Split a PDF into one file per page
  * Add background or overlay PDFs
+ * Add attachments to PDF file
  * Read out meta data about PDF and form fields
  * Set passwords and permissions
 
@@ -34,7 +35,7 @@ A PDF conversion and form utility based on pdftk.
 You should use use [composer](https://getcomposer.org/) to install this library.
 
 ```
-composer require mikehaertl/php-pdftk
+composer require mu4ddi3/php-pdftk
 ```
 
 ## Examples
@@ -91,6 +92,24 @@ $fdf->saveAs('data.xfdf');
 $fdf = new FdfFile(['name'=>'Jürgen мирано']);
 $fdf->saveAs('data.fdf');
 ```
+
+#### Attach File
+
+Attach files to the input PDF file.
+
+```php
+
+$pdf = new Pdf;
+ $pdf->addFile('file1.pdf', 'A')
+     ->attachFiles(['attachment.pdf','image.jpg']);
+     ->saveAs('out.pdf');
+
+ $pdf = new Pdf;
+ $pdf->addFile('file1.pdf', 'A')
+     ->attachFiles(['attachment.pdf','image.jpg'], 1);
+     ->saveAs('out.pdf');
+```
+
 
 #### Cat
 
