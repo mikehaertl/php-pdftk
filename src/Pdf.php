@@ -107,7 +107,7 @@ class Pdf
      */
     public function addFile($name, $handle = null, $password = null)
     {
-        if ($handle===null) {
+        if ($handle===null || is_numeric($handle)) {
             $handle = $this->nextHandle();
         }
         if ($name instanceof Pdf) {
