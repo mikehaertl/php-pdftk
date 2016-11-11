@@ -71,6 +71,11 @@ $pdf->fillForm(array(
 $pdf = new Pdf('form.pdf');
 $pdf->fillForm('data.xfdf')
     ->saveAs('filled.pdf');
+
+// Check for errors
+if (!$pdf->saveAs('my.pdf')) {
+    $error = $pdf->getError();
+}
 ```
 
 **Note:** When filling in UTF-8 data, you should always add the `needAppearances()` option.
