@@ -59,7 +59,7 @@ Fill a PDF form with data from a PHP array or an XFDF/FDF file.
 use mikehaertl\pdftk\Pdf;
 
 // Fill form with data array
-$pdf = new Pdf('form.pdf');
+$pdf = new Pdf('/full/path/to/form.pdf');
 $pdf->fillForm(array(
         'name'=>'ÄÜÖ äüö мирано čárka',
         'nested.name' => 'valX',
@@ -91,10 +91,10 @@ This is a bonus feature that is not available from `pdftk`.
 use mikehaertl\pdftk\FdfFile;
 
 $fdf = new XfdfFile(['name'=>'Jürgen мирано']);
-$fdf->saveAs('data.xfdf');
+$fdf->saveAs('/path/to/data.xfdf');
 
 $fdf = new FdfFile(['name'=>'Jürgen мирано']);
-$fdf->saveAs('data.fdf');
+$fdf->saveAs('/path/to/data.fdf');
 ```
 
 #### Cat
@@ -105,23 +105,23 @@ Assemble a PDF from pages of one or more PDF files.
 use mikehaertl\pdftk\Pdf;
 
 // Extract pages 1-5 and 7,4,9 into a new file
-$pdf = new Pdf('my.pdf');
+$pdf = new Pdf('/path/to/my.pdf');
 $pdf->cat(1, 5)
     ->cat(array(7, 4, 9))
-    ->saveAs('new.pdf');
+    ->saveAs('/path/to/new.pdf');
 
 // Combine pages from several files, demonstrating several ways how to add files
 $pdf = new Pdf(array(
-    'A' => 'file1.pdf',                 // Reference file as 'A'
-    'B' => ['file2.pdf','pass**word'],  // Reference file as 'B'
+    'A' => '/path/file1.pdf',                 // Reference file as 'A'
+    'B' => ['/path/file2.pdf','pass**word'],  // Reference file as 'B'
 ));
-$pdf->addFile('file3.pdf','C','**secret**pw');  // Reference file as 'C'
+$pdf->addFile('/path/file3.pdf','C','**secret**pw');  // Reference file as 'C'
 $pdf->cat(1, 5, 'A')                // pages 1-5 from A
     ->cat(3, null, 'B')             // page 3 from B
     ->cat(7, 'end', 'B', null, 'east') // pages 7-end from B, rotated East
     ->cat('end',3,'A','even')       // even pages 3-end in reverse order from A
     ->cat([2,3,7], 'C')             // pages 2,3 and 7 from C
-    ->saveAs('new.pdf');
+    ->saveAs('/path/new.pdf');
 ```
 
 #### Shuffle
@@ -133,14 +133,14 @@ stream at a time.
 use mikehaertl\pdftk\Pdf;
 
 $pdf = new Pdf(array(
-    'A' => 'file1.pdf',     // Reference file as 'A'
-    'B' => 'file2.pdf',     // Reference file as 'B'
+    'A' => '/path/file1.pdf',     // Reference file as 'A'
+    'B' => '/path/file2.pdf',     // Reference file as 'B'
 ));
 
 // new.pdf will have pages A1, B3, A2, B4, A3, B5, ...
 $pdf->shuffle(1, 5, 'A')    // pages 1-5 from A
     ->shuffle(3, 8, 'B')    // pages 3-8 from B
-    ->saveAs('new.pdf');
+    ->saveAs('/path/new.pdf');
 ```
 
 #### Burst
@@ -150,8 +150,8 @@ Split a PDF file into one file per page.
 ```php
 use mikehaertl\pdftk\Pdf;
 
-$pdf = new Pdf('my.pdf');
-$pdf->burst('page_%d.pdf');     // Supply a printf() pattern
+$pdf = new Pdf('/path/my.pdf');
+$pdf->burst('/path/page_%d.pdf');     // Supply a printf() pattern
 ```
 
 #### Add background PDF
@@ -162,14 +162,14 @@ Add another PDF file as background.
 use mikehaertl\pdftk\Pdf;
 
 // Set background from another PDF (first page repeated)
-$pdf = new Pdf('my.pdf');
-$pdf->background('back.pdf')
-    ->saveAs('watermarked.pdf');
+$pdf = new Pdf('/path/my.pdf');
+$pdf->background('/path/back.pdf')
+    ->saveAs('/path/watermarked.pdf');
 
 // Set background from another PDF (one page each)
-$pdf = new Pdf('my.pdf');
-$pdf->multiBackground('back_pages.pdf')
-    ->saveAs('watermarked.pdf');
+$pdf = new Pdf('/path/my.pdf');
+$pdf->multiBackground('/path/back_pages.pdf')
+    ->saveAs('/path/watermarked.pdf');
 ```
 
 #### Add overlay PDF
@@ -180,14 +180,14 @@ Add another PDF file as overlay.
 use mikehaertl\pdftk\Pdf;
 
 // Stamp with another PDF (first page repeated)
-$pdf = new Pdf('my.pdf');
-$pdf->stamp('overlay.pdf')
-    ->saveAs('stamped.pdf');
+$pdf = new Pdf('/path/my.pdf');
+$pdf->stamp('/path/overlay.pdf')
+    ->saveAs('/path/stamped.pdf');
 
 // Stamp with another PDF (one page each)
-$pdf = new Pdf('my.pdf');
-$pdf->multiStamp('overlay_pages.pdf')
-    ->saveAs('stamped.pdf');
+$pdf = new Pdf('/path/my.pdf');
+$pdf->multiStamp('/path/overlay_pages.pdf')
+    ->saveAs('/path/stamped.pdf');
 ```
 
 #### Generate FDF
@@ -198,8 +198,8 @@ Create a FDF file from a given filled PDF form.
 use mikehaertl\pdftk\Pdf;
 
 // Create FDF from PDF
-$pdf = new Pdf('form.pdf');
-$pdf->generateFdfFile('data.fdf');
+$pdf = new Pdf('/path/form.pdf');
+$pdf->generateFdfFile('/path/data.fdf');
 ```
 
 #### Get PDF data
@@ -210,11 +210,11 @@ Read out metadata or form field information from a PDF file.
 use mikehaertl\pdftk\Pdf;
 
 // Get data
-$pdf = new Pdf('my.pdf');
+$pdf = new Pdf('/path/my.pdf');
 $data = $pdf->getData();
 
 // Get form data fields
-$pdf = new Pdf('my.pdf');
+$pdf = new Pdf('/path/my.pdf');
 $data = $pdf->getDataFields();
 ```
 
@@ -227,7 +227,7 @@ If you need more than one operation you can feed one `Pdf` instance into another
 use mikehaertl\pdftk\Pdf;
 
 // Extract pages 1-5 and 7,4,9 into a new file
-$pdf = new Pdf('my.pdf');
+$pdf = new Pdf('/path/my.pdf');
 $pdf->cat(1, 5)
     ->cat(array(7, 4, 9));
 
@@ -235,7 +235,7 @@ $pdf->cat(1, 5)
 $pdf2 = new Pdf($pdf);
 $pdf2->fillForm(array('name'=>'ÄÜÖ äüö мирано čárka'))
     ->needAppearances()
-    ->saveAs('filled.pdf');
+    ->saveAs('/path/filled.pdf');
 ```
 
 ### Options
@@ -245,7 +245,7 @@ You can combine the above operations with one or more of the following options.
 ```php
 use mikehaertl\pdftk\Pdf;
 
-$pdf = new Pdf('my.pdf');
+$pdf = new Pdf('/path/my.pdf');
 
 $pdf->allow('AllFeatures')      // Change permissions
     ->flatten()                 // Merge form data into document (doesn't work well with UTF-8!)
@@ -261,15 +261,15 @@ $pdf->allow('AllFeatures')      // Change permissions
 
 // Example: Fill PDF form and merge form data into PDF
 // Fill form with data array
-$pdf = new Pdf('form.pdf');
+$pdf = new Pdf('/path/form.pdf');
 $pdf->fillForm(array('name'=>'My Name'))
     ->flatten()
-    ->saveAs('filled.pdf');
+    ->saveAs('/path/filled.pdf');
 
 // Example: Remove password from a PDF
 $pdf = new Pdf;
-$pdf->addPage('my.pdf', null, 'some**password')
-    ->saveAs('new.pdf');
+$pdf->addPage('/path/my.pdf', null, 'some**password')
+    ->saveAs('/path/new.pdf');
 ```
 
 ### Execution
@@ -280,8 +280,10 @@ The class uses [php-shellcommand](https://github.com/mikehaertl/php-shellcommand
 ```php
 use mikehaertl\pdftk\Pdf;
 
-$pdf = new Pdf('my.pdf', [
+$pdf = new Pdf('/path/my.pdf', [
     'command' => '/some/other/path/to/pdftk',
+    // or on most Windows systems:
+    // 'command' => 'C:\Program Files (x86)\PDFtk\bin\pdftk.exe',
     'useExec' => true,  // May help on Windows systems if execution fails
 ]);
 ```
