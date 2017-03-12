@@ -64,8 +64,8 @@ class DataFields extends ArrayObject
      */
     private function parseData($dataString)
     {
-        $output = [];
-        $field  = [];
+        $output = array();
+        $field  = array();
         foreach (explode(PHP_EOL, $dataString) as $line) {
             $trimmedLine = trim($line);
             if ('---' === $trimmedLine || '' === $trimmedLine) {
@@ -73,7 +73,7 @@ class DataFields extends ArrayObject
                 if (sizeof($field) > 0) {
                     $output[] = $field;
                 }
-                $field = [];
+                $field = array();
                 continue;
             }
             // Process contents of data block
