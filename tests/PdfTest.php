@@ -545,8 +545,10 @@ class PdfTest extends \PHPUnit_Framework_TestCase
 
         $pdf = new Pdf($form);
         $data = $pdf->getDataFields();
-        $this->assertInternalType('string', $data);
-        $this->assertEquals($this->formDataFields, $data);
+        $this->assertInternalType('string', $data->__toString());
+        $this->assertEquals($this->formDataFields, $data->__toString());
+        $this->assertInternalType('array', $data->__toArray());
+        $this->assertEquals($this->formDataFieldsArray, $data->__toArray());
     }
 
     protected function getDocument1()
@@ -621,4 +623,42 @@ FieldFlags: 0
 FieldJustification: Left
 EOD;
 
+    protected $formDataFieldsArray = [
+        [
+            'FieldType'          => 'Button',
+            'FieldName'          => 'checkbox 1',
+            'FieldFlags'         => '0',
+            'FieldValue'         => 'On',
+            'FieldJustification' => 'Left',
+            'FieldStateOption'   => ['Off', 'On'],
+        ],
+        [
+            'FieldType'          => 'Button',
+            'FieldName'          => 'checkbox 2',
+            'FieldFlags'         => '0',
+            'FieldValue'         => 'On',
+            'FieldJustification' => 'Left',
+            'FieldStateOption'   => ['Off', 'On'],
+        ],
+        [
+            'FieldType'          => 'Button',
+            'FieldName'          => 'radio 1',
+            'FieldFlags'         => '49152',
+            'FieldValue'         => '2',
+            'FieldJustification' => 'Left',
+            'FieldStateOption'   => ['1', '2', 'Off'],
+        ],
+        [
+            'FieldType'          => 'Text',
+            'FieldName'          => 'email',
+            'FieldFlags'         => '0',
+            'FieldJustification' => 'Left',
+        ],
+        [
+            'FieldType'          => 'Text',
+            'FieldName'          => 'name',
+            'FieldFlags'         => '0',
+            'FieldJustification' => 'Left',
+        ],
+    ];
 }
