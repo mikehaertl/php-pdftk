@@ -68,9 +68,9 @@ class DataFields extends ArrayObject
         $field  = array();
         foreach (explode(PHP_EOL, $dataString) as $line) {
             $trimmedLine = trim($line);
-            if ('---' === $trimmedLine || '' === $trimmedLine) {
+            if ($trimmedLine === '---' || $trimmedLine === '') {
                 // Block completed; process it
-                if (sizeof($field) > 0) {
+                if (0 < sizeof($field)) {
                     $output[] = $field;
                 }
                 $field = array();
@@ -82,7 +82,7 @@ class DataFields extends ArrayObject
             $value = null;
 
             // Handle colon in the value
-            if (2 !== sizeof($parts)) {
+            if (sizeof($parts) !== 2) {
                 $key = $parts[0];
                 unset($parts[0]);
                 $value = implode(':', $parts);
