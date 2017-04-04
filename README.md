@@ -218,6 +218,7 @@ $pdf = new Pdf('/path/my.pdf');
 $data = $pdf->getDataFields();
 echo $data; // raw string; also can directly call $data->__toString();
 print_r($data); // metadata as array; also can directly call $data->__toArray();
+$field1Value = $data[0]['FieldValue']; // array access to a field's value
 ```
 
 #### How to perform more than one operation on a PDF
