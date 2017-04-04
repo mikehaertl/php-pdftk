@@ -70,7 +70,7 @@ class DataFields extends ArrayObject
             $trimmedLine = trim($line);
             if ($trimmedLine === '---' || $trimmedLine === '') {
                 // Block completed; process it
-                if (0 < sizeof($field)) {
+                if (sizeof($field) > 0) {
                     $output[] = $field;
                 }
                 $field = array();
@@ -100,7 +100,7 @@ class DataFields extends ArrayObject
         }
 
         // process final block
-        if (0 < sizeof($field)) {
+        if (sizeof($field) > 0) {
             $output[] = $field;
         }
 
