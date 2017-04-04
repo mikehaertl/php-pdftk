@@ -62,7 +62,7 @@ class Pdf
     protected $_data_utf8;
 
     /**
-     * @var string the PDF form field data as returned from getDataFields()
+     * @var DataFields the PDF form field data as returned from getDataFields()
      */
     protected $_dataFields;
     protected $_dataFields_utf8;
@@ -331,7 +331,7 @@ class Pdf
 
     /**
      * @param bool $utf8 whether to dump the data UTF-8 encoded. Default is true.
-     * @return string|bool data about the PDF form fields or false on failure
+     * @return DataFields|bool data about the PDF form fields or false on failure
      */
     public function getDataFields($utf8 = true)
     {
@@ -342,7 +342,7 @@ class Pdf
             if (!$command->execute()) {
                 return false;
             } else {
-                $this->$property = trim($command->getOutput());
+                $this->$property = new DataFields(trim($command->getOutput()));
             }
         }
         return $this->$property;
