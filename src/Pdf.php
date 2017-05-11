@@ -25,7 +25,7 @@ class Pdf
     public $ignoreWarnings = false;
 
     /**
-     * @var mikehaertl\tmp\File the temporary output file
+     * @var File the temporary output file
      */
     protected $_tmpFile;
 
@@ -207,7 +207,7 @@ class Pdf
      * Generate the FDF file for a single PDF file.
      *
      * @param string $name name of the FDF file
-     * @return Pdf the pdf instance for method chaining
+     * @return bool whether the pdf is generated successful
      */
     public function generateFdfFile($name)
     {
@@ -221,9 +221,9 @@ class Pdf
      * Fill a PDF form
      *
      * @param string|array $data either a XFDF/FDF filename or an array with form field data (name => value)
-     * @param string the encoding of the data. Default is 'UTF-8'.
-     * @param bool whether to drop XFA forms (see dropXfa()). Default is true.
-     * @param string the file format to use for form filling when passing an array in `$data`. This can be
+     * @param string $encoding the encoding of the data. Default is 'UTF-8'.
+     * @param bool $dropXfa whether to drop XFA forms (see dropXfa()). Default is true.
+     * @param string $format the file format to use for form filling when passing an array in `$data`. This can be
      * `xfdf` or `fdf`. `xfdf` should give best results so you should not have to change the default.
      * @return Pdf the pdf instance for method chaining
      */
@@ -530,7 +530,7 @@ class Pdf
     }
 
     /**
-     * @return mikehaertl\tmp\File the temporary output file instance
+     * @return File the temporary output file instance
      */
     public function getTmpFile()
     {
