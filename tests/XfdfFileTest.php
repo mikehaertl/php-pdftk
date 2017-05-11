@@ -1,7 +1,7 @@
 <?php
 use mikehaertl\pdftk\XfdfFile;
 
-class XfdfFileTest extends \PHPUnit_Framework_TestCase
+class XfdfFileTest extends \PHPUnit\Framework\TestCase
 {
     public function testXfdfFileCreation() {
         $data = array(

@@ -2,7 +2,7 @@
 use mikehaertl\pdftk\Pdf;
 use mikehaertl\pdftk\FdfFile;
 
-class PdfTest extends \PHPUnit_Framework_TestCase
+class PdfTest extends \PHPUnit\Framework\TestCase
 {
     public function setUp()
     {

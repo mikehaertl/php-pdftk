@@ -1,7 +1,7 @@
 <?php
 use mikehaertl\pdftk\FdfFile;
 
-class FdfFileTest extends \PHPUnit_Framework_TestCase
+class FdfFileTest extends \PHPUnit\Framework\TestCase
 {
     public function testFdfFileCreation() {
         $data = array(
