@@ -495,6 +495,12 @@ class Pdf
             return false;
         }
         $tmpFile = (string) $this->getTmpFile();
+  
+        $dest = pathinfo($name, PATHINFO_DIRNAME);
+        if (!file_exists($dest)) {
+          mkdir($dest, 0775, true);
+        }
+      
         if (!copy($tmpFile, $name)) {
             $this->_error = "Could not copy PDF from tmp location '$tmpFile' to '$name'";
             return false;
