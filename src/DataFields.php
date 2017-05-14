@@ -88,6 +88,11 @@ class DataFields extends ArrayObject
                 $value = implode(':', $parts);
             }
 
+            if (sizeof($parts) === 0 && !empty($key) && empty($value)) {
+                $value = $key;
+                $key = 'FieldValue';
+            }
+
             $key   = $key   ?: trim($parts[0]);
             $value = $value ?: trim($parts[1]);
             if (isset($field[$key])) {
