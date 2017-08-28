@@ -59,10 +59,10 @@ use mikehaertl\pdftk\Pdf;
 
 // Fill form with data array
 $pdf = new Pdf('/full/path/to/form.pdf');
-$pdf->fillForm(array(
+$pdf->fillForm([
         'name'=>'ÄÜÖ äüö мирано čárka',
         'nested.name' => 'valX',
-    ))
+    ])
     ->needAppearances()
     ->saveAs('filled.pdf');
 
@@ -87,6 +87,7 @@ if you have special characters in your data.
 This is a bonus feature that is not available from `pdftk`.
 
 ```php
+use mikehaertl\pdftk\XfdfFile;
 use mikehaertl\pdftk\FdfFile;
 
 $xfdf = new XfdfFile(['name'=>'Jürgen мирано']);
@@ -98,7 +99,7 @@ $fdf->saveAs('/path/to/data.fdf');
 
 #### Cat
 
-Assemble a PDF from pages of one or more PDF files.
+Assemble a PDF from pages from one or more PDF files.
 
 ```php
 use mikehaertl\pdftk\Pdf;
@@ -106,15 +107,15 @@ use mikehaertl\pdftk\Pdf;
 // Extract pages 1-5 and 7,4,9 into a new file
 $pdf = new Pdf('/path/to/my.pdf');
 $pdf->cat(1, 5)
-    ->cat(array(7, 4, 9))
+    ->cat([7, 4, 9])
     ->saveAs('/path/to/new.pdf');
 
 // Combine pages from several files, demonstrating several ways how to add files
-$pdf = new Pdf(array(
-    'A' => '/path/file1.pdf',                 // Reference file as 'A'
-    'B' => ['/path/file2.pdf','pass**word'],  // Reference file as 'B'
-));
-$pdf->addFile('/path/file3.pdf','C','**secret**pw');  // Reference file as 'C'
+$pdf = new Pdf([
+    'A' => '/path/file1.pdf',                 // A is alias for file1.pdf
+    'B' => ['/path/file2.pdf','pass**word'],  // B is alias for file2.pdf
+]);
+$pdf->addFile('/path/file3.pdf','C','**secret**pw');  // C is alias file3.pdf
 $pdf->cat(1, 5, 'A')                // pages 1-5 from A
     ->cat(3, null, 'B')             // page 3 from B
     ->cat(7, 'end', 'B', null, 'east') // pages 7-end from B, rotated East
@@ -131,10 +132,10 @@ stream at a time.
 ```php
 use mikehaertl\pdftk\Pdf;
 
-$pdf = new Pdf(array(
-    'A' => '/path/file1.pdf',     // Reference file as 'A'
-    'B' => '/path/file2.pdf',     // Reference file as 'B'
-));
+$pdf = new Pdf([
+    'A' => '/path/file1.pdf',     // A is alias for file1.pdf
+    'B' => '/path/file2.pdf',     // B is alias for file2.pdf
+]);
 
 // new.pdf will have pages A1, B3, A2, B4, A3, B5, ...
 $pdf->shuffle(1, 5, 'A')    // pages 1-5 from A
@@ -215,9 +216,16 @@ $data = $pdf->getData();
 // Get form data fields
 $pdf = new Pdf('/path/my.pdf');
 $data = $pdf->getDataFields();
-echo $data; // raw string; also can directly call $data->__toString();
-print_r($data); // metadata as array; also can directly call $data->__toArray();
-$field1Value = $data[0]['FieldValue']; // array access to a field's value
+
+// Get data as string
+echo $data;
+$txt = (string) $data;
+$txt = $data->__toString();
+
+// Get data as array
+$arr = (array) $data;
+$arr = $data->__toArray();
+$field1 = $data[0]['Field1'];
 ```
 
 #### How to perform more than one operation on a PDF
@@ -231,11 +239,11 @@ use mikehaertl\pdftk\Pdf;
 // Extract pages 1-5 and 7,4,9 into a new file
 $pdf = new Pdf('/path/my.pdf');
 $pdf->cat(1, 5)
-    ->cat(array(7, 4, 9));
+    ->cat([7, 4, 9]);
 
 // We now use the above PDF as source file for a new PDF
 $pdf2 = new Pdf($pdf);
-$pdf2->fillForm(array('name'=>'ÄÜÖ äüö мирано čárka'))
+$pdf2->fillForm(['name'=>'ÄÜÖ äüö мирано čárka'])
     ->needAppearances()
     ->saveAs('/path/filled.pdf');
 ```
@@ -264,7 +272,7 @@ $pdf->allow('AllFeatures')      // Change permissions
 // Example: Fill PDF form and merge form data into PDF
 // Fill form with data array
 $pdf = new Pdf('/path/form.pdf');
-$pdf->fillForm(array('name'=>'My Name'))
+$pdf->fillForm(['name'=>'My Name'])
     ->flatten()
     ->saveAs('/path/filled.pdf');
 
