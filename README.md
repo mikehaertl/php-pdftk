@@ -89,8 +89,8 @@ This is a bonus feature that is not available from `pdftk`.
 ```php
 use mikehaertl\pdftk\FdfFile;
 
-$fdf = new XfdfFile(['name'=>'Jürgen мирано']);
-$fdf->saveAs('/path/to/data.xfdf');
+$xfdf = new XfdfFile(['name'=>'Jürgen мирано']);
+$xfdf->saveAs('/path/to/data.xfdf');
 
 $fdf = new FdfFile(['name'=>'Jürgen мирано']);
 $fdf->saveAs('/path/to/data.fdf');
