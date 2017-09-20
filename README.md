@@ -90,10 +90,10 @@ This is a bonus feature that is not available from `pdftk`.
 use mikehaertl\pdftk\XfdfFile;
 use mikehaertl\pdftk\FdfFile;
 
-$xfdf = new XfdfFile(['name'=>'Jürgen мирано']);
+$xfdf = new XfdfFile(['name' => 'Jürgen мирано']);
 $xfdf->saveAs('/path/to/data.xfdf');
 
-$fdf = new FdfFile(['name'=>'Jürgen мирано']);
+$fdf = new FdfFile(['name' => 'Jürgen мирано']);
 $fdf->saveAs('/path/to/data.fdf');
 ```
 
@@ -243,7 +243,7 @@ $pdf->cat(1, 5)
 
 // We now use the above PDF as source file for a new PDF
 $pdf2 = new Pdf($pdf);
-$pdf2->fillForm(['name'=>'ÄÜÖ äüö мирано čárka'])
+$pdf2->fillForm(['name' => 'ÄÜÖ äüö мирано čárka'])
     ->needAppearances()
     ->saveAs('/path/filled.pdf');
 ```
@@ -272,7 +272,7 @@ $pdf->allow('AllFeatures')      // Change permissions
 // Example: Fill PDF form and merge form data into PDF
 // Fill form with data array
 $pdf = new Pdf('/path/form.pdf');
-$pdf->fillForm(['name'=>'My Name'])
+$pdf->fillForm(['name' => 'My Name'])
     ->flatten()
     ->saveAs('/path/filled.pdf');
 
@@ -282,7 +282,7 @@ $pdf->addPage('/path/my.pdf', null, 'some**password')
     ->saveAs('/path/new.pdf');
 ```
 
-### Execution
+### Shell Command
 
 The class uses [php-shellcommand](https://github.com/mikehaertl/php-shellcommand) to execute
 `pdftk`. You can pass `$options` for its `Command` class as second argument to the constructor:
@@ -296,6 +296,21 @@ $pdf = new Pdf('/path/my.pdf', [
     // 'command' => 'C:\Program Files (x86)\PDFtk\bin\pdftk.exe',
     'useExec' => true,  // May help on Windows systems if execution fails
 ]);
+```
+
+### Temporary File
+
+Internally a temporary file is created via [php-tmpfile](https://github.com/mikehaertl/php-tmpfile).
+You can also access that file directly, e.g. if you neither want to send or save the
+file but only need the binary PDF content:
+
+```php
+use mikehaertl\pdftk\Pdf;
+
+$pdf = new Pdf('/path/my.pdf');
+$pdf->fillForm(['name' => 'My Name'])
+    ->execute();
+$content = file_get_contents( (string) $pdf->getTmpFile() );
 ```
 
 ## API
