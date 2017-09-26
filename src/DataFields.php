@@ -66,7 +66,7 @@ class DataFields extends ArrayObject
     {
         $output = array();
         $field  = array();
-        foreach (explode(PHP_EOL, $dataString) as $line) {
+        foreach (explode("\n", $dataString) as $line) {
             $trimmedLine = trim($line);
             if ($trimmedLine === '---' || $trimmedLine === '') {
                 // Block completed; process it
