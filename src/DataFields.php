@@ -66,9 +66,13 @@ class DataFields extends ArrayObject
     {
         $output = array();
         $field  = array();
+        $currentField = "";
         foreach (explode("\n", $dataString) as $line) {
             $trimmedLine = trim($line);
-            if ($trimmedLine === '---' || $trimmedLine === '') {
+
+            // ($trimmedLine === '' && $currentField != 'FieldValue')
+            // Don't start new field for an empty line in a multi-line FieldValue
+            if ($trimmedLine === '---' || ($currentField != 'FieldValue' && $trimmedLine === '')) {
                 // Block completed; process it
                 if (sizeof($field) > 0) {
                     $output[] = $field;
@@ -76,10 +80,19 @@ class DataFields extends ArrayObject
                 $field = array();
                 continue;
             }
+
             // Process contents of data block
             $parts = explode(':', $line);
             $key   = null;
             $value = null;
+
+            //Continue through lines already process from FieldValue
+            if($currentField == 'FieldValue'
+                && $parts[0] != 'FieldJustification'
+                && !empty($field['FieldValue'])){
+
+                continue;
+            }
 
             // Handle colon in the value
             if (sizeof($parts) !== 2) {
@@ -90,6 +103,13 @@ class DataFields extends ArrayObject
 
             $key   = $key   ?: trim($parts[0]);
             $value = $value ?: trim($parts[1]);
+
+            if ($currentField == 'FieldValue' && !empty($value)) {
+                $value = $this->getFieldValue($line,$dataString);
+            } else if ($currentField == 'FieldValue'){
+                $value = "";
+            }
+
             if (isset($field[$key])) {
                 $field[$key]   = (array) $field[$key];
                 $field[$key][] = $value;
@@ -105,5 +125,36 @@ class DataFields extends ArrayObject
         }
 
         return $output;
+    }
+
+    /**
+     * Parses a FieldValue for Multiple Lines e.g.
+     * FieldValue: Text
+     *
+     * MoreText
+     * Something
+     * ExtraText
+     * OtherText
+     *
+     * FieldJustification: Left
+     *
+     * @param string        $line      The current line being searched
+     * @param string        $dataString
+     * @return bool|string
+     */
+    private function getFieldValue($line,$dataString)
+    {
+        // Offset 'FieldValue:'
+        $pos1 = strpos($dataString, $line) + 11;
+        $pos2 = strpos($dataString, "FieldJustification", $pos1);
+        $length = $pos2 - $pos1;
+
+        $value = substr(
+            $dataString,
+            $pos1,
+            $length
+        );
+
+        return $value;
     }
 }
