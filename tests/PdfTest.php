@@ -53,10 +53,10 @@ class PdfTest extends \PHPUnit\Framework\TestCase
         $document2 = $this->getDocument2();
         $file = $this->getOutFile();
 
-        $pdf = new Pdf(array(
+        $pdf = new Pdf([
             'A' => $document1,
             'B' => $document2,
-        ));
+        ]);
         $this->assertTrue($pdf->saveAs($file));
         $this->assertFileExists($file);
 
@@ -76,10 +76,10 @@ class PdfTest extends \PHPUnit\Framework\TestCase
         $this->assertFalse($pdf1->getCommand()->getExecuted());
         $this->assertFalse($pdf2->getCommand()->getExecuted());
 
-        $pdf = new Pdf(array(
+        $pdf = new Pdf([
             'A' => $pdf1,
             'B' => $pdf2,
-        ));
+        ]);
         $this->assertTrue($pdf1->getCommand()->getExecuted());
         $this->assertTrue($pdf2->getCommand()->getExecuted());
         $outFile1 = (string) $pdf1->getTmpFile();
@@ -99,10 +99,10 @@ class PdfTest extends \PHPUnit\Framework\TestCase
         $document2 = $this->getDocument2();
         $file = $this->getOutFile();
 
-        $pdf = new Pdf(array(
-            'A' => array($document1, 'complex\'"password'),
+        $pdf = new Pdf([
+            'A' => [$document1, 'complex\'"password'],
             'B' => $document2,
-        ));
+        ]);
         $this->assertTrue($pdf->saveAs($file));
         $this->assertFileExists($file);
 
@@ -155,7 +155,7 @@ class PdfTest extends \PHPUnit\Framework\TestCase
 
         $pdf = new Pdf($document);
         $this->assertInstanceOf('mikehaertl\pdftk\Pdf', $pdf->cat(1,5));
-        $this->assertInstanceOf('mikehaertl\pdftk\Pdf', $pdf->cat(array(2,3,4)));
+        $this->assertInstanceOf('mikehaertl\pdftk\Pdf', $pdf->cat([2,3,4]));
         $this->assertInstanceOf('mikehaertl\pdftk\Pdf', $pdf->cat('end','2',null,'even'));
         $this->assertInstanceOf('mikehaertl\pdftk\Pdf', $pdf->cat(3,5,null,null,'east'));
         $this->assertInstanceOf('mikehaertl\pdftk\Pdf', $pdf->cat(4,8,null,'even','east'));
@@ -176,12 +176,12 @@ class PdfTest extends \PHPUnit\Framework\TestCase
         $document2 = $this->getDocument2();
         $file = $this->getOutFile();
 
-        $pdf = new Pdf(array(
+        $pdf = new Pdf([
             'A' => $document1,
             'B' => $document2,
-        ));
+        ]);
         $this->assertInstanceOf('mikehaertl\pdftk\Pdf', $pdf->cat(1,5,'A'));
-        $this->assertInstanceOf('mikehaertl\pdftk\Pdf', $pdf->cat(array(2,3,4),'A'));
+        $this->assertInstanceOf('mikehaertl\pdftk\Pdf', $pdf->cat([2,3,4],'A'));
         $this->assertInstanceOf('mikehaertl\pdftk\Pdf', $pdf->cat('end','2','B','even'));
         $this->assertInstanceOf('mikehaertl\pdftk\Pdf', $pdf->cat(3,5,'A',null,'east'));
         $this->assertInstanceOf('mikehaertl\pdftk\Pdf', $pdf->cat(4,8,'B','even','east'));
@@ -202,12 +202,12 @@ class PdfTest extends \PHPUnit\Framework\TestCase
         $document2 = $this->getDocument2();
         $file = $this->getOutFile();
 
-        $pdf = new Pdf(array(
+        $pdf = new Pdf([
             'A' => $document1,
             'B' => $document2,
-        ));
+        ]);
         $this->assertInstanceOf('mikehaertl\pdftk\Pdf', $pdf->shuffle(1,5,'A'));
-        $this->assertInstanceOf('mikehaertl\pdftk\Pdf', $pdf->shuffle(array(2,3,4),'B'));
+        $this->assertInstanceOf('mikehaertl\pdftk\Pdf', $pdf->shuffle([2,3,4],'B'));
         $this->assertInstanceOf('mikehaertl\pdftk\Pdf', $pdf->shuffle('end','2','B','even'));
         $this->assertInstanceOf('mikehaertl\pdftk\Pdf', $pdf->shuffle(3,5,'A',null,'east'));
         $this->assertInstanceOf('mikehaertl\pdftk\Pdf', $pdf->shuffle(4,8,'B','even','east'));
@@ -271,13 +271,13 @@ class PdfTest extends \PHPUnit\Framework\TestCase
 
         $form = $this->getForm();
         $file = $this->getOutFile();
-        $data = array(
+        $data = [
             'name' => 'Jürgen čárka čČćĆđĐ мирано',
             'email' => 'test@email.com',
             'checkbox 1' => 'Yes',
             'checkbox 2' => 0,
             'radio 1' => 2,
-        );
+        ];
 
         $pdf = new Pdf($form);
         $this->assertInstanceOf('mikehaertl\pdftk\Pdf', $pdf->fillForm($data));
@@ -536,7 +536,7 @@ class PdfTest extends \PHPUnit\Framework\TestCase
         $pdf = new Pdf($document);
         $data = $pdf->getData();
         $this->assertInternalType('string', $data);
-        $this->assertContains('NumberOfPages: 5', $data);
+        $this->assertEquals($this->formData, $data);
     }
 
     public function testCanGetDataFields()
@@ -545,6 +545,7 @@ class PdfTest extends \PHPUnit\Framework\TestCase
 
         $pdf = new Pdf($form);
         $data = $pdf->getDataFields();
+        $this->assertInstanceOf('\mikehaertl\pdftk\DataFields', $data);
         $this->assertInternalType('string', $data->__toString());
         $this->assertEquals($this->formDataFields, $data->__toString());
         $this->assertInternalType('array', $data->__toArray());
@@ -585,6 +586,46 @@ class PdfTest extends \PHPUnit\Framework\TestCase
         return __DIR__.'/test.pdf';
     }
 
+    protected $formData = <<<EOD
+InfoBegin
+InfoKey: CreationDate
+InfoValue: D:20140709121536+02'00'
+InfoBegin
+InfoKey: Creator
+InfoValue: Writer
+InfoBegin
+InfoKey: Producer
+InfoValue: LibreOffice 4.2
+PdfID0: 8b93f76a0b28b720d0dee9a6eb2a780a
+PdfID1: 8b93f76a0b28b720d0dee9a6eb2a780a
+NumberOfPages: 5
+PageMediaBegin
+PageMediaNumber: 1
+PageMediaRotation: 0
+PageMediaRect: 0 0 595 842
+PageMediaDimensions: 595 842
+PageMediaBegin
+PageMediaNumber: 2
+PageMediaRotation: 0
+PageMediaRect: 0 0 595 842
+PageMediaDimensions: 595 842
+PageMediaBegin
+PageMediaNumber: 3
+PageMediaRotation: 0
+PageMediaRect: 0 0 595 842
+PageMediaDimensions: 595 842
+PageMediaBegin
+PageMediaNumber: 4
+PageMediaRotation: 0
+PageMediaRect: 0 0 595 842
+PageMediaDimensions: 595 842
+PageMediaBegin
+PageMediaNumber: 5
+PageMediaRotation: 0
+PageMediaRect: 0 0 595 842
+PageMediaDimensions: 595 842
+EOD;
+
     protected $formDataFields = <<<EOD
 ---
 FieldType: Button
@@ -623,42 +664,42 @@ FieldFlags: 0
 FieldJustification: Left
 EOD;
 
-    protected $formDataFieldsArray = array(
-        array(
+    protected $formDataFieldsArray = [
+        [
             'FieldType'          => 'Button',
             'FieldName'          => 'checkbox 1',
             'FieldFlags'         => '0',
             'FieldValue'         => 'On',
             'FieldJustification' => 'Left',
-            'FieldStateOption'   => array('Off', 'On'),
-        ),
-        array(
+            'FieldStateOption'   => ['Off', 'On'],
+        ],
+        [
             'FieldType'          => 'Button',
             'FieldName'          => 'checkbox 2',
             'FieldFlags'         => '0',
             'FieldValue'         => 'On',
             'FieldJustification' => 'Left',
-            'FieldStateOption'   => array('Off', 'On'),
-),
-        array(
+            'FieldStateOption'   => ['Off', 'On'],
+        ],
+        [
             'FieldType'          => 'Button',
             'FieldName'          => 'radio 1',
             'FieldFlags'         => '49152',
             'FieldValue'         => '2',
             'FieldJustification' => 'Left',
-            'FieldStateOption'   => array('1', '2', 'Off'),
-        ),
-        array(
+            'FieldStateOption'   => ['1', '2', 'Off'],
+        ],
+        [
             'FieldType'          => 'Text',
             'FieldName'          => 'email',
             'FieldFlags'         => '0',
             'FieldJustification' => 'Left',
-        ),
-        array(
+        ],
+        [
             'FieldType'          => 'Text',
             'FieldName'          => 'name',
             'FieldFlags'         => '0',
             'FieldJustification' => 'Left',
-        ),
-    );
+        ],
+    ];
 }

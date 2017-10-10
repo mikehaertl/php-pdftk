@@ -5,14 +5,16 @@ namespace mikehaertl\pdftk;
 use ArrayObject;
 
 /**
- * Class DataFields
+ * This class is an array representation of the dump_data_fields output of
+ * pdftk.
  *
  * @author Ray Holland <raymondaholland+php-pdftk@gmail.com>
+ * @author Michael Härtl <haertl.mike@gmail.com>
+ * @license http://www.opensource.org/licenses/MIT
  */
 class DataFields extends ArrayObject
 {
     private $_string;
-
     private $_array;
 
     /**
@@ -25,7 +27,7 @@ class DataFields extends ArrayObject
     public function __construct($input = null, $flags = 0, $iterator_class = "ArrayIterator")
     {
         $this->_string = $input ?: '';
-        $this->_array  = $this->parseData($this->_string);
+        $this->_array  = self::parse($this->_string);
 
         return parent::__construct($this->_array, $flags, $iterator_class);
     }
@@ -47,114 +49,107 @@ class DataFields extends ArrayObject
     }
 
     /**
-     * Parse the output of dump_data_fields into something usable.
-     * Derived from: http://stackoverflow.com/a/34864936/744228
-     * Example input (includes '---' line):
+     * Parse the output of dump_data_fields into an array.
+     *
+     * The string to parse can either be a single block of `Xyz:value` lines
+     * or a set of such blocks, separated by and starting with `---`.
+     *
+     *
+     * Here's an example:
+     *
+     * ```
      * ---
      * FieldType: Text
      * FieldName: Text1
      * FieldFlags: 0
      * FieldValue: University of Missouri : Ray-Holland
+     * extended line value
      * FieldValueDefault: University of Missouri : Ray-Holland
+     * extended line2 value
      * FieldJustification: Left
      * FieldMaxLength: 99
+     * ---
+     * FieldType: Text
+     * FieldName: Text2
+     * ...
+     * ...
+     * ```
      *
-     * @param $dataString
-     * @return array
+     * @param $input the string to parse
+     * @return array the parsed result
      */
-    private function parseData($dataString)
+    public static function parse($input)
     {
-        $output = array();
-        $field  = array();
-        $currentField = "";
-        foreach (explode("\n", $dataString) as $line) {
-            $trimmedLine = trim($line);
-
-            // ($trimmedLine === '' && $currentField != 'FieldValue')
-            // Don't start new field for an empty line in a multi-line FieldValue
-            if ($trimmedLine === '---' || ($currentField !== 'FieldValue' && $trimmedLine === '')) {
-                // Block completed; process it
-                if (sizeof($field) > 0) {
-                    $output[] = $field;
-                }
-                $field = array();
-                continue;
-            }
-
-            // Process contents of data block
-            $parts = explode(':', $line);
-            $key   = null;
-            $value = null;
-
-            //Continue through lines already processed from FieldValue
-            if($currentField === 'FieldValue'
-                && $parts[0] !== 'FieldJustification'
-                && !empty($field['FieldValue'])){
-
-                continue;
-            }
-
-            // Handle colon in the value
-            if (sizeof($parts) !== 2) {
-                $key = $parts[0];
-                unset($parts[0]);
-                $value = implode(':', $parts);
-            }
-
-            $key   = $key   ?: trim($parts[0]);
-            $value = $value ?: trim($parts[1]);
-
-            if ($currentField === 'FieldValue' && !empty($value)) {
-                $value = $this->getFieldValue($line,$dataString);
-            } else if ($currentField === 'FieldValue'){
-                $value = "";
-            }
-
-            if (isset($field[$key])) {
-                $field[$key]   = (array) $field[$key];
-                $field[$key][] = $value;
-            }
-            else {
-                $field[$key] = $value;
-            }
+        if (strncmp('---', $input, 3) === 0) {
+            // Split blocks only if '---' is followed by 'FieldType'
+            $blocks = preg_split(
+                '/^---(\r\n|\n|\r)(?=FieldType:)/m',
+                substr($input,3 )
+            );
+            return array_map('\mikehaertl\pdftk\DataFields::parseBlock', $blocks);
+        } else {
+            return self::parseBlock($input);
         }
-
-        // process final block
-        if (sizeof($field) > 0) {
-            $output[] = $field;
-        }
-
-        return $output;
     }
 
     /**
-     * Parses a FieldValue for Multiple Lines e.g.
-     * FieldValue: Text
+     * Parses a block of this form:
      *
-     * MoreText
-     * Something
-     * ExtraText
-     * OtherText
+     * ```
+     * Name1: Value1
+     * Name2: Value2
+     * Name3: Value3
+     * ...
+     * ```
      *
-     * FieldJustification: Left
-     *
-     * @param string        $line      The current line being searched
-     * @param string        $dataString
-     * @return bool|string  Returns a string containing the value for FieldValue e.g. Text\n\nMoreText\nSomething  etc.
+     * @param string $block the block to parse
+     * @return array the parsed block values indexed by respective names
      */
-    private function getFieldValue($line, $dataString)
+    public static function parseBlock($block)
     {
-        // Offset 'FieldValue:'
-        $pos1 = strpos($dataString, $line) + 11;
-        $pos2 = strpos($dataString, "FieldJustification", $pos1);
-        $length = $pos2 - $pos1;
+        $data = [];
+        $lines = preg_split("/(\r\n|\n|\r)/", trim($block));
+        $continueKey = null;
+        foreach($lines as $n => $line) {
+            if ($continueKey !== null) {
+                $data[$continueKey] .= "\n" . $line;
+                if (!self::lineContinues($lines, $n, $continueKey)) {
+                    $continueKey = null;
+                }
+            } elseif (preg_match('/([^:]*): ?(.*)/', $line, $match)) {
+                $key = $match[1];
+                $value = $match[2];
+                // Convert multiple keys like 'FieldStateOption' to array
+                if (isset($data[$key])) {
+                    $data[$key]   = (array) $data[$key];
+                    $data[$key][] = $value;
+                } else {
+                    $data[$key] = $value;
+                }
+                if (self::lineContinues($lines, $n, $key)) {
+                    $continueKey = $key;
+                }
+            }
+        }
+        return $data;
+    }
 
-        $value = substr(
-            $dataString,
-            $pos1,
-            $length
-        );
-
-        return $value;
+    /**
+     * Checks whether the value for the given line number continues on the next
+     * line. This is the case if the next line does not start with either
+     * 'FieldValueDefault:' or 'FieldJustification:'.
+     *
+     * @param array $lines all lines of the block
+     * @param int $n the 0-based index of the current line
+     * @param string the key for the value. Only 'FieldValue' and
+     * 'FieldValueDefault' can span multiple lines
+     * @return bool whether the value continues in line n + 1
+     */
+    protected static function lineContinues($lines, $n, $key)
+    {
+        return
+            in_array($key, ['FieldValue', 'FieldValueDefault']) &&
+            array_key_exists($n + 1, $lines) &&
+            !preg_match('/^Field(ValueDefault|Justification):/', $lines[$n + 1]);
     }
 }
