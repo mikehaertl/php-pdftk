@@ -72,7 +72,7 @@ class DataFields extends ArrayObject
 
             // ($trimmedLine === '' && $currentField != 'FieldValue')
             // Don't start new field for an empty line in a multi-line FieldValue
-            if ($trimmedLine === '---' || ($currentField != 'FieldValue' && $trimmedLine === '')) {
+            if ($trimmedLine === '---' || ($currentField !== 'FieldValue' && $trimmedLine === '')) {
                 // Block completed; process it
                 if (sizeof($field) > 0) {
                     $output[] = $field;
@@ -86,9 +86,9 @@ class DataFields extends ArrayObject
             $key   = null;
             $value = null;
 
-            //Continue through lines already process from FieldValue
-            if($currentField == 'FieldValue'
-                && $parts[0] != 'FieldJustification'
+            //Continue through lines already processed from FieldValue
+            if($currentField === 'FieldValue'
+                && $parts[0] !== 'FieldJustification'
                 && !empty($field['FieldValue'])){
 
                 continue;
@@ -104,9 +104,9 @@ class DataFields extends ArrayObject
             $key   = $key   ?: trim($parts[0]);
             $value = $value ?: trim($parts[1]);
 
-            if ($currentField == 'FieldValue' && !empty($value)) {
+            if ($currentField === 'FieldValue' && !empty($value)) {
                 $value = $this->getFieldValue($line,$dataString);
-            } else if ($currentField == 'FieldValue'){
+            } else if ($currentField === 'FieldValue'){
                 $value = "";
             }
 
@@ -140,9 +140,9 @@ class DataFields extends ArrayObject
      *
      * @param string        $line      The current line being searched
      * @param string        $dataString
-     * @return bool|string
+     * @return bool|string  Returns a string containing the value for FieldValue e.g. Text\n\nMoreText\nSomething  etc.
      */
-    private function getFieldValue($line,$dataString)
+    private function getFieldValue($line, $dataString)
     {
         // Offset 'FieldValue:'
         $pos1 = strpos($dataString, $line) + 11;
