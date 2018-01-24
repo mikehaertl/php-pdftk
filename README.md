@@ -43,6 +43,9 @@ composer require mikehaertl/php-pdftk
 Please consult the `pdftk` man page for each operation to find out how each operation works
 in detail and which options are available.
 
+> **Note:** Some commands allow to alias your files with a handle (see examples below).
+> In version 2.x of pdftk a handle can be one or more upper case letters.
+
 For all operations you can either save the PDF locally through `saveAs($name)` or send it to the
 browser with `send()`. If you pass a filename to `send($name)` the client browser will open a download
 dialogue whereas without a filename it will usually display the PDF inline.
