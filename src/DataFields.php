@@ -107,7 +107,7 @@ class DataFields extends ArrayObject
      */
     public static function parseBlock($block)
     {
-        $data = [];
+        $data = array();
         $lines = preg_split("/(\r\n|\n|\r)/", trim($block));
         $continueKey = null;
         foreach($lines as $n => $line) {
