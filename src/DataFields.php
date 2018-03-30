@@ -80,11 +80,6 @@ class DataFields extends ArrayObject
      */
     public static function parse($input)
     {
-        // Strip any warning blocks from top
-        if (strncmp('WARNING:', $input, 8) === 0) {
-            // Remove the 'WARNING:' line and all following lines starting with a space
-            $input = preg_replace('/^WARNING:.*$[\n\r]+( .*$[\n\r]+)*/m', '', $input);
-        }
         if (strncmp('---', $input, 3) === 0) {
             // Split blocks only if '---' is followed by 'FieldType'
             $blocks = preg_split(
