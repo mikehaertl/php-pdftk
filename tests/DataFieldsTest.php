@@ -6,7 +6,6 @@ class DataFieldsTest extends \PHPUnit\Framework\TestCase
     public function testDataFieldParsing()
     {
         $dataFields = new DataFields($this->_testInput);
-        //print_r($dataFields->__toArray());exit;
         $this->assertEquals($this->_parsedResult, $dataFields->__toArray());
     }
 
@@ -61,6 +60,15 @@ and
 multi lines
 
 FieldJustification: Left
+---
+FieldType: Choice
+FieldName: field6
+FieldFlags: 2097152
+FieldValue: 1
+FieldValue: 2
+FieldValue: 3
+FieldValue: 4
+FieldJustification: Left
 DATA;
 
     protected $_parsedResult = [
@@ -103,6 +111,13 @@ DATA;
             'FieldValue' => "field:with:colons\n\n---more:colons:\nand\nmulti lines\n",
             'FieldValueDefault' => "default:with:colons\n\n---more:colons:\nand\nmulti lines\n",
             'FieldJustification' => 'Left',
-        ]
+        ],
+        [
+            'FieldType' => 'Choice',
+            'FieldName' => 'field6',
+            'FieldFlags' => 2097152,
+            'FieldValue' => [1, 2, 3, 4],
+            'FieldJustification' => 'Left',
+        ],
     ];
 }

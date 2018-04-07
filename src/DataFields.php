@@ -119,7 +119,8 @@ class DataFields extends ArrayObject
             } elseif (preg_match('/([^:]*): ?(.*)/', $line, $match)) {
                 $key = $match[1];
                 $value = $match[2];
-                // Convert multiple keys like 'FieldStateOption' to array
+                // Convert multiple keys like 'FieldStateOption' or 'FieldValue'
+                // from Choice fields to array
                 if (isset($data[$key])) {
                     $data[$key]   = (array) $data[$key];
                     $data[$key][] = $value;
@@ -136,8 +137,18 @@ class DataFields extends ArrayObject
 
     /**
      * Checks whether the value for the given line number continues on the next
-     * line. This is the case if the next line does not start with either
-     * 'FieldValueDefault:' or 'FieldJustification:'.
+     * line, i.e. is a multiline string.
+     *
+     * This can be the case for 'FieldValue'  and 'FieldValueDefault' keys. To
+     * find the end of the string we don't simply test for /^Field/, as this
+     * would also match multiline strings where a line starts with 'Field'.
+     *
+     * Instead we assume that the string is always followed by one of these
+     * keys:
+     *
+     *  - 'FieldValue:'
+     *  - 'FieldValueDefault:'
+     *  - 'FieldJustification:'
      *
      * @param array $lines all lines of the block
      * @param int $n the 0-based index of the current line
@@ -150,6 +161,6 @@ class DataFields extends ArrayObject
         return
             in_array($key, ['FieldValue', 'FieldValueDefault']) &&
             array_key_exists($n + 1, $lines) &&
-            !preg_match('/^Field(ValueDefault|Justification):/', $lines[$n + 1]);
+            !preg_match('/^Field(Value|ValueDefault|Justification):/', $lines[$n + 1]);
     }
 }
