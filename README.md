@@ -30,7 +30,7 @@ A PDF conversion and form utility based on pdftk.
 
 ## Installation
 
-You should use use [composer](https://getcomposer.org/) to install this library.
+You should use [composer](https://getcomposer.org/) to install this library.
 
 ```
 composer require mikehaertl/php-pdftk
