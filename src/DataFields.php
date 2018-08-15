@@ -159,7 +159,7 @@ class DataFields extends ArrayObject
     protected static function lineContinues($lines, $n, $key)
     {
         return
-            in_array($key, ['FieldValue', 'FieldValueDefault']) &&
+            in_array($key, array('FieldValue', 'FieldValueDefault')) &&
             array_key_exists($n + 1, $lines) &&
             !preg_match('/^Field(Value|ValueDefault|Justification):/', $lines[$n + 1]);
     }
