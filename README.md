@@ -21,6 +21,7 @@ A PDF conversion and form utility based on pdftk.
  * Add background or overlay PDFs
  * Read out meta data about PDF and form fields
  * Set passwords and permissions
+ * Remove passwords
 
 ## Requirements
 
@@ -281,7 +282,7 @@ $pdf->fillForm(['name' => 'My Name'])
 
 // Example: Remove password from a PDF
 $pdf = new Pdf;
-$pdf->addPage('/path/my.pdf', null, 'some**password')
+$pdf->addFile('/path/my.pdf', null, 'some**password')
     ->saveAs('/path/new.pdf');
 ```
 
