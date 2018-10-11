@@ -519,6 +519,19 @@ class Pdf
     }
 
     /**
+     * Get the raw PDF contents (triggers PDF creation).
+     * @return string|bool the PDF content as a string or `false` if the PDF
+     * wasn't created successfully.
+     */
+    public function toString()
+    {
+        if (!$this->getCommand()->getExecuted() && !$this->execute()) {
+            return false;
+        }
+        return file_get_contents($this->getTmpFile()->getFileName());
+    }
+
+    /**
      * @return Command the command instance that executes pdftk
      */
     public function getCommand()
