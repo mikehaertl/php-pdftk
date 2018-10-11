@@ -552,6 +552,17 @@ class PdfTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($this->formDataFieldsArray, $data->__toArray());
     }
 
+    public function testCanGetPdfContentAsString()
+    {
+        $document = $this->getDocument1();
+        $file = $this->getOutFile();
+
+        $pdf = new Pdf($document);
+        $this->assertTrue($pdf->saveAs($file));
+        $this->assertFileExists($file);
+        $this->assertEquals(file_get_contents($file), $pdf->toString());
+    }
+
     protected function getDocument1()
     {
         return __DIR__.'/files/document1.pdf';
