@@ -85,6 +85,9 @@ FDF;
         $this->writeFields($fp, $fields);
         fwrite($fp, self::XFDF_FOOTER);
         fclose($fp);
+        
+        // Update file permissions to ensure PDFTK can read the file as potentially a different user
+        chmod($this->_filename, 0644);
     }
 
     /**
