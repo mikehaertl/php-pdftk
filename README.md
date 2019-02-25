@@ -29,6 +29,10 @@ A PDF conversion and form utility based on pdftk.
  * This library is written for pdftk 2.x versions. You should be able to use it with pdftk 1.x but not all methods will work there.
    For details consult the man page of pdftk on your system.
 
+> **Note** If you're on Ubuntu you may want to install the version from `ppa:malteworld/ppa`.
+> The default packages seems to use snap an there have been reports about file permission
+> issues with this version.
+
 ## Installation
 
 You should use [composer](https://getcomposer.org/) to install this library.
