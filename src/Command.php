@@ -6,8 +6,8 @@ use mikehaertl\shellcommand\Command as BaseCommand;
 /**
  * Command
  *
- * This class represents an pdftk shell command. It extends a standard shellcommand
- * and adds pdftk specific features to add options and operations.
+ * This class represents an pdftk shell command. It extends a standard
+ * shellcommand and adds pdftk specific features to add options and operations.
  *
  * @author Michael Härtl <haertl.mike@gmail.com>
  * @license http://www.opensource.org/licenses/MIT
@@ -20,12 +20,14 @@ class Command extends BaseCommand
     protected $_command = 'pdftk';
 
     /**
-     * @var array list of input files to process as array('name' => $filename, 'password' => $pw) indexed by handle
+     * @var array list of input files to process as array('name' => $filename,
+     * 'password' => $pw) indexed by handle
      */
     protected $_files = array();
 
     /**
-     * @var array list of command options, either strings or array with arguments to addArg()
+     * @var array list of command options, either strings or array with
+     * arguments to addArg()
      */
     protected $_options = array();
 
@@ -35,21 +37,24 @@ class Command extends BaseCommand
     protected $_operation;
 
     /**
-     * @var string|array operation arguments, e.g. a list of page ranges or a filename or tmp file instance
+     * @var string|array operation arguments, e.g. a list of page ranges or a
+     * filename or tmp file instance
      */
     protected $_operationArgument = array();
 
     /**
-     * @var bool whether to force escaping of the operation argument e.g. for filenames
+     * @var bool whether to force escaping of the operation argument e.g. for
+     * filenames
      */
     protected $_escapeOperationArgument = false;
 
     /**
      * @param string $name the PDF file to add for processing
-     * @param string $handle one or more uppercase letters A..Z to reference this file later.
+     * @param string $handle one or more uppercase letters A..Z to reference
+     * this file later.
      * @param string|null $password the owner (or user) password if any
-     * @throws \Exception
      * @return Command the command instance for method chaining
+     * @throws \Exception
      */
     public function addFile($name, $handle, $password = null)
     {
@@ -64,8 +69,10 @@ class Command extends BaseCommand
 
     /**
      * @param string $option the pdftk option to add
-     * @param string|File|null $argument the argument to add, either string, File instance or null if none
-     * @param null|bool whether to escape the option. Default is null meaning use Command default setting.
+     * @param string|File|null $argument the argument to add, either string,
+     * File instance or null if none
+     * @param null|bool whether to escape the option. Default is null meaning
+     * use Command default setting.
      * @return Command the command instance for method chaining
      */
     public function addOption($option, $argument = null, $escape = null)
@@ -107,7 +114,8 @@ class Command extends BaseCommand
     }
 
     /**
-     * @return string|array|null the current operation argument as string or array or null if none set
+     * @return string|array|null the current operation argument as string or
+     * array or null if none set
      */
     public function getOperationArgument()
     {
@@ -126,11 +134,15 @@ class Command extends BaseCommand
     /**
      * Add a page range as used by some operations
      *
-     * @param int|string|array $start the start page number or an array of page numbers. If an array, the other
-     * arguments will be ignored. $start can also be bigger than $end for pages in reverse order.
-     * @param int|string|null $end the end page number or null for single page (or list if $start is an array)
-     * @param string|null $handle the handle of the file to use. Can be null if only a single file was added.
-     * @param string|null $qualifier the page number qualifier, either 'even' or 'odd' or null for none
+     * @param int|string|array $start the start page number or an array of page
+     * numbers. If an array, the other arguments will be ignored. $start can
+     * also be bigger than $end for pages in reverse order.
+     * @param int|string|null $end the end page number or null for single page
+     * (or list if $start is an array)
+     * @param string|null $handle the handle of the file to use. Can be null if
+     * only a single file was added.
+     * @param string|null $qualifier the page number qualifier, either 'even'
+     * or 'odd' or null for none
      * @param string $rotation the rotation to apply to the pages.
      * @return Command the command instance for method chaining
      */
@@ -154,7 +166,8 @@ class Command extends BaseCommand
     }
 
     /**
-     * @param string|null $filename the filename to add as 'output' option or null if none
+     * @param string|null $filename the filename to add as 'output' option or
+     * null if none
      * @return bool whether the command was executed successfully
      */
     public function execute($filename = null)
@@ -188,7 +201,8 @@ class Command extends BaseCommand
 
     /**
      * Process options and create respective command arguments
-     * @param string|null $filename if provided an 'output' option will be added
+     * @param string|null $filename if provided an 'output' option will be
+     * added
      */
     protected function processOptions($filename = null)
     {
@@ -220,7 +234,9 @@ class Command extends BaseCommand
     }
 
     /**
-     * Ensure that the command was not exectued yet. Throws exception otherwise.
+     * Ensure that the command was not exectued yet. Throws exception
+     * otherwise.
+     * @throws \Exception
      */
     protected function checkExecutionStatus()
     {

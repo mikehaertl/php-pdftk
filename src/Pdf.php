@@ -8,8 +8,9 @@ use mikehaertl\tmp\File;
  *
  * This class is a wrapper around pdftk.
  *
- * The class was developed for pdftk 2.x but should also work with older versions,
- * but you may have to use slightly different page rotation options (e.g 'E' instead 'east').
+ * The class was developed for pdftk 2.x but should also work with older
+ * versions, but you may have to use slightly different page rotation options
+ * (e.g 'E' instead 'east').
  *
  * @author Michael Härtl <haertl.mike@gmail.com>
  * @license http://www.opensource.org/licenses/MIT
@@ -20,7 +21,8 @@ class Pdf
     const TMP_PREFIX = 'tmp_php_pdftk_';
 
     /**
-     * @var bool whether to ignore any errors if some non-empty output file was still created. Default is false.
+     * @var bool whether to ignore any errors if some non-empty output file was
+     * still created. Default is false.
      */
     public $ignoreWarnings = false;
 
@@ -50,8 +52,8 @@ class Pdf
     protected $_error = '';
 
     /**
-     * @var string|null the output filename. If null (default) a tmp file is used as output. If false,
-     * no output option is added at all.
+     * @var string|null the output filename. If null (default) a tmp file is
+     * used as output. If false, no output option is added at all.
      */
     protected $_output;
 
@@ -68,16 +70,18 @@ class Pdf
     protected $_dataFields_utf8;
 
     /**
-     * @var Pdf|null if the input was an instance, we keep a reference here, so that it won't get
-     * unlinked before this object gets destroyed
+     * @var Pdf|null if the input was an instance, we keep a reference here, so
+     * that it won't get unlinked before this object gets destroyed
      */
     protected $_pdf;
 
     /**
-     * @param string|Pdf|array $pdf a pdf filename or Pdf instance or an array of filenames/instances indexed by a handle.
-     * The array values can also be arrays of the form array($filename, $password) if some
-     * files are password protected.
-     * @param array $options Options to pass to set on the Command instance, e.g. the pdftk binary path
+     * @param string|Pdf|array $pdf a pdf filename or Pdf instance or an array
+     * of filenames/instances indexed by a handle. The array values can also
+     * be arrays of the form array($filename, $password) if some files are
+     * password protected.
+     * @param array $options Options to pass to set on the Command instance,
+     * e.g. the pdftk binary path
      */
     public function __construct($pdf = null, $options = array())
     {
@@ -99,9 +103,11 @@ class Pdf
     }
 
     /**
-     * @param string|Pdf $name the PDF filename or Pdf instance to add for processing
-     * @param string|null $handle one or more uppercase letters A..Z to reference this file later.
-     * If no handle is provided, an internal handle is autocreated, consuming the range Z..A
+     * @param string|Pdf $name the PDF filename or Pdf instance to add for
+     * processing
+     * @param string|null $handle one or more uppercase letters A..Z to
+     * reference this file later. If no handle is provided, an internal handle
+     * is autocreated, consuming the range Z..A
      * @param string|null $password the owner (or user) password if any
      * @return Pdf the pdf instance for method chaining
      */
@@ -126,9 +132,10 @@ class Pdf
     /**
      * Assemble (catenate) pages from the input files.
      *
-     * Values for rotation are (in degrees): north: 0, east: 90, south: 180, west: 270, left: -90,
-     * right: +90, down: +180. left, right and down make relative adjustments to a page's rotation.
-     * Note: Older pdftk versions use N, E, S, W, L, R, and D instead.
+     * Values for rotation are (in degrees): north: 0, east: 90, south: 180,
+     * west: 270, left: -90, right: +90, down: +180. left, right and down make
+     * relative adjustments to a page's rotation. Note: Older pdftk versions
+     * use N, E, S, W, L, R, and D instead.
      *
      * Example:
      *
@@ -141,11 +148,15 @@ class Pdf
      *      ->cat(null, null, 'B', 'east')  // All pages from file B rotated by 90 degree
      *      ->saveAs('out.pdf');
      *
-     * @param int|string|array $start the start page number or an array of page numbers. If an array, the other
-     * arguments will be ignored. $start can also be bigger than $end for pages in reverse order.
-     * @param int|string|null $end the end page number or null for single page (or list if $start is an array)
-     * @param string|null $handle the handle of the file to use. Can be null if only a single file was added.
-     * @param string|null $qualifier the page number qualifier, either 'even' or 'odd' or null for none
+     * @param int|string|array $start the start page number or an array of page
+     * numbers. If an array, the other arguments will be ignored. $start can
+     * also be bigger than $end for pages in reverse order.
+     * @param int|string|null $end the end page number or null for single page
+     * (or list if $start is an array)
+     * @param string|null $handle the handle of the file to use. Can be null if
+     * only a single file was added.
+     * @param string|null $qualifier the page number qualifier, either 'even'
+     * or 'odd' or null for none
      * @param string $rotation the rotation to apply to the pages.
      * @return Pdf the pdf instance for method chaining
      */
@@ -160,24 +171,29 @@ class Pdf
     /**
      * Shuffle pages from the input files.
      *
-     * This works the same as cat(), but each call to this method creates a "stream" of pages. The outfile
-     * will be assembled by adding one page from each stream at a time.
+     * This works the same as cat(), but each call to this method creates a
+     * "stream" of pages. The outfile will be assembled by adding one page from
+     * each stream at a time.
      *
      * Example:
      *
      *  $pdf = new Pdf;
      *  $pdf1 = $pdf->addFile('file1.pdf');
-     *  $pdf->cat($pdf1, array(1,3,2))
-     *      ->cat($pdf1, array(4,5,9)
+     *  $pdf->shuffle($pdf1, array(1,3,2))
+     *      ->shuffle($pdf1, array(4,5,9)
      *      ->saveAs('out.pdf');
      *
-     *  This will give the page order 1, 4, 3, 5, 2, 9 in the out.pdf
+     * This will give the page order 1, 4, 3, 5, 2, 9 in the out.pdf
      *
      * @param string $handle the handle of the input file to use
-     * @param int|array $start the start page number or an array of page numbers.
-     * @param int|null $end the end page number or null for single page (or list if $start is an array)
-     * @param string|null $qualifier the page number qualifier, either 'even' or 'odd' or null for none
-     * @param string $rotation the rotation to apply to the pages. See cat() for more details.
+     * @param int|array $start the start page number or an array of page
+     * numbers.
+     * @param int|null $end the end page number or null for single page (or
+     * list if $start is an array)
+     * @param string|null $qualifier the page number qualifier, either 'even'
+     * or 'odd' or null for none
+     * @param string $rotation the rotation to apply to the pages. See cat()
+     * for more details.
      * @return Pdf the pdf instance for method chaining
      */
     public function shuffle($start, $end = null, $handle = null, $qualifier = null, $rotation = null)
@@ -191,7 +207,8 @@ class Pdf
     /**
      * Split the PDF document into pages
      *
-     * @param string|null $filepattern the output name in sprintf format or null for default 'pg_%04d.pdf'
+     * @param string|null $filepattern the output name in sprintf format or
+     * null for default 'pg_%04d.pdf'
      * @return bool whether the burst command was successful
      * @return bool whether the burst operation was successful
      */
@@ -220,11 +237,14 @@ class Pdf
     /**
      * Fill a PDF form
      *
-     * @param string|array $data either a XFDF/FDF filename or an array with form field data (name => value)
+     * @param string|array $data either a XFDF/FDF filename or an array with
+     * form field data (name => value)
      * @param string $encoding the encoding of the data. Default is 'UTF-8'.
-     * @param bool $dropXfa whether to drop XFA forms (see dropXfa()). Default is true.
-     * @param string $format the file format to use for form filling when passing an array in `$data`. This can be
-     * `xfdf` or `fdf`. `xfdf` should give best results so you should not have to change the default.
+     * @param bool $dropXfa whether to drop XFA forms (see dropXfa()). Default
+     * is true.
+     * @param string $format the file format to use for form filling when
+     * passing an array in `$data`. This can be `xfdf` or `fdf`. `xfdf` should
+     * give best results so you should not have to change the default.
      * @return Pdf the pdf instance for method chaining
      */
     public function fillForm($data, $encoding = 'UTF-8', $dropXfa = true, $format = 'xfdf')
@@ -247,9 +267,11 @@ class Pdf
     /**
      * Apply a PDF as watermark to the background of a single PDF file.
      *
-     * The PDF file must have a transparent background for the watermark to be visible.
+     * The PDF file must have a transparent background for the watermark to be
+     * visible.
      *
-     * @param string $file name of the background PDF file. Only the first page is used.
+     * @param string $file name of the background PDF file. Only the first page
+     * is used.
      * @return Pdf the pdf instance for method chaining
      */
     public function background($file)
@@ -262,9 +284,11 @@ class Pdf
     }
 
     /**
-     * Apply multiple PDF pages as watermark to the corresponding pages of a single PDF file.
+     * Apply multiple PDF pages as watermark to the corresponding pages of a
+     * single PDF file.
      *
-     * If $file has fewer pages than the PDF file then the last page is repeated as background.
+     * If $file has fewer pages than the PDF file then the last page is
+     * repeated as background.
      *
      * @param string $file name of the background PDF file.
      * @return Pdf the pdf instance for method chaining
@@ -282,7 +306,8 @@ class Pdf
      *
      * The $file should have a transparent background.
      *
-     * @param string $file name of the PDF file to add as overlay. Only the first page is used.
+     * @param string $file name of the PDF file to add as overlay. Only the
+     * first page is used.
      * @return Pdf the pdf instance for method chaining
      */
     public function stamp($file)
@@ -295,9 +320,11 @@ class Pdf
     }
 
     /**
-     * Add multiple pages from $file as overlay to the corresponding pages of a single PDF file.
+     * Add multiple pages from $file as overlay to the corresponding pages of a
+     * single PDF file.
      *
-     * If $file has fewer pages than the PDF file then the last page is repeated as overlay.
+     * If $file has fewer pages than the PDF file then the last page is
+     * repeated as overlay.
      *
      * @param string $file name of the PDF file to add as overlay
      * @return Pdf the pdf instance for method chaining
@@ -311,7 +338,8 @@ class Pdf
     }
 
     /**
-     * @param bool $utf8 whether to dump the data UTF-8 encoded. Default is true.
+     * @param bool $utf8 whether to dump the data UTF-8 encoded. Default is
+     * true.
      * @return string|bool meta data about the PDF or false on failure
      */
     public function getData($utf8 = true)
@@ -330,8 +358,10 @@ class Pdf
     }
 
     /**
-     * @param bool $utf8 whether to dump the data UTF-8 encoded. Default is true.
-     * @return DataFields|bool data about the PDF form fields or false on failure
+     * @param bool $utf8 whether to dump the data UTF-8 encoded. Default is
+     * true.
+     * @return DataFields|bool data about the PDF form fields or false on
+     * failure
      */
     public function getDataFields($utf8 = true)
     {
@@ -351,9 +381,11 @@ class Pdf
     /**
      * Set PDF permissions
      *
-     * The available permissions are Printing, DegradedPrinting, ModifyContents, Assembly,
-     * CopyContents, ScreenReaders, ModifyAnnotations, FillIn, AllFeatures.
-     * @param string|null $permissions list of space separated permissions or null for none.
+     *
+     * @param string|null $permissions list of space separated permissions or
+     * null for none. The available permissions are Printing, DegradedPrinting,
+     * ModifyContents, Assembly, CopyContents, ScreenReaders,
+     * ModifyAnnotations, FillIn, AllFeatures.
      * @return Pdf the pdf instance for method chaining
      */
     public function allow($permissions = null)
@@ -378,7 +410,8 @@ class Pdf
     /**
      * Restore/remove compression
      *
-     * @param bool $compress whether to restore (default) or remove the compression
+     * @param bool $compress whether to restore (default) or remove the
+     * compression
      * @return Pdf the pdf instance for method chaining
      */
     public function compress($compress = true)
@@ -389,8 +422,8 @@ class Pdf
     }
 
     /**
-     * When combining multiple PDFs, use either the first or last ID in the output.
-     * If not called, a new ID is created.
+     * When combining multiple PDFs, use either the first or last ID in the
+     * output. If not called, a new ID is created.
      *
      * @param string $id, either 'first' (default) or 'last'
      * @return Pdf the pdf instance for method chaining
@@ -405,9 +438,10 @@ class Pdf
     /**
      * Set need_appearances flag in PDF
      *
-     * This flag makes sure, that a PDF reader takes care of rendering form field content, even
-     * if it contains non ASCII characters. You should always use this option if you fill in forms
-     * e.g. with Unicode characters. You can't combine this option with flatten() though!
+     * This flag makes sure, that a PDF reader takes care of rendering form
+     * field content, even if it contains non ASCII characters. You should
+     * always use this option if you fill in forms e.g. with Unicode
+     * characters. You can't combine this option with flatten() though!
      *
      * @return Pdf the pdf instance for method chaining
      */
@@ -421,9 +455,10 @@ class Pdf
     /**
      * Drop XFA data from forms created with newer Acrobat.
      *
-     * Newer PDF forms contain both, the newer XFA and the older AcroForm form fields. PDF readers
-     * can use both, but will prefer XFA if present. Since pdftk can only fill in AcroForm data you
-     * should always add this option when filling in forms with pdftk.
+     * Newer PDF forms contain both, the newer XFA and the older AcroForm form
+     * fields. PDF readers can use both, but will prefer XFA if present. Since
+     * pdftk can only fill in AcroForm data you should always add this option
+     * when filling in forms with pdftk.
      *
      * @return Pdf the pdf instance for method chaining
      */
@@ -437,9 +472,10 @@ class Pdf
     /**
      * Drop XMP meta data
      *
-     * Newer PDFs can contain both, new style XMP data and old style info directory. PDF readers
-     * can use both, but will prefer XMP if present. Since pdftk can only update the info directory
-     * you should always add this option when updating PDF info.
+     * Newer PDFs can contain both, new style XMP data and old style info
+     * directory. PDF readers can use both, but will prefer XMP if present.
+     * Since pdftk can only update the info directory you should always add
+     * this option when updating PDF info.
      *
      * @return Pdf the pdf instance for method chaining
      */
@@ -505,8 +541,10 @@ class Pdf
     /**
      * Send PDF to client, either inline or as download (triggers PDF creation)
      *
-     * @param string|null $filename the filename to send. If empty, the PDF is streamed inline.
-     * @param bool $inline whether to force inline display of the PDF, even if filename is present.
+     * @param string|null $filename the filename to send. If empty, the PDF is
+     * streamed inline.
+     * @param bool $inline whether to force inline display of the PDF, even if
+     * filename is present.
      * @return bool whether PDF was created successfully
      */
     public function send($filename=null,$inline=false)
@@ -520,6 +558,7 @@ class Pdf
 
     /**
      * Get the raw PDF contents (triggers PDF creation).
+     *
      * @return string|bool the PDF content as a string or `false` if the PDF
      * wasn't created successfully.
      */
@@ -562,8 +601,10 @@ class Pdf
     }
 
     /**
-     * Execute the pdftk command and store the output file to a temporary location or $this->_output if set.
-     * You should probably never call this method unless you only need a temporary PDF file as result.
+     * Execute the pdftk command and store the output file to a temporary
+     * location or $this->_output if set.  You should probably never call this
+     * method unless you only need a temporary PDF file as result.
+     *
      * @return bool whether the command was executed successfully
      */
     public function execute()

@@ -6,8 +6,8 @@ use mikehaertl\tmp\File;
 /**
  * FdfFile
  *
- * This class represents a temporary FDF (1.2) file that can be used to fill a PDF form
- * with valid unicode characters.
+ * This class represents a temporary FDF (1.2) file that can be used to fill a
+ * PDF form with valid unicode characters.
  *
  * @author Michael Härtl <haertl.mike@gmail.com>
  * @license http://www.opensource.org/licenses/MIT
@@ -34,8 +34,10 @@ FDF;
      *
      * @param array $data the form data as name => value
      * @param string|null $suffix the optional suffix for the tmp file
-     * @param string|null $suffix the optional prefix for the tmp file. If null 'php_tmpfile_' is used.
-     * @param string|null $directory directory where the file should be created. Autodetected if not provided.
+     * @param string|null $suffix the optional prefix for the tmp file. If null
+     * 'php_tmpfile_' is used.
+     * @param string|null $directory directory where the file should be
+     * created. Autodetected if not provided.
      * @param string|null $encoding of the data. Default is 'UTF-8'.
      */
     public function __construct($data, $suffix = null, $prefix = null, $directory = null, $encoding = 'UTF-8')
