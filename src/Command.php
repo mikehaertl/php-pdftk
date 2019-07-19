@@ -77,7 +77,7 @@ class Command extends BaseCommand
      */
     public function addOption($option, $argument = null, $escape = null)
     {
-        $this->_options[] = $argument===null ? $option : array($option, $argument, $escape);
+        $this->_options[] = $argument === null ? $option : array($option, $argument, $escape);
         return $this;
     }
 
@@ -150,16 +150,18 @@ class Command extends BaseCommand
     {
         $this->checkExecutionStatus();
         if (is_array($start)) {
-            if ($handle!==null) {
-                $start = array_map(function ($p) use ($handle) { return $handle.$p; }, $start);
+            if ($handle !== null) {
+                $start = array_map(function ($p) use ($handle) {
+                    return $handle . $p;
+                }, $start);
             }
             $range = implode(' ', $start);
         } else {
-            $range = $handle.$start;
+            $range = $handle . $start;
             if ($end) {
-                $range .= '-'.$end;
+                $range .= '-' . $end;
             }
-            $range .= $qualifier.$rotation;
+            $range .= $qualifier . $rotation;
         }
         $this->_operationArgument[] = $range;
         return $this;
@@ -186,15 +188,15 @@ class Command extends BaseCommand
     {
         $passwords = array();
         foreach ($this->_files as $handle => $file) {
-            $this->addArg($handle.'=',$file['name']);
-            if ($file['password']!==null) {
+            $this->addArg($handle . '=', $file['name']);
+            if ($file['password'] !== null) {
                 $passwords[$handle] = $file['password'];
             }
         }
-        if ($passwords!==array()) {
+        if ($passwords !== array()) {
             $this->addArg('input_pw');
             foreach ($passwords as $handle => $password) {
-                $this->addArg($handle.'=', $password);
+                $this->addArg($handle . '=', $password);
             }
         }
     }
@@ -207,7 +209,7 @@ class Command extends BaseCommand
     protected function processOptions($filename = null)
     {
         // output must be first option after operation
-        if ($filename!==null) {
+        if ($filename !== null) {
             $this->addArg('output', $filename, true);
         }
         foreach ($this->_options as $option) {
@@ -224,7 +226,7 @@ class Command extends BaseCommand
      */
     protected function processOperation()
     {
-        if ($this->_operation!==null) {
+        if ($this->_operation !== null) {
             $value = $this->_operationArgument ? $this->_operationArgument : null;
             if ($value instanceof TmpFile) {
                 $value = (string) $value;

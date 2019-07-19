@@ -86,7 +86,7 @@ class Pdf
     public function __construct($pdf = null, $options = array())
     {
         $command = $this->getCommand();
-        if ($options!==array()) {
+        if ($options !== array()) {
             $command->setOptions($options);
         }
         if (is_string($pdf) || $pdf instanceof Pdf) {
@@ -113,7 +113,7 @@ class Pdf
      */
     public function addFile($name, $handle = null, $password = null)
     {
-        if ($handle===null || is_numeric($handle)) {
+        if ($handle === null || is_numeric($handle)) {
             $handle = $this->nextHandle();
         }
         if ($name instanceof Pdf) {
@@ -216,7 +216,7 @@ class Pdf
     {
         $this->constrainSingleFile();
         $this->getCommand()->setOperation('burst');
-        $this->_output = $filepattern===null ? 'pg_%04d.pdf' : $filepattern;
+        $this->_output = $filepattern === null ? 'pg_%04d.pdf' : $filepattern;
         return $this->execute();
     }
 
@@ -251,7 +251,7 @@ class Pdf
     {
         $this->constrainSingleFile();
         if (is_array($data)) {
-            $className = '\mikehaertl\pdftk\\'. ($format==='xfdf' ? 'XfdfFile' : 'FdfFile');
+            $className = '\mikehaertl\pdftk\\' . ($format === 'xfdf' ? 'XfdfFile' : 'FdfFile');
             $data = new $className($data, null, null, null, $encoding);
         }
         $this->getCommand()
@@ -263,25 +263,25 @@ class Pdf
         }
         return $this;
     }
-    
+
     /**
      * Update meta data of PDF
      *
-     * @param string|array $data either a InfoFile filename or an array with 
+     * @param string|array $data either a InfoFile filename or an array with
      * form field data (name => value)
      * @param string the encoding of the data. Default is 'UTF-8'.
-     * @return \mikehaertl\pdftk\Pdf the pdf instance for method chaining
+     * @return Pdf the pdf instance for method chaining
      */
     public function updateInfo($data, $encoding = 'UTF-8')
     {
         $this->constrainSingleFile();
         if (is_array($data)) {
-            $data = new \mikehaertl\pdftk\InfoFile($data, null, null, null, $encoding);
+            $data = new InfoFile($data, null, null, null, $encoding);
         }
         $this->getCommand()
-        ->setOperation($encoding == 'UTF-8' ? 'update_info_utf8' : 'update_info')
-        ->setOperationArgument($data, true);
-        
+            ->setOperation($encoding == 'UTF-8' ? 'update_info_utf8' : 'update_info')
+            ->setOperationArgument($data, true);
+
         return $this;
     }
 
@@ -366,7 +366,7 @@ class Pdf
     public function getData($utf8 = true)
     {
         $property = $utf8 ? '_data_utf8' : '_data';
-        if ($this->$property===null) {
+        if ($this->$property === null) {
             $command = $this->getCommand();
             $command->setOperation($utf8 ? 'dump_data_utf8' : 'dump_data');
             if (!$command->execute()) {
@@ -387,7 +387,7 @@ class Pdf
     public function getDataFields($utf8 = true)
     {
         $property = $utf8 ? '_dataFields_utf8' : '_dataFields';
-        if ($this->$property===null) {
+        if ($this->$property === null) {
             $command = $this->getCommand();
             $command->setOperation($utf8 ? 'dump_data_fields_utf8' : 'dump_data_fields');
             if (!$command->execute()) {
@@ -452,7 +452,7 @@ class Pdf
     public function keepId($id = 'first')
     {
         $this->getCommand()
-            ->addOption($id==='first' ? 'keep_first_id' : 'keep_final_id');
+            ->addOption($id === 'first' ? 'keep_first_id' : 'keep_final_id');
         return $this;
     }
 
@@ -536,7 +536,7 @@ class Pdf
     public function passwordEncryption($strength = 128)
     {
         $this->getCommand()
-            ->addOption($strength==128 ? 'encrypt_128bit' : 'encrypt_40bit');
+            ->addOption($strength == 128 ? 'encrypt_128bit' : 'encrypt_40bit');
         return $this;
     }
 
@@ -568,7 +568,7 @@ class Pdf
      * filename is present.
      * @return bool whether PDF was created successfully
      */
-    public function send($filename=null,$inline=false)
+    public function send($filename = null, $inline = false)
     {
         if (!$this->getCommand()->getExecuted() && !$this->execute()) {
             return false;
@@ -596,7 +596,7 @@ class Pdf
      */
     public function getCommand()
     {
-        if ($this->_command===null) {
+        if ($this->_command === null) {
             $this->_command = new Command;
         }
         return $this->_command;
@@ -607,7 +607,7 @@ class Pdf
      */
     public function getTmpFile()
     {
-        if ($this->_tmpFile===null) {
+        if ($this->_tmpFile === null) {
             $this->_tmpFile = new File('', '.pdf', self::TMP_PREFIX);
         }
         return $this->_tmpFile;
@@ -635,14 +635,14 @@ class Pdf
             return false;
         }
 
-        if ($this->_output===false) {
+        if ($this->_output === false) {
             $filename = null;
         } else {
             $filename = $this->_output ? $this->_output : (string) $this->getTmpFile();
         }
         if (!$command->execute($filename)) {
             $this->_error = $command->getError();
-            if ($filename && !(file_exists($filename) && filesize($filename)!==0 && $this->ignoreWarnings)) {
+            if ($filename && !(file_exists($filename) && filesize($filename) !== 0 && $this->ignoreWarnings)) {
                 return false;
             }
         }
@@ -654,7 +654,7 @@ class Pdf
      */
     protected function constrainSingleFile()
     {
-        if ($this->getCommand()->getFileCount()>1) {
+        if ($this->getCommand()->getFileCount() > 1) {
             throw new \Exception('This operation can only process single files');
         }
     }

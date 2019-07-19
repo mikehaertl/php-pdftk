@@ -3,7 +3,8 @@ use mikehaertl\pdftk\XfdfFile;
 
 class XfdfFileTest extends \PHPUnit\Framework\TestCase
 {
-    public function testXfdfFileCreation() {
+    public function testXfdfFileCreation()
+    {
         $data = array(
             'name' => 'Jürgen čárka čČćĆđĐ мирано',
             'email' => 'test@email.com',
@@ -24,6 +25,6 @@ class XfdfFileTest extends \PHPUnit\Framework\TestCase
         $sXfdfFilename = $oXfdfFile->getFileName();
 
         $this->assertFileExists($sXfdfFilename);
-        $this->assertFileEquals(__DIR__."/files/XfdfFileTest.xfdf", $sXfdfFilename);
+        $this->assertFileEquals(__DIR__ . "/files/XfdfFileTest.xfdf", $sXfdfFilename);
     }
 }
