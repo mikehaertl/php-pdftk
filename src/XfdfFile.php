@@ -41,23 +41,23 @@ FDF;
      */
     public function __construct($data, $suffix = null, $prefix = null, $directory = null, $encoding = 'UTF-8')
     {
-        if ($directory===null) {
+        if ($directory === null) {
             $directory = self::getTempDir();
         }
         $suffix = '.xfdf';
         $prefix = 'php_pdftk_xfdf_';
 
-        $this->_fileName = tempnam($directory,$prefix);
-        $newName = $this->_fileName.$suffix;
+        $this->_fileName = tempnam($directory, $prefix);
+        $newName = $this->_fileName . $suffix;
         rename($this->_fileName, $newName);
         $this->_fileName = $newName;
 
         $fields = array();
-        foreach ($data as $key=>$value) {
+        foreach ($data as $key => $value) {
             // Always convert to UTF-8
-            if ($encoding!=='UTF-8' && function_exists('mb_convert_encoding')) {
-                $value = mb_convert_encoding($value,'UTF-8', $encoding);
-                $key = mb_convert_encoding($key,'UTF-8', $encoding);
+            if ($encoding !== 'UTF-8' && function_exists('mb_convert_encoding')) {
+                $value = mb_convert_encoding($value, 'UTF-8', $encoding);
+                $key = mb_convert_encoding($key, 'UTF-8', $encoding);
             }
 
             //Sanitize input for use in XML
@@ -67,15 +67,15 @@ FDF;
             // Key can be in dot notation like 'Address.name'
             $keys = explode('.', $sanitizedKey);
             $final = array_pop($keys);
-            if (count($keys)===0) {
+            if (count($keys) === 0) {
                 $fields[$final] = $sanitizedValue;
             } else {
-                $target =& $fields;
+                $target = & $fields;
                 foreach ($keys as $part) {
                     if (!isset($target[$part])) {
                         $target[$part] = array();
                     }
-                    $target =& $target[$part];
+                    $target = & $target[$part];
                 }
                 $target[$final] = $sanitizedValue;
             }

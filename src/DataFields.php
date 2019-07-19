@@ -27,7 +27,7 @@ class DataFields extends ArrayObject
     public function __construct($input = null, $flags = 0, $iterator_class = "ArrayIterator")
     {
         $this->_string = $input ?: '';
-        $this->_array  = self::parse($this->_string);
+        $this->_array = self::parse($this->_string);
 
         return parent::__construct($this->_array, $flags, $iterator_class);
     }
@@ -84,7 +84,7 @@ class DataFields extends ArrayObject
             // Split blocks only if '---' is followed by 'FieldType'
             $blocks = preg_split(
                 '/^---(\r\n|\n|\r)(?=FieldType:)/m',
-                substr($input,3 )
+                substr($input, 3)
             );
             return array_map('\mikehaertl\pdftk\DataFields::parseBlock', $blocks);
         } else {
@@ -110,7 +110,7 @@ class DataFields extends ArrayObject
         $data = array();
         $lines = preg_split("/(\r\n|\n|\r)/", trim($block));
         $continueKey = null;
-        foreach($lines as $n => $line) {
+        foreach ($lines as $n => $line) {
             if ($continueKey !== null) {
                 $data[$continueKey] .= "\n" . $line;
                 if (!self::lineContinues($lines, $n, $continueKey)) {
@@ -122,7 +122,7 @@ class DataFields extends ArrayObject
                 // Convert multiple keys like 'FieldStateOption' or 'FieldValue'
                 // from Choice fields to array
                 if (isset($data[$key])) {
-                    $data[$key]   = (array) $data[$key];
+                    $data[$key] = (array) $data[$key];
                     $data[$key][] = $value;
                 } else {
                     $data[$key] = $value;

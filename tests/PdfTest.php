@@ -33,7 +33,7 @@ class PdfTest extends \PHPUnit\Framework\TestCase
         $file = $this->getOutFile();
 
         $pdf = new Pdf($document);
-        $this->assertInstanceOf('mikehaertl\pdftk\Pdf', $pdf->cat(1,5));
+        $this->assertInstanceOf('mikehaertl\pdftk\Pdf', $pdf->cat(1, 5));
         $this->assertFalse($pdf->getCommand()->getExecuted());
 
         $pdf2 = new Pdf($pdf);
@@ -71,8 +71,8 @@ class PdfTest extends \PHPUnit\Framework\TestCase
 
         $pdf1 = new Pdf($document1);
         $pdf2 = new Pdf($document2);
-        $this->assertInstanceOf('mikehaertl\pdftk\Pdf', $pdf1->cat(1,5));
-        $this->assertInstanceOf('mikehaertl\pdftk\Pdf', $pdf2->cat(2,3));
+        $this->assertInstanceOf('mikehaertl\pdftk\Pdf', $pdf1->cat(1, 5));
+        $this->assertInstanceOf('mikehaertl\pdftk\Pdf', $pdf2->cat(2, 3));
         $this->assertFalse($pdf1->getCommand()->getExecuted());
         $this->assertFalse($pdf2->getCommand()->getExecuted());
 
@@ -154,12 +154,12 @@ class PdfTest extends \PHPUnit\Framework\TestCase
         $file = $this->getOutFile();
 
         $pdf = new Pdf($document);
-        $this->assertInstanceOf('mikehaertl\pdftk\Pdf', $pdf->cat(1,5));
+        $this->assertInstanceOf('mikehaertl\pdftk\Pdf', $pdf->cat(1, 5));
         $this->assertInstanceOf('mikehaertl\pdftk\Pdf', $pdf->cat([2,3,4]));
-        $this->assertInstanceOf('mikehaertl\pdftk\Pdf', $pdf->cat('end','2',null,'even'));
-        $this->assertInstanceOf('mikehaertl\pdftk\Pdf', $pdf->cat(3,5,null,null,'east'));
-        $this->assertInstanceOf('mikehaertl\pdftk\Pdf', $pdf->cat(4,8,null,'even','east'));
-        $this->assertInstanceOf('mikehaertl\pdftk\Pdf', $pdf->cat(1,null,null,null,'south'));
+        $this->assertInstanceOf('mikehaertl\pdftk\Pdf', $pdf->cat('end', '2', null, 'even'));
+        $this->assertInstanceOf('mikehaertl\pdftk\Pdf', $pdf->cat(3, 5, null, null, 'east'));
+        $this->assertInstanceOf('mikehaertl\pdftk\Pdf', $pdf->cat(4, 8, null, 'even', 'east'));
+        $this->assertInstanceOf('mikehaertl\pdftk\Pdf', $pdf->cat(1, null, null, null, 'south'));
         $this->assertTrue($pdf->saveAs($file));
         $this->assertFileExists($file);
 
@@ -180,12 +180,12 @@ class PdfTest extends \PHPUnit\Framework\TestCase
             'A' => $document1,
             'B' => $document2,
         ]);
-        $this->assertInstanceOf('mikehaertl\pdftk\Pdf', $pdf->cat(1,5,'A'));
-        $this->assertInstanceOf('mikehaertl\pdftk\Pdf', $pdf->cat([2,3,4],'A'));
-        $this->assertInstanceOf('mikehaertl\pdftk\Pdf', $pdf->cat('end','2','B','even'));
-        $this->assertInstanceOf('mikehaertl\pdftk\Pdf', $pdf->cat(3,5,'A',null,'east'));
-        $this->assertInstanceOf('mikehaertl\pdftk\Pdf', $pdf->cat(4,8,'B','even','east'));
-        $this->assertInstanceOf('mikehaertl\pdftk\Pdf', $pdf->cat(1,null,'A',null,'south'));
+        $this->assertInstanceOf('mikehaertl\pdftk\Pdf', $pdf->cat(1, 5, 'A'));
+        $this->assertInstanceOf('mikehaertl\pdftk\Pdf', $pdf->cat([2,3,4], 'A'));
+        $this->assertInstanceOf('mikehaertl\pdftk\Pdf', $pdf->cat('end', '2', 'B', 'even'));
+        $this->assertInstanceOf('mikehaertl\pdftk\Pdf', $pdf->cat(3, 5, 'A', null, 'east'));
+        $this->assertInstanceOf('mikehaertl\pdftk\Pdf', $pdf->cat(4, 8, 'B', 'even', 'east'));
+        $this->assertInstanceOf('mikehaertl\pdftk\Pdf', $pdf->cat(1, null, 'A', null, 'south'));
         $this->assertTrue($pdf->saveAs($file));
         $this->assertFileExists($file);
 
@@ -206,12 +206,12 @@ class PdfTest extends \PHPUnit\Framework\TestCase
             'A' => $document1,
             'B' => $document2,
         ]);
-        $this->assertInstanceOf('mikehaertl\pdftk\Pdf', $pdf->shuffle(1,5,'A'));
-        $this->assertInstanceOf('mikehaertl\pdftk\Pdf', $pdf->shuffle([2,3,4],'B'));
-        $this->assertInstanceOf('mikehaertl\pdftk\Pdf', $pdf->shuffle('end','2','B','even'));
-        $this->assertInstanceOf('mikehaertl\pdftk\Pdf', $pdf->shuffle(3,5,'A',null,'east'));
-        $this->assertInstanceOf('mikehaertl\pdftk\Pdf', $pdf->shuffle(4,8,'B','even','east'));
-        $this->assertInstanceOf('mikehaertl\pdftk\Pdf', $pdf->shuffle(1,null,'A',null,'south'));
+        $this->assertInstanceOf('mikehaertl\pdftk\Pdf', $pdf->shuffle(1, 5, 'A'));
+        $this->assertInstanceOf('mikehaertl\pdftk\Pdf', $pdf->shuffle([2,3,4], 'B'));
+        $this->assertInstanceOf('mikehaertl\pdftk\Pdf', $pdf->shuffle('end', '2', 'B', 'even'));
+        $this->assertInstanceOf('mikehaertl\pdftk\Pdf', $pdf->shuffle(3, 5, 'A', null, 'east'));
+        $this->assertInstanceOf('mikehaertl\pdftk\Pdf', $pdf->shuffle(4, 8, 'B', 'even', 'east'));
+        $this->assertInstanceOf('mikehaertl\pdftk\Pdf', $pdf->shuffle(1, null, 'A', null, 'south'));
         $this->assertTrue($pdf->saveAs($file));
         $this->assertFileExists($file);
 
@@ -226,40 +226,40 @@ class PdfTest extends \PHPUnit\Framework\TestCase
     {
         $document = $this->getDocument1();
         $dir = __DIR__;
-        $filepattern = $dir.'/pg_000%d.pdf';
+        $filepattern = $dir . '/pg_000%d.pdf';
 
         $pdf = new Pdf($document);
         $pdf->getCommand()->procCwd = __DIR__;
         $this->assertTrue($pdf->burst());
-        for ($x=1; $x<=5; $x++) {
+        for ($x = 1; $x <= 5; $x++) {
             $filename = sprintf($filepattern, $x);
             $this->assertFileExists($filename);
             @unlink($filename);
         }
-        @unlink($dir.'/doc_data.txt');
+        @unlink($dir . '/doc_data.txt');
     }
 
     public function testCanBurstWithFilePattern()
     {
         $document = $this->getDocument1();
         $dir = __DIR__;
-        $filepattern = $dir.'/burst_page_%d.pdf';
+        $filepattern = $dir . '/burst_page_%d.pdf';
 
         chdir($dir);
         $pdf = new Pdf($document);
         $this->assertTrue($pdf->burst($filepattern));
-        for ($x=1; $x<=5; $x++) {
+        for ($x = 1; $x <= 5; $x++) {
             $filename = sprintf($filepattern, $x);
             $this->assertFileExists($filename);
             @unlink($filename);
         }
-        @unlink($dir.'/doc_data.txt');
+        @unlink($dir . '/doc_data.txt');
     }
 
     public function testCanCreateFdfFileFromPdf()
     {
         $form = $this->getFilledForm();
-        $file = __DIR__.'/test.fdf';
+        $file = __DIR__ . '/test.fdf';
 
         $pdf = new Pdf($form);
         $this->assertTrue($pdf->generateFdfFile($file));
@@ -268,7 +268,6 @@ class PdfTest extends \PHPUnit\Framework\TestCase
 
     public function testCanFillFormFromData()
     {
-
         $form = $this->getForm();
         $file = $this->getOutFile();
         $data = [
@@ -584,36 +583,36 @@ class PdfTest extends \PHPUnit\Framework\TestCase
 
     protected function getDocument1()
     {
-        return __DIR__.'/files/document1.pdf';
+        return __DIR__ . '/files/document1.pdf';
     }
 
     protected function getDocument2()
     {
-        return __DIR__.'/files/document2.pdf';
+        return __DIR__ . '/files/document2.pdf';
     }
 
     protected function getForm()
     {
         // Empty form
-        return __DIR__.'/files/form.pdf';
+        return __DIR__ . '/files/form.pdf';
     }
 
     protected function getFilledForm()
     {
         // Form filled with data from testCanFillFormFromData()
-        return __DIR__.'/files/filledform.pdf';
+        return __DIR__ . '/files/filledform.pdf';
     }
 
     protected function getFdf()
     {
         // Data from testCanFillFormFromData()
-        return __DIR__.'/files/data.fdf';
+        return __DIR__ . '/files/data.fdf';
     }
 
     protected function getOutFile()
     {
         // tmp out file
-        return __DIR__.'/test.pdf';
+        return __DIR__ . '/test.pdf';
     }
 
     protected $formData = <<<EOD
@@ -741,39 +740,39 @@ EOD;
 
     protected $formDataFieldsArray = [
         [
-            'FieldType'          => 'Button',
-            'FieldName'          => 'checkbox 1',
-            'FieldFlags'         => '0',
-            'FieldValue'         => 'On',
+            'FieldType' => 'Button',
+            'FieldName' => 'checkbox 1',
+            'FieldFlags' => '0',
+            'FieldValue' => 'On',
             'FieldJustification' => 'Left',
-            'FieldStateOption'   => ['Off', 'On'],
+            'FieldStateOption' => ['Off', 'On'],
         ],
         [
-            'FieldType'          => 'Button',
-            'FieldName'          => 'checkbox 2',
-            'FieldFlags'         => '0',
-            'FieldValue'         => 'On',
+            'FieldType' => 'Button',
+            'FieldName' => 'checkbox 2',
+            'FieldFlags' => '0',
+            'FieldValue' => 'On',
             'FieldJustification' => 'Left',
-            'FieldStateOption'   => ['Off', 'On'],
+            'FieldStateOption' => ['Off', 'On'],
         ],
         [
-            'FieldType'          => 'Button',
-            'FieldName'          => 'radio 1',
-            'FieldFlags'         => '49152',
-            'FieldValue'         => '2',
+            'FieldType' => 'Button',
+            'FieldName' => 'radio 1',
+            'FieldFlags' => '49152',
+            'FieldValue' => '2',
             'FieldJustification' => 'Left',
-            'FieldStateOption'   => ['1', '2', 'Off'],
+            'FieldStateOption' => ['1', '2', 'Off'],
         ],
         [
-            'FieldType'          => 'Text',
-            'FieldName'          => 'email',
-            'FieldFlags'         => '0',
+            'FieldType' => 'Text',
+            'FieldName' => 'email',
+            'FieldFlags' => '0',
             'FieldJustification' => 'Left',
         ],
         [
-            'FieldType'          => 'Text',
-            'FieldName'          => 'name',
-            'FieldFlags'         => '0',
+            'FieldType' => 'Text',
+            'FieldName' => 'name',
+            'FieldFlags' => '0',
             'FieldJustification' => 'Left',
         ],
     ];

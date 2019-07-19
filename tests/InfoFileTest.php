@@ -3,7 +3,8 @@ use mikehaertl\pdftk\InfoFile;
 
 class InfoFileTest extends \PHPUnit\Framework\TestCase
 {
-    public function testInfoFileCreation() {
+    public function testInfoFileCreation()
+    {
         $data = array(
             'Creator' => 'php-pdftk',
             'Subject' => "öäüÖÄÜ",
@@ -13,6 +14,6 @@ class InfoFileTest extends \PHPUnit\Framework\TestCase
         $sInfoFilename = $oInfoFile->getFileName();
 
         $this->assertFileExists($sInfoFilename);
-        $this->assertFileEquals(__DIR__."/files/InfoFileTest.txt", $sInfoFilename);
+        $this->assertFileEquals(__DIR__ . "/files/InfoFileTest.txt", $sInfoFilename);
     }
 }

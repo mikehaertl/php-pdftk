@@ -1,5 +1,4 @@
 <?php
-
 namespace mikehaertl\pdftk;
 
 use ArrayObject;
@@ -27,7 +26,7 @@ class InfoFields extends ArrayObject
     public function __construct($input = null, $flags = 0, $iterator_class = "ArrayIterator")
     {
         $this->_string = $input ?: '';
-        $this->_array  = $this->parseData($this->_string);
+        $this->_array = $this->parseData($this->_string);
 
         return parent::__construct($this->_array, $flags, $iterator_class);
     }
@@ -70,66 +69,61 @@ class InfoFields extends ArrayObject
     private function parseData($dataString)
     {
         $expectType = null;
-        $output = array('Info'=>array(),'Bookmark'=>array(),'PageMedia'=>array());
-        $field  = array();
+        $output = array('Info' => array(),'Bookmark' => array(),'PageMedia' => array());
+        $field = array();
         $buffer = array();
         foreach (explode(PHP_EOL, $dataString) as $line) {
             $trimmedLine = trim($line);
-            if($trimmedLine === 'InfoBegin') {
+            if ($trimmedLine === 'InfoBegin') {
                 $expectType = 'Info';
                 continue;
             }
-            if($trimmedLine === 'BookmarkBegin') {
+            if ($trimmedLine === 'BookmarkBegin') {
                 $expectType = 'Bookmark';
                 continue;
             }
-            if($trimmedLine === 'PageMediaBegin') {
+            if ($trimmedLine === 'PageMediaBegin') {
                 $expectType = 'PageMedia';
                 continue;
             }
-            
+
             preg_match('/([^:]*): ?(.*)/', $trimmedLine, $match);
             $key = $match[1];
             $value = $match[2];
-            
-            if($expectType == 'Info'){
-                if($key == 'InfoKey') {
+
+            if ($expectType === 'Info') {
+                if ($key === 'InfoKey') {
                     $buffer['Key'] = $value;
-                }
-                elseif($key == 'InfoValue') {
+                } elseif ($key === 'InfoValue') {
                     $buffer['Value'] = $value;
                 }
-                if(isset($buffer['Value']) && isset($buffer['Key'])) {
+                if (isset($buffer['Value'], $buffer['Key'])) {
                     $output['Info'][$buffer['Key']] = $buffer['Value'];
                     $buffer = array();
                     $expectType = null;
                 }
                 continue;
             }
-            if(!is_null($expectType)){
-                if(strpos($key, $expectType) === 0) {
+            if ($expectType !== null) {
+                if (strpos($key, $expectType) === 0) {
                     $buffer[str_replace($expectType, '', $key)] = $value;
-                }
-                else{
+                } else {
                     throw new \Exception("Unexpected input");
                 }
-                if($expectType == 'Bookmark' && isset($buffer['Level']) && isset($buffer['Title']) && isset($buffer['PageNumber'])) {
+                if ($expectType === 'Bookmark' && isset($buffer['Level'], $buffer['Title'], $buffer['PageNumber'])) {
                     $output[$expectType][] = $buffer;
                     $buffer = array();
                     $expectType = null;
-                }
-                elseif($expectType == 'PageMedia' && isset($buffer['Number']) && isset($buffer['Rotation']) && isset($buffer['Rect']) && isset($buffer['Dimensions'])) {
+                } elseif ($expectType === 'PageMedia' && isset($buffer['Number'], $buffer['Rotation'], $buffer['Rect'], $buffer['Dimensions'])) {
                     $output[$expectType][] = $buffer;
                     $buffer = array();
                     $expectType = null;
                 }
                 continue;
-            }
-            else{
+            } else {
                 $output[$key] = $value;
             }
         }
         return $output;
     }
-    
 }

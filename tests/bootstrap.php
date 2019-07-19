@@ -7,4 +7,3 @@ if (!class_exists($newClass) && class_exists($oldClass)) {
 }
 
 require __DIR__ . '/../vendor/autoload.php';
-

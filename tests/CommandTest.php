@@ -37,8 +37,8 @@ class CommandTest extends \PHPUnit\Framework\TestCase
         $command = new Command;
         $this->assertInstanceOf('mikehaertl\pdftk\Command', $command->addFile($document1, 'A'));
         $this->assertInstanceOf('mikehaertl\pdftk\Command', $command->addOption('encrypt_40bit'));
-        $this->assertInstanceOf('mikehaertl\pdftk\Command', $command->addOption('allow','Printing',false));
-        $this->assertInstanceOf('mikehaertl\pdftk\Command', $command->addOption('owner_pw','complex\'"password'));
+        $this->assertInstanceOf('mikehaertl\pdftk\Command', $command->addOption('allow', 'Printing', false));
+        $this->assertInstanceOf('mikehaertl\pdftk\Command', $command->addOption('owner_pw', 'complex\'"password'));
         $this->assertTrue($command->execute($file));
         $this->assertFileExists($file);
 
@@ -71,18 +71,18 @@ class CommandTest extends \PHPUnit\Framework\TestCase
         $this->assertInstanceOf('mikehaertl\pdftk\Command', $command->addFile($document1, 'A'));
         $this->assertInstanceOf('mikehaertl\pdftk\Command', $command->setOperation('cat'));
         $this->assertInstanceOf('mikehaertl\pdftk\Command', $command->addPageRange(1));
-        $this->assertInstanceOf('mikehaertl\pdftk\Command', $command->addPageRange(1,null,'A'));
-        $this->assertInstanceOf('mikehaertl\pdftk\Command', $command->addPageRange(1,3));
-        $this->assertInstanceOf('mikehaertl\pdftk\Command', $command->addPageRange(1,3,null,'even'));
-        $this->assertInstanceOf('mikehaertl\pdftk\Command', $command->addPageRange(1,3,null,'even','north'));
-        $this->assertInstanceOf('mikehaertl\pdftk\Command', $command->addPageRange(1,3,null,null,'north'));
-        $this->assertInstanceOf('mikehaertl\pdftk\Command', $command->addPageRange(1,3,'A'));
-        $this->assertInstanceOf('mikehaertl\pdftk\Command', $command->addPageRange(1,3,'A','even'));
-        $this->assertInstanceOf('mikehaertl\pdftk\Command', $command->addPageRange(1,3,'A','odd','east'));
-        $this->assertInstanceOf('mikehaertl\pdftk\Command', $command->addPageRange(1,3,'A',null,'east'));
-        $this->assertInstanceOf('mikehaertl\pdftk\Command', $command->addPageRange(1,3,null,null,'east'));
+        $this->assertInstanceOf('mikehaertl\pdftk\Command', $command->addPageRange(1, null, 'A'));
+        $this->assertInstanceOf('mikehaertl\pdftk\Command', $command->addPageRange(1, 3));
+        $this->assertInstanceOf('mikehaertl\pdftk\Command', $command->addPageRange(1, 3, null, 'even'));
+        $this->assertInstanceOf('mikehaertl\pdftk\Command', $command->addPageRange(1, 3, null, 'even', 'north'));
+        $this->assertInstanceOf('mikehaertl\pdftk\Command', $command->addPageRange(1, 3, null, null, 'north'));
+        $this->assertInstanceOf('mikehaertl\pdftk\Command', $command->addPageRange(1, 3, 'A'));
+        $this->assertInstanceOf('mikehaertl\pdftk\Command', $command->addPageRange(1, 3, 'A', 'even'));
+        $this->assertInstanceOf('mikehaertl\pdftk\Command', $command->addPageRange(1, 3, 'A', 'odd', 'east'));
+        $this->assertInstanceOf('mikehaertl\pdftk\Command', $command->addPageRange(1, 3, 'A', null, 'east'));
+        $this->assertInstanceOf('mikehaertl\pdftk\Command', $command->addPageRange(1, 3, null, null, 'east'));
         $this->assertInstanceOf('mikehaertl\pdftk\Command', $command->addPageRange(array(1,3)));
-        $this->assertInstanceOf('mikehaertl\pdftk\Command', $command->addPageRange(array(1,3),null,'A'));
+        $this->assertInstanceOf('mikehaertl\pdftk\Command', $command->addPageRange(array(1,3), null, 'A'));
         $this->assertTrue($command->execute($file));
         $this->assertFileExists($file);
 
@@ -91,21 +91,21 @@ class CommandTest extends \PHPUnit\Framework\TestCase
 
     protected function getDocument1()
     {
-        return __DIR__.'/files/document1.pdf';
+        return __DIR__ . '/files/document1.pdf';
     }
 
     protected function getDocument2()
     {
-        return __DIR__.'/files/document2.pdf';
+        return __DIR__ . '/files/document2.pdf';
     }
 
     protected function getForm()
     {
-        return __DIR__.'/files/form.pdf';
+        return __DIR__ . '/files/form.pdf';
     }
 
     protected function getOutFile()
     {
-        return __DIR__.'/test.pdf';
+        return __DIR__ . '/test.pdf';
     }
 }
