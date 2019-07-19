@@ -1,0 +1,6 @@
+InfoBegin
+InfoKey: Creator
+InfoValue: php-pdftk
+InfoBegin
+InfoKey: Subject
+InfoValue: öäüÖÄÜ

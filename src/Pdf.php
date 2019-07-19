@@ -263,6 +263,27 @@ class Pdf
         }
         return $this;
     }
+    
+    /**
+     * Update meta data of PDF
+     *
+     * @param string|array $data either a InfoFile filename or an array with 
+     * form field data (name => value)
+     * @param string the encoding of the data. Default is 'UTF-8'.
+     * @return \mikehaertl\pdftk\Pdf the pdf instance for method chaining
+     */
+    public function updateInfo($data, $encoding = 'UTF-8')
+    {
+        $this->constrainSingleFile();
+        if (is_array($data)) {
+            $data = new \mikehaertl\pdftk\InfoFile($data, null, null, null, $encoding);
+        }
+        $this->getCommand()
+        ->setOperation($encoding == 'UTF-8' ? 'update_info_utf8' : 'update_info')
+        ->setOperationArgument($data, true);
+        
+        return $this;
+    }
 
     /**
      * Apply a PDF as watermark to the background of a single PDF file.
@@ -340,7 +361,7 @@ class Pdf
     /**
      * @param bool $utf8 whether to dump the data UTF-8 encoded. Default is
      * true.
-     * @return string|bool meta data about the PDF or false on failure
+     * @return InfoFields|bool meta data about the PDF or false on failure
      */
     public function getData($utf8 = true)
     {
@@ -351,7 +372,7 @@ class Pdf
             if (!$command->execute()) {
                 return false;
             } else {
-                $this->$property = trim($command->getOutput());
+                $this->$property = new InfoFields(trim($command->getOutput()));
             }
         }
         return $this->$property;

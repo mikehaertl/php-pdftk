@@ -313,6 +313,25 @@ class PdfTest extends \PHPUnit\Framework\TestCase
         );
     }
 
+    public function testCanUpdateInfo()
+    {
+        $document1 = $this->getDocument1();
+        $file = $this->getOutFile();
+        
+        $pdf = new Pdf($document1);
+        $this->assertInstanceOf('mikehaertl\pdftk\Pdf', $pdf->updateInfo([
+            'Creator' => 'php-pdftk'
+        ]));
+        $this->assertTrue($pdf->saveAs($file));
+        
+        $this->assertFileExists($file);
+        
+        $tmpFile = (string) $pdf->getTmpFile();
+        $pdf = new Pdf($file);
+        $data = $pdf->getData();
+        $this->assertEquals('php-pdftk', $data['Info']['Creator']);
+    }
+
     public function testCanSetBackground()
     {
         $document1 = $this->getDocument1();
@@ -532,11 +551,11 @@ class PdfTest extends \PHPUnit\Framework\TestCase
     public function testCanGetData()
     {
         $document = $this->getDocument1();
-
+        
         $pdf = new Pdf($document);
         $data = $pdf->getData();
-        $this->assertInternalType('string', $data);
-        $this->assertEquals($this->formData, $data);
+        $this->assertInstanceOf('\mikehaertl\pdftk\InfoFields', $data);
+        $this->assertEquals($this->formDataArray, (array)$data);
     }
 
     public function testCanGetDataFields()
@@ -636,6 +655,51 @@ PageMediaRotation: 0
 PageMediaRect: 0 0 595 842
 PageMediaDimensions: 595 842
 EOD;
+    
+    protected $formDataArray = array(
+        "Info" => array(
+            "CreationDate" => "D:20140709121536+02'00'",
+            "Creator" => "Writer",
+            "Producer" => "LibreOffice 4.2"
+        ),
+        "PdfID0" => "8b93f76a0b28b720d0dee9a6eb2a780a",
+        "PdfID1" => "8b93f76a0b28b720d0dee9a6eb2a780a",
+        "NumberOfPages" => "5",
+        "Bookmark" => array(),
+        "PageMedia" => array(
+            array(
+                "Number" => "1",
+                "Rotation" => "0",
+                "Rect" => "0 0 595 842",
+                "Dimensions" => "595 842"
+            ),
+            array(
+                "Number" => "2",
+                "Rotation" => "0",
+                "Rect" => "0 0 595 842",
+                "Dimensions" => "595 842"
+            ),
+            array(
+                "Number" => "3",
+                "Rotation" => "0",
+                "Rect" => "0 0 595 842",
+                "Dimensions" => "595 842"
+            ),
+            array(
+                "Number" => "4",
+                "Rotation" => "0",
+                "Rect" => "0 0 595 842",
+                "Dimensions" => "595 842"
+            ),
+            array(
+                "Number" => "5",
+                "Rotation" => "0",
+                "Rect" => "0 0 595 842",
+                "Dimensions" => "595 842"
+            ),
+        )
+        
+    );
 
     protected $formDataFields = <<<EOD
 ---
