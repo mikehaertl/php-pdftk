@@ -70,7 +70,6 @@ class InfoFields extends ArrayObject
     {
         $expectType = null;
         $output = array('Info' => array(),'Bookmark' => array(),'PageMedia' => array());
-        $field = array();
         $buffer = array();
         foreach (explode(PHP_EOL, $dataString) as $line) {
             $trimmedLine = trim($line);
@@ -87,7 +86,11 @@ class InfoFields extends ArrayObject
                 continue;
             }
 
-            preg_match('/([^:]*): ?(.*)/', $trimmedLine, $match);
+            $match = array();
+            $result = preg_match('/([^:]*): ?(.*)/', $trimmedLine, $match);
+            if (!$result) {
+                continue;
+            }
             $key = $match[1];
             $value = $match[2];
 
