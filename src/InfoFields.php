@@ -87,8 +87,7 @@ class InfoFields extends ArrayObject
             }
 
             $match = array();
-            $result = preg_match('/([^:]*): ?(.*)/', $trimmedLine, $match);
-            if (!$result) {
+            if (!preg_match('/([^:]*): ?(.*)/', $trimmedLine, $match)) {
                 continue;
             }
             $key = $match[1];
