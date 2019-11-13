@@ -550,7 +550,6 @@ class PdfTest extends \PHPUnit\Framework\TestCase
     public function testCanGetData()
     {
         $document = $this->getDocument1();
-        
         $pdf = new Pdf($document);
         $data = $pdf->getData();
         $this->assertInstanceOf('\mikehaertl\pdftk\InfoFields', $data);
@@ -664,7 +663,6 @@ EOD;
         "PdfID0" => "8b93f76a0b28b720d0dee9a6eb2a780a",
         "PdfID1" => "8b93f76a0b28b720d0dee9a6eb2a780a",
         "NumberOfPages" => "5",
-        "Bookmark" => array(),
         "PageMedia" => array(
             array(
                 "Number" => "1",

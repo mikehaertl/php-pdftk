@@ -49,6 +49,9 @@ class InfoFields extends ArrayObject
 
     /**
      * Parse the output of dump_data into something usable.
+     *
+     * The expected string looks similar to this:
+     *
      * InfoBegin
      * InfoKey: Creator
      * InfoValue: Adobe Acrobat Pro DC 15.0
@@ -62,67 +65,74 @@ class InfoFields extends ArrayObject
      * BookmarkTitle: First bookmark
      * BookmarkLevel: 1
      * BookmarkPageNumber: 1
+     * BookmarkBegin
+     * BookmarkTitle: Second bookmark
+     * BookmarkLevel: 1
+     * BookmarkPageNumber: 2
      *
      * @param $dataString
      * @return array
      */
     private function parseData($dataString)
     {
-        $expectType = null;
-        $output = array('Info' => array(),'Bookmark' => array(),'PageMedia' => array());
-        $field = array();
-        $buffer = array();
+        $output = array();
         foreach (explode(PHP_EOL, $dataString) as $line) {
             $trimmedLine = trim($line);
-            if ($trimmedLine === 'InfoBegin') {
-                $expectType = 'Info';
-                continue;
-            }
-            if ($trimmedLine === 'BookmarkBegin') {
-                $expectType = 'Bookmark';
-                continue;
-            }
-            if ($trimmedLine === 'PageMediaBegin') {
-                $expectType = 'PageMedia';
-                continue;
-            }
-
-            preg_match('/([^:]*): ?(.*)/', $trimmedLine, $match);
-            $key = $match[1];
-            $value = $match[2];
-
-            if ($expectType === 'Info') {
-                if ($key === 'InfoKey') {
-                    $buffer['Key'] = $value;
-                } elseif ($key === 'InfoValue') {
-                    $buffer['Value'] = $value;
+            // Parse blocks of the form:
+            // AbcBegin
+            // AbcData1: Value1
+            // AbcData2: Value2
+            // AbcBegin
+            // AbcData1: Value3
+            // AbcData2: Value4
+            // ...
+            if (preg_match('/^(\w+)Begin$/', $trimmedLine, $matches)) {
+                // Previous group ended - if any - so add it to output
+                if (!empty($group) && !empty($groupData)) {
+                    $output[$group][] = $groupData;
                 }
-                if (isset($buffer['Value'], $buffer['Key'])) {
-                    $output['Info'][$buffer['Key']] = $buffer['Value'];
-                    $buffer = array();
-                    $expectType = null;
+                // Now start next group
+                $group = $matches[1];   // Info, PageMedia, ...
+                if (!isset($output[$group])) {
+                    $output[$group] = array();
                 }
+                $groupData = array();
                 continue;
             }
-            if ($expectType !== null) {
-                if (strpos($key, $expectType) === 0) {
-                    $buffer[str_replace($expectType, '', $key)] = $value;
+            if (!empty($group)) {
+                // Check for AbcData1: Value1
+                if (preg_match("/^$group(\w+): ?(.*)$/", $trimmedLine, $matches)) {
+                    $groupData[$matches[1]] = $matches[2];
+                    continue;
                 } else {
-                    throw new \Exception("Unexpected input");
+                    // Something else, so group ended
+                    if (!empty($groupData)) {
+                        $output[$group][] = $groupData;
+                        $groupData = array();
+                    }
+                    $group = null;
                 }
-                if ($expectType === 'Bookmark' && isset($buffer['Level'], $buffer['Title'], $buffer['PageNumber'])) {
-                    $output[$expectType][] = $buffer;
-                    $buffer = array();
-                    $expectType = null;
-                } elseif ($expectType === 'PageMedia' && isset($buffer['Number'], $buffer['Rotation'], $buffer['Rect'], $buffer['Dimensions'])) {
-                    $output[$expectType][] = $buffer;
-                    $buffer = array();
-                    $expectType = null;
-                }
-                continue;
-            } else {
-                $output[$key] = $value;
             }
+            if (preg_match('/([^:]*): ?(.*)/', $trimmedLine, $matches)) {
+                $output[$matches[1]] = $matches[2];
+            }
+        }
+        // There could be a final group left if it was not followed by another
+        // line in the loop
+        if (!empty($group) && !empty($groupData)) {
+            $output[$group][] = $groupData;
+        }
+
+        // Info group is a list of ['Key' => 'x', 'Value' => 'y'], so
+        // convert it to ['x' => 'y', ...]
+        if (isset($output['Info'])) {
+            $data = array();
+            foreach ($output['Info'] as $infoGroup) {
+                if (isset($infoGroup['Key'], $infoGroup['Value'])) {
+                    $data[$infoGroup['Key']] = $infoGroup['Value'];
+                }
+            }
+            $output['Info'] = $data;
         }
         return $output;
     }
