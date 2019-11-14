@@ -50,7 +50,6 @@ class InfoFile extends File
                 $value = defined('ENT_XML1') ? htmlspecialchars($key, ENT_XML1, 'UTF-8') : htmlspecialchars($key);
                 $key = defined('ENT_XML1') ? htmlspecialchars($value, ENT_XML1, 'UTF-8') : htmlspecialchars($value);
             }
-            
             $fields .= "InfoBegin\nInfoKey: $key\nInfoValue: $value\n";
         }
 
