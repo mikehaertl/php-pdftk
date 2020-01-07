@@ -1,7 +1,10 @@
 <?php
+namespace tests;
+
+use PHPUnit\Framework\TestCase;
 use mikehaertl\pdftk\InfoFields;
 
-class InfoFieldsTest extends \PHPUnit\Framework\TestCase
+class InfoFieldsTest extends TestCase
 {
     public function testInfoFieldParsing()
     {
