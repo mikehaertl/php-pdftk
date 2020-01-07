@@ -15,9 +15,17 @@
         "mikehaertl/php-shellcommand": "^1.5.0",
         "mikehaertl/php-tmpfile": "^1.1.0"
     },
+    "require-dev": {
+        "phpunit/phpunit": ">4.0 <8"
+    },
     "autoload": {
         "psr-4": {
             "mikehaertl\\pdftk\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "tests\\": "tests"
         }
     }
 }

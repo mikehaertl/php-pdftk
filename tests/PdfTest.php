@@ -1,8 +1,11 @@
 <?php
+namespace tests;
+
+use PHPUnit\Framework\TestCase;
 use mikehaertl\pdftk\Pdf;
 use mikehaertl\pdftk\FdfFile;
 
-class PdfTest extends \PHPUnit\Framework\TestCase
+class PdfTest extends TestCase
 {
     public function setUp()
     {

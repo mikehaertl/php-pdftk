@@ -1,7 +1,10 @@
 <?php
+namespace tests;
+
+use PHPUnit\Framework\TestCase;
 use mikehaertl\pdftk\Command;
 
-class CommandTest extends \PHPUnit\Framework\TestCase
+class CommandTest extends TestCase
 {
     public function setUp()
     {

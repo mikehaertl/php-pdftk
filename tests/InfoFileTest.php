@@ -1,7 +1,10 @@
 <?php
+namespace tests;
+
+use PHPUnit\Framework\TestCase;
 use mikehaertl\pdftk\InfoFile;
 
-class InfoFileTest extends \PHPUnit\Framework\TestCase
+class InfoFileTest extends TestCase
 {
     public function testInfoFileCreation()
     {
