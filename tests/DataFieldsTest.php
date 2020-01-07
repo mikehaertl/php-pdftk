@@ -1,7 +1,10 @@
 <?php
+namespace tests;
+
+use PHPUnit\Framework\TestCase;
 use mikehaertl\pdftk\DataFields;
 
-class DataFieldsTest extends \PHPUnit\Framework\TestCase
+class DataFieldsTest extends TestCase
 {
     public function testDataFieldParsing()
     {
