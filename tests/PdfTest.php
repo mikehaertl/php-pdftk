@@ -583,6 +583,20 @@ class PdfTest extends TestCase
         $this->assertEquals(file_get_contents($file), $pdf->toString());
     }
 
+    public function testCanSetTemporaryDirectory()
+    {
+        $document = $this->getDocument1();
+        $file = $this->getOutFile();
+        $dir = dirname($file);
+
+        $pdf = new Pdf($document);
+        $pdf->tempDir = $dir;
+        $this->assertTrue($pdf->saveAs($file));
+
+        $tmpFile = (string) $pdf->getTmpFile();
+        $this->assertStringStartsWith($dir, $tmpFile);
+    }
+
     protected function getDocument1()
     {
         return __DIR__ . '/files/document1.pdf';

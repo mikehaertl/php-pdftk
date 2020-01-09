@@ -27,6 +27,12 @@ class Pdf
     public $ignoreWarnings = false;
 
     /**
+     * @var null|string an optional directory where temporary files should be
+     * created. If left empty the directory is autodetected.
+     */
+    public $tempDir;
+
+    /**
      * @var File the temporary output file
      */
     protected $_tmpFile;
@@ -608,7 +614,7 @@ class Pdf
     public function getTmpFile()
     {
         if ($this->_tmpFile === null) {
-            $this->_tmpFile = new File('', '.pdf', self::TMP_PREFIX);
+            $this->_tmpFile = new File('', '.pdf', self::TMP_PREFIX, $this->tempDir);
         }
         return $this->_tmpFile;
     }
