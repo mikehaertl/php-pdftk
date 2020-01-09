@@ -258,7 +258,7 @@ class Pdf
         $this->constrainSingleFile();
         if (is_array($data)) {
             $className = '\mikehaertl\pdftk\\' . ($format === 'xfdf' ? 'XfdfFile' : 'FdfFile');
-            $data = new $className($data, null, null, null, $encoding);
+            $data = new $className($data, null, null, $this->tempDir, $encoding);
         }
         $this->getCommand()
             ->setOperation('fill_form')
@@ -282,7 +282,7 @@ class Pdf
     {
         $this->constrainSingleFile();
         if (is_array($data)) {
-            $data = new InfoFile($data, null, null, null, $encoding);
+            $data = new InfoFile($data, null, null, $this->tempDir, $encoding);
         }
         $this->getCommand()
             ->setOperation($encoding == 'UTF-8' ? 'update_info_utf8' : 'update_info')
