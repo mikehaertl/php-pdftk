@@ -27,6 +27,12 @@ class Pdf
     public $ignoreWarnings = false;
 
     /**
+     * @var null|string an optional directory where temporary files should be
+     * created. If left empty the directory is autodetected.
+     */
+    public $tempDir;
+
+    /**
      * @var File the temporary output file
      */
     protected $_tmpFile;
@@ -252,7 +258,7 @@ class Pdf
         $this->constrainSingleFile();
         if (is_array($data)) {
             $className = '\mikehaertl\pdftk\\' . ($format === 'xfdf' ? 'XfdfFile' : 'FdfFile');
-            $data = new $className($data, null, null, null, $encoding);
+            $data = new $className($data, null, null, $this->tempDir, $encoding);
         }
         $this->getCommand()
             ->setOperation('fill_form')
@@ -276,7 +282,7 @@ class Pdf
     {
         $this->constrainSingleFile();
         if (is_array($data)) {
-            $data = new InfoFile($data, null, null, null, $encoding);
+            $data = new InfoFile($data, null, null, $this->tempDir, $encoding);
         }
         $this->getCommand()
             ->setOperation($encoding == 'UTF-8' ? 'update_info_utf8' : 'update_info')
@@ -608,7 +614,7 @@ class Pdf
     public function getTmpFile()
     {
         if ($this->_tmpFile === null) {
-            $this->_tmpFile = new File('', '.pdf', self::TMP_PREFIX);
+            $this->_tmpFile = new File('', '.pdf', self::TMP_PREFIX, $this->tempDir);
         }
         return $this->_tmpFile;
     }

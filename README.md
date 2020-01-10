@@ -31,7 +31,7 @@ A PDF conversion and form utility based on pdftk.
 
 > **Note** If you're on Ubuntu you may want to install the version from `ppa:malteworld/ppa`.
 > The default packages seems to use snap an there have been reports about file permission
-> issues with this version.
+> issues with this version. See below for a workaround.
 
 ## Installation
 
@@ -319,6 +319,16 @@ $pdf = new Pdf('/path/my.pdf');
 $pdf->fillForm(['name' => 'My Name'])
     ->execute();
 $content = file_get_contents( (string) $pdf->getTmpFile() );
+```
+
+If you have permission issues you may have to set a directory where your
+`pdftk` command can write to:
+
+```php
+use mikehaertl\pdftk\Pdf;
+
+$pdf = new Pdf('/path/my.pdf');
+$pdf->tempDir = '/home/john/temp';
 ```
 
 ## API
