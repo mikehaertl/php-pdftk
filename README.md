@@ -25,7 +25,7 @@ A PDF conversion and form utility based on pdftk.
 
 ## Requirements
 
- * The `pdftk` command must be installed and working on your system
+ * The `pdftk` command must be installed and working on your system (download PDFtk Server [here](https://www.pdflabs.com/tools/pdftk-server/))
  * This library is written for pdftk 2.x versions. You should be able to use it with pdftk 1.x but not all methods will work there.
    For details consult the man page of pdftk on your system.
 
