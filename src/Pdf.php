@@ -376,6 +376,7 @@ class Pdf
             $command = $this->getCommand();
             $command->setOperation($utf8 ? 'dump_data_utf8' : 'dump_data');
             if (!$command->execute()) {
+                $this->_error = $command->getError();
                 return false;
             } else {
                 $this->$property = new InfoFields(trim($command->getOutput()));
@@ -397,6 +398,7 @@ class Pdf
             $command = $this->getCommand();
             $command->setOperation($utf8 ? 'dump_data_fields_utf8' : 'dump_data_fields');
             if (!$command->execute()) {
+                $this->_error = $command->getError();
                 return false;
             } else {
                 $this->$property = new DataFields(trim($command->getOutput()));
