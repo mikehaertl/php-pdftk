@@ -259,6 +259,19 @@ class PdfTest extends TestCase
         @unlink($dir . '/doc_data.txt');
     }
 
+    public function testUnpackFiles()
+    {
+        $document = $this->getDocument1();
+        $dir = __DIR__;
+
+        $pdf = new Pdf($document);
+        $this->assertTrue($pdf->unpackFiles($dir));
+        $this->assertEquals(
+            "pdftk 'A'='$document' unpack_files 'output' '$dir'",
+            (string) $pdf->getCommand()
+        );
+    }
+
     public function testCanCreateFdfFileFromPdf()
     {
         $form = $this->getFilledForm();
