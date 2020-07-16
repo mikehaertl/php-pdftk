@@ -215,7 +215,6 @@ class Pdf
      *
      * @param string|null $filepattern the output name in sprintf format or
      * null for default 'pg_%04d.pdf'
-     * @return bool whether the burst command was successful
      * @return bool whether the burst operation was successful
      */
     public function burst($filepattern = null)
@@ -223,6 +222,20 @@ class Pdf
         $this->constrainSingleFile();
         $this->getCommand()->setOperation('burst');
         $this->_output = $filepattern === null ? 'pg_%04d.pdf' : $filepattern;
+        return $this->execute();
+    }
+
+    /**
+     * Copy all attachments from the PDF to the given directory
+     *
+     * @param string|null $dir the output directory
+     * @return bool whether the operation was successful
+     */
+    public function unpackFiles($dir = null)
+    {
+        $this->constrainSingleFile();
+        $this->getCommand()->setOperation('unpack_files');
+        $this->_output = $dir;
         return $this->execute();
     }
 

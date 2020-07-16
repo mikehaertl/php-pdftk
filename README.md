@@ -198,6 +198,17 @@ $pdf->multiStamp('/path/overlay_pages.pdf')
     ->saveAs('/path/stamped.pdf');
 ```
 
+#### Unpack Files
+
+Copy file attachments from a PDF to the given directory.
+
+```php
+use mikehaertl\pdftk\Pdf;
+
+$pdf = new Pdf('/path/my.pdf');
+$pdf->unpackFiles('/path/to/dir');
+```
+
 #### Generate FDF
 
 Create a FDF file from a given filled PDF form.
