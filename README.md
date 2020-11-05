@@ -67,20 +67,23 @@ use mikehaertl\pdftk\Pdf;
 
 // Fill form with data array
 $pdf = new Pdf('/full/path/to/form.pdf');
-$pdf->fillForm([
+$result = $pdf->fillForm([
         'name'=>'ÄÜÖ äüö мирано čárka',
         'nested.name' => 'valX',
     ])
     ->needAppearances()
     ->saveAs('filled.pdf');
 
+// Always check for errors
+if ($result === false) {
+    $error = $pdf->getError();
+}
+
 // Fill form from FDF
 $pdf = new Pdf('form.pdf');
-$pdf->fillForm('data.xfdf')
+$result = $pdf->fillForm('data.xfdf')
     ->saveAs('filled.pdf');
-
-// Check for errors
-if (!$pdf->saveAs('my.pdf')) {
+if ($result === false) {
     $error = $pdf->getError();
 }
 ```
@@ -114,9 +117,12 @@ use mikehaertl\pdftk\Pdf;
 
 // Extract pages 1-5 and 7,4,9 into a new file
 $pdf = new Pdf('/path/to/my.pdf');
-$pdf->cat(1, 5)
+$result = $pdf->cat(1, 5)
     ->cat([7, 4, 9])
     ->saveAs('/path/to/new.pdf');
+if ($result === false) {
+    $error = $pdf->getError();
+}
 
 // Combine pages from several files, demonstrating several ways how to add files
 $pdf = new Pdf([
@@ -124,12 +130,15 @@ $pdf = new Pdf([
     'B' => ['/path/file2.pdf','pass**word'],  // B is alias for file2.pdf
 ]);
 $pdf->addFile('/path/file3.pdf','C','**secret**pw');  // C is alias file3.pdf
-$pdf->cat(1, 5, 'A')                // pages 1-5 from A
+$result = $pdf->cat(1, 5, 'A')                // pages 1-5 from A
     ->cat(3, null, 'B')             // page 3 from B
     ->cat(7, 'end', 'B', null, 'east') // pages 7-end from B, rotated East
     ->cat('end',3,'A','even')       // even pages 3-end in reverse order from A
     ->cat([2,3,7], 'C')             // pages 2,3 and 7 from C
     ->saveAs('/path/new.pdf');
+if ($result === false) {
+    $error = $pdf->getError();
+}
 ```
 
 #### Shuffle
@@ -146,9 +155,12 @@ $pdf = new Pdf([
 ]);
 
 // new.pdf will have pages A1, B3, A2, B4, A3, B5, ...
-$pdf->shuffle(1, 5, 'A')    // pages 1-5 from A
+$result = $pdf->shuffle(1, 5, 'A')    // pages 1-5 from A
     ->shuffle(3, 8, 'B')    // pages 3-8 from B
     ->saveAs('/path/new.pdf');
+if ($result === false) {
+    $error = $pdf->getError();
+}
 ```
 
 #### Burst
@@ -159,7 +171,10 @@ Split a PDF file into one file per page.
 use mikehaertl\pdftk\Pdf;
 
 $pdf = new Pdf('/path/my.pdf');
-$pdf->burst('/path/page_%d.pdf');     // Supply a printf() pattern
+$result = $pdf->burst('/path/page_%d.pdf');     // Supply a printf() pattern
+if ($result === false) {
+    $error = $pdf->getError();
+}
 ```
 
 #### Add background PDF
@@ -171,13 +186,19 @@ use mikehaertl\pdftk\Pdf;
 
 // Set background from another PDF (first page repeated)
 $pdf = new Pdf('/path/my.pdf');
-$pdf->background('/path/back.pdf')
+$result = $pdf->background('/path/back.pdf')
     ->saveAs('/path/watermarked.pdf');
+if ($result === false) {
+    $error = $pdf->getError();
+}
 
 // Set background from another PDF (one page each)
 $pdf = new Pdf('/path/my.pdf');
-$pdf->multiBackground('/path/back_pages.pdf')
+$result = $pdf->multiBackground('/path/back_pages.pdf')
     ->saveAs('/path/watermarked.pdf');
+if ($result === false) {
+    $error = $pdf->getError();
+}
 ```
 
 #### Add overlay PDF
@@ -189,13 +210,19 @@ use mikehaertl\pdftk\Pdf;
 
 // Stamp with another PDF (first page repeated)
 $pdf = new Pdf('/path/my.pdf');
-$pdf->stamp('/path/overlay.pdf')
+$result = $pdf->stamp('/path/overlay.pdf')
     ->saveAs('/path/stamped.pdf');
+if ($result === false) {
+    $error = $pdf->getError();
+}
 
 // Stamp with another PDF (one page each)
 $pdf = new Pdf('/path/my.pdf');
-$pdf->multiStamp('/path/overlay_pages.pdf')
+$result = $pdf->multiStamp('/path/overlay_pages.pdf')
     ->saveAs('/path/stamped.pdf');
+if ($result === false) {
+    $error = $pdf->getError();
+}
 ```
 
 #### Unpack Files
@@ -206,7 +233,10 @@ Copy file attachments from a PDF to the given directory.
 use mikehaertl\pdftk\Pdf;
 
 $pdf = new Pdf('/path/my.pdf');
-$pdf->unpackFiles('/path/to/dir');
+$result = $pdf->unpackFiles('/path/to/dir');
+if ($result === false) {
+    $error = $pdf->getError();
+}
 ```
 
 #### Generate FDF
@@ -218,7 +248,10 @@ use mikehaertl\pdftk\Pdf;
 
 // Create FDF from PDF
 $pdf = new Pdf('/path/form.pdf');
-$pdf->generateFdfFile('/path/data.fdf');
+$result = $pdf->generateFdfFile('/path/data.fdf');
+if ($result === false) {
+    $error = $pdf->getError();
+}
 ```
 
 #### Get PDF data
@@ -231,10 +264,16 @@ use mikehaertl\pdftk\Pdf;
 // Get data
 $pdf = new Pdf('/path/my.pdf');
 $data = $pdf->getData();
+if ($data === false) {
+    $error = $pdf->getError();
+}
 
 // Get form data fields
 $pdf = new Pdf('/path/my.pdf');
 $data = $pdf->getDataFields();
+if ($data === false) {
+    $error = $pdf->getError();
+}
 
 // Get data as string
 echo $data;
@@ -262,9 +301,12 @@ $pdf->cat(1, 5)
 
 // We now use the above PDF as source file for a new PDF
 $pdf2 = new Pdf($pdf);
-$pdf2->fillForm(['name' => 'ÄÜÖ äüö мирано čárka'])
+$result = $pdf2->fillForm(['name' => 'ÄÜÖ äüö мирано čárka'])
     ->needAppearances()
     ->saveAs('/path/filled.pdf');
+if ($result === false) {
+    $error = $pdf->getError();
+}
 ```
 
 ### Options
@@ -276,7 +318,7 @@ use mikehaertl\pdftk\Pdf;
 
 $pdf = new Pdf('/path/my.pdf');
 
-$pdf->allow('AllFeatures')      // Change permissions
+$result = $pdf->allow('AllFeatures')      // Change permissions
     ->flatten()                 // Merge form data into document (doesn't work well with UTF-8!)
     ->compress($value)          // Compress/Uncompress
     ->keepId('first')           // Keep first/last Id of combined files
@@ -287,18 +329,27 @@ $pdf->allow('AllFeatures')      // Change permissions
     ->setUserPassword($pw)      // Set user password
     ->passwordEncryption(128)   // Set password encryption strength
     ->saveAs('new.pdf');
+if ($result === false) {
+    $error = $pdf->getError();
+}
 
 // Example: Fill PDF form and merge form data into PDF
 // Fill form with data array
-$pdf = new Pdf('/path/form.pdf');
+$result = $pdf = new Pdf('/path/form.pdf');
 $pdf->fillForm(['name' => 'My Name'])
     ->flatten()
     ->saveAs('/path/filled.pdf');
+if ($result === false) {
+    $error = $pdf->getError();
+}
 
 // Example: Remove password from a PDF
 $pdf = new Pdf;
-$pdf->addFile('/path/my.pdf', null, 'some**password')
+$result = $pdf->addFile('/path/my.pdf', null, 'some**password')
     ->saveAs('/path/new.pdf');
+if ($result === false) {
+    $error = $pdf->getError();
+}
 ```
 
 ### Shell Command
@@ -327,8 +378,11 @@ file but only need the binary PDF content:
 use mikehaertl\pdftk\Pdf;
 
 $pdf = new Pdf('/path/my.pdf');
-$pdf->fillForm(['name' => 'My Name'])
+$result = $pdf->fillForm(['name' => 'My Name'])
     ->execute();
+if ($result === false) {
+    $error = $pdf->getError();
+}
 $content = file_get_contents( (string) $pdf->getTmpFile() );
 ```
 
