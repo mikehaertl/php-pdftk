@@ -72,6 +72,16 @@ FieldValue: 2
 FieldValue: 3
 FieldValue: 4
 FieldJustification: Left
+---
+FieldType: Choice
+FieldName: field7
+FieldFlags: 524288
+FieldValue: -- Value with dashes --
+FieldValueDefault: -- Value with dashes --
+FieldJustification: Left
+FieldStateOption: -- Another value with dashes --
+FieldStateOption: Value 2
+FieldStateOption: Value 3
 DATA;
 
     protected $_parsedResult = [
@@ -120,6 +130,19 @@ DATA;
             'FieldName' => 'field6',
             'FieldFlags' => 2097152,
             'FieldValue' => [1, 2, 3, 4],
+            'FieldJustification' => 'Left',
+        ],
+        [
+            'FieldType' => 'Choice',
+            'FieldName' => 'field7',
+            'FieldFlags' => 524288,
+            'FieldValue' => '-- Value with dashes --',
+            'FieldValueDefault' => '-- Value with dashes --',
+            'FieldStateOption' => [
+                '-- Another value with dashes --',
+                'Value 2',
+                'Value 3',
+            ],
             'FieldJustification' => 'Left',
         ],
     ];
