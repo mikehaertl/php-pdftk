@@ -3,21 +3,9 @@ namespace tests;
 
 use PHPUnit\Framework\TestCase;
 use mikehaertl\pdftk\Pdf;
-use mikehaertl\pdftk\FdfFile;
 
 class PdfTest extends TestCase
 {
-    public function setUp()
-    {
-        @unlink($this->getOutFile());
-    }
-    public function tearDown()
-    {
-        @unlink($this->getOutFile());
-    }
-
-
-
     public function testCanPassDocumentToConstructor()
     {
         $document = $this->getDocument1();
@@ -56,10 +44,10 @@ class PdfTest extends TestCase
         $document2 = $this->getDocument2();
         $file = $this->getOutFile();
 
-        $pdf = new Pdf([
+        $pdf = new Pdf(array(
             'A' => $document1,
             'B' => $document2,
-        ]);
+        ));
         $this->assertTrue($pdf->saveAs($file));
         $this->assertFileExists($file);
 
@@ -79,10 +67,10 @@ class PdfTest extends TestCase
         $this->assertFalse($pdf1->getCommand()->getExecuted());
         $this->assertFalse($pdf2->getCommand()->getExecuted());
 
-        $pdf = new Pdf([
+        $pdf = new Pdf(array(
             'A' => $pdf1,
             'B' => $pdf2,
-        ]);
+        ));
         $this->assertTrue($pdf1->getCommand()->getExecuted());
         $this->assertTrue($pdf2->getCommand()->getExecuted());
         $outFile1 = (string) $pdf1->getTmpFile();
@@ -102,10 +90,10 @@ class PdfTest extends TestCase
         $document2 = $this->getDocument2();
         $file = $this->getOutFile();
 
-        $pdf = new Pdf([
-            'A' => [$document1, 'complex\'"password'],
+        $pdf = new Pdf(array(
+            'A' => array($document1, 'complex\'"password'),
             'B' => $document2,
-        ]);
+        ));
         $this->assertTrue($pdf->saveAs($file));
         $this->assertFileExists($file);
 
@@ -158,7 +146,7 @@ class PdfTest extends TestCase
 
         $pdf = new Pdf($document);
         $this->assertInstanceOf('mikehaertl\pdftk\Pdf', $pdf->cat(1, 5));
-        $this->assertInstanceOf('mikehaertl\pdftk\Pdf', $pdf->cat([2,3,4]));
+        $this->assertInstanceOf('mikehaertl\pdftk\Pdf', $pdf->cat(array(2,3,4)));
         $this->assertInstanceOf('mikehaertl\pdftk\Pdf', $pdf->cat('end', '2', null, 'even'));
         $this->assertInstanceOf('mikehaertl\pdftk\Pdf', $pdf->cat(3, 5, null, null, 'east'));
         $this->assertInstanceOf('mikehaertl\pdftk\Pdf', $pdf->cat(4, 8, null, 'even', 'east'));
@@ -179,12 +167,12 @@ class PdfTest extends TestCase
         $document2 = $this->getDocument2();
         $file = $this->getOutFile();
 
-        $pdf = new Pdf([
+        $pdf = new Pdf(array(
             'A' => $document1,
             'B' => $document2,
-        ]);
+        ));
         $this->assertInstanceOf('mikehaertl\pdftk\Pdf', $pdf->cat(1, 5, 'A'));
-        $this->assertInstanceOf('mikehaertl\pdftk\Pdf', $pdf->cat([2,3,4], 'A'));
+        $this->assertInstanceOf('mikehaertl\pdftk\Pdf', $pdf->cat(array(2,3,4), 'A'));
         $this->assertInstanceOf('mikehaertl\pdftk\Pdf', $pdf->cat('end', '2', 'B', 'even'));
         $this->assertInstanceOf('mikehaertl\pdftk\Pdf', $pdf->cat(3, 5, 'A', null, 'east'));
         $this->assertInstanceOf('mikehaertl\pdftk\Pdf', $pdf->cat(4, 8, 'B', 'even', 'east'));
@@ -205,12 +193,12 @@ class PdfTest extends TestCase
         $document2 = $this->getDocument2();
         $file = $this->getOutFile();
 
-        $pdf = new Pdf([
+        $pdf = new Pdf(array(
             'A' => $document1,
             'B' => $document2,
-        ]);
+        ));
         $this->assertInstanceOf('mikehaertl\pdftk\Pdf', $pdf->shuffle(1, 5, 'A'));
-        $this->assertInstanceOf('mikehaertl\pdftk\Pdf', $pdf->shuffle([2,3,4], 'B'));
+        $this->assertInstanceOf('mikehaertl\pdftk\Pdf', $pdf->shuffle(array(2,3,4), 'B'));
         $this->assertInstanceOf('mikehaertl\pdftk\Pdf', $pdf->shuffle('end', '2', 'B', 'even'));
         $this->assertInstanceOf('mikehaertl\pdftk\Pdf', $pdf->shuffle(3, 5, 'A', null, 'east'));
         $this->assertInstanceOf('mikehaertl\pdftk\Pdf', $pdf->shuffle(4, 8, 'B', 'even', 'east'));
@@ -232,7 +220,7 @@ class PdfTest extends TestCase
         $filepattern = $dir . '/pg_000%d.pdf';
 
         $pdf = new Pdf($document);
-        $pdf->getCommand()->procCwd = __DIR__;
+        $pdf->getCommand()->procCwd = $dir;
         $this->assertTrue($pdf->burst());
         for ($x = 1; $x <= 5; $x++) {
             $filename = sprintf($filepattern, $x);
@@ -286,13 +274,13 @@ class PdfTest extends TestCase
     {
         $form = $this->getForm();
         $file = $this->getOutFile();
-        $data = [
+        $data = array(
             'name' => 'Jürgen čárka čČćĆđĐ мирано',
             'email' => 'test@email.com',
             'checkbox 1' => 'Yes',
             'checkbox 2' => 0,
             'radio 1' => 2,
-        ];
+        );
 
         $pdf = new Pdf($form);
         $this->assertInstanceOf('mikehaertl\pdftk\Pdf', $pdf->fillForm($data));
@@ -302,10 +290,13 @@ class PdfTest extends TestCase
         $this->assertFileExists($file);
 
         $tmpFile = (string) $pdf->getTmpFile();
-        $this->assertRegExp(
-            "#pdftk 'A'='$form' 'fill_form' '/tmp/[^ ]+\.xfdf' 'output' '$tmpFile' 'drop_xfa' 'need_appearances'#",
-            (string) $pdf->getCommand()
-        );
+        $regex = "#pdftk 'A'='$form' 'fill_form' '/tmp/[^ ]+\.xfdf' 'output' '$tmpFile' 'drop_xfa' 'need_appearances'#";
+        $command = (string) $pdf->getCommand();
+        if (phpUnitVersion('<', 9)) {
+            $this->assertRegExp($regex, $command);
+        } else {
+            $this->assertMatchesRegularExpression($regex, $command);
+        }
     }
 
     public function testCanFillFormFromFile()
@@ -322,10 +313,13 @@ class PdfTest extends TestCase
         $this->assertFileExists($file);
 
         $tmpFile = (string) $pdf->getTmpFile();
-        $this->assertRegExp(
-            "#pdftk 'A'='$form' 'fill_form' '$fdf' 'output' '$tmpFile' 'drop_xfa' 'need_appearances'#",
-            (string) $pdf->getCommand()
-        );
+        $regex = "#pdftk 'A'='$form' 'fill_form' '$fdf' 'output' '$tmpFile' 'drop_xfa' 'need_appearances'#";
+        $command = (string) $pdf->getCommand();
+        if (phpUnitVersion('<', 9)) {
+            $this->assertRegExp($regex, $command);
+        } else {
+            $this->assertMatchesRegularExpression($regex, $command);
+        }
     }
 
     public function testCanUpdateInfo()
@@ -334,14 +328,13 @@ class PdfTest extends TestCase
         $file = $this->getOutFile();
 
         $pdf = new Pdf($document1);
-        $this->assertInstanceOf('mikehaertl\pdftk\Pdf', $pdf->updateInfo([
+        $this->assertInstanceOf('mikehaertl\pdftk\Pdf', $pdf->updateInfo(array(
             'Creator' => 'php-pdftk'
-        ]));
+        )));
         $this->assertTrue($pdf->saveAs($file));
 
         $this->assertFileExists($file);
 
-        $tmpFile = (string) $pdf->getTmpFile();
         $pdf = new Pdf($file);
         $data = $pdf->getData();
         $this->assertEquals('php-pdftk', $data['Info']['Creator']);
@@ -579,9 +572,14 @@ class PdfTest extends TestCase
         $pdf = new Pdf($form);
         $data = $pdf->getDataFields();
         $this->assertInstanceOf('\mikehaertl\pdftk\DataFields', $data);
-        $this->assertInternalType('string', $data->__toString());
+        if (phpUnitVersion('<', 9)) {
+            $this->assertInternalType('string', $data->__toString());
+            $this->assertInternalType('array', $data->__toArray());
+        } else {
+            $this->assertIsString($data->__toString());
+            $this->assertIsArray($data->__toArray());
+        }
         $this->assertEquals($this->formDataFields, $data->__toString());
-        $this->assertInternalType('array', $data->__toArray());
         $this->assertEquals($this->formDataFieldsArray, $data->__toArray());
     }
 
@@ -766,42 +764,42 @@ FieldFlags: 0
 FieldJustification: Left
 EOD;
 
-    protected $formDataFieldsArray = [
-        [
+    protected $formDataFieldsArray = array(
+        array(
             'FieldType' => 'Button',
             'FieldName' => 'checkbox 1',
             'FieldFlags' => '0',
             'FieldValue' => 'On',
             'FieldJustification' => 'Left',
-            'FieldStateOption' => ['Off', 'On'],
-        ],
-        [
+            'FieldStateOption' => array('Off', 'On'),
+        ),
+        array(
             'FieldType' => 'Button',
             'FieldName' => 'checkbox 2',
             'FieldFlags' => '0',
             'FieldValue' => 'On',
             'FieldJustification' => 'Left',
-            'FieldStateOption' => ['Off', 'On'],
-        ],
-        [
+            'FieldStateOption' => array('Off', 'On'),
+        ),
+        array(
             'FieldType' => 'Button',
             'FieldName' => 'radio 1',
             'FieldFlags' => '49152',
             'FieldValue' => '2',
             'FieldJustification' => 'Left',
-            'FieldStateOption' => ['1', '2', 'Off'],
-        ],
-        [
+            'FieldStateOption' => array('1', '2', 'Off'),
+        ),
+        array(
             'FieldType' => 'Text',
             'FieldName' => 'email',
             'FieldFlags' => '0',
             'FieldJustification' => 'Left',
-        ],
-        [
+        ),
+        array(
             'FieldType' => 'Text',
             'FieldName' => 'name',
             'FieldFlags' => '0',
             'FieldJustification' => 'Left',
-        ],
-    ];
+        ),
+    );
 }

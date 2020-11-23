@@ -1,11 +1,11 @@
 php-pdftk
 =========
 
-[![Build Status](https://secure.travis-ci.org/mikehaertl/php-pdftk.png)](http://travis-ci.org/mikehaertl/php-pdftk)
-[![Latest Stable Version](https://poser.pugx.org/mikehaertl/php-pdftk/v/stable.svg)](https://packagist.org/packages/mikehaertl/php-pdftk)
-[![Total Downloads](https://poser.pugx.org/mikehaertl/php-pdftk/downloads)](https://packagist.org/packages/mikehaertl/php-pdftk)
-[![Latest Unstable Version](https://poser.pugx.org/mikehaertl/php-pdftk/v/unstable.svg)](https://packagist.org/packages/mikehaertl/php-pdftk)
-[![License](https://poser.pugx.org/mikehaertl/php-pdftk/license.svg)](https://packagist.org/packages/mikehaertl/php-pdftk)
+[![GitHub Tests](https://github.com/mikehaertl/php-pdftk/workflows/Tests/badge.svg)](https://github.com/mikehaertl/php-pdftk/actions)
+[![Packagist Version](https://img.shields.io/packagist/v/mikehaertl/php-pdftk?label=version)](https://packagist.org/packages/mikehaertl/php-pdftk)
+[![Packagist Downloads](https://img.shields.io/packagist/dt/mikehaertl/php-pdftk)](https://packagist.org/packages/mikehaertl/php-pdftk)
+[![GitHub license](https://img.shields.io/github/license/mikehaertl/php-pdftk)](https://github.com/mikehaertl/php-pdftk/blob/master/LICENSE)
+[![Packagist PHP Version Support](https://img.shields.io/packagist/php-v/mikehaertl/php-pdftk)](https://packagist.org/packages/mikehaertl/php-pdftk)
 
 A PDF conversion and form utility based on pdftk.
 
@@ -28,10 +28,16 @@ A PDF conversion and form utility based on pdftk.
  * The `pdftk` command must be installed and working on your system
  * This library is written for pdftk 2.x versions. You should be able to use it with pdftk 1.x but not all methods will work there.
    For details consult the man page of pdftk on your system.
+ * There is a [known issue](issues/150) on Ubuntu if you installed the `pdftk` package from snap. This
+   version has no permission to write to the `/tmp` directory. You can either
+   set another temporay directory as described below or use another package.
+   For Ubuntu 18.10 there's also a `pdftk-jave` package available in apt which
+   should work fine. For Ubuntu 18.04 you can also install this package if
+   you download it manually. Also check [this answer](https://askubuntu.com/a/1028983/175814) on askubuntu.
 
-> **Note** If you're on Ubuntu you may want to install the version from `ppa:malteworld/ppa`.
-> The default packages seems to use snap an there have been reports about file permission
-> issues with this version. See below for a workaround.
+> **Note:** The pdftk version from the alternative PPA `ppa:malteworld/ppa` is
+> no longer available. The author instead now points to his answer on askubuntu
+> linked above.
 
 ## Installation
 

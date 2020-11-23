@@ -6,15 +6,6 @@ use mikehaertl\pdftk\Command;
 
 class CommandTest extends TestCase
 {
-    public function setUp()
-    {
-        @unlink($this->getOutFile());
-    }
-    public function tearDown()
-    {
-        @unlink($this->getOutFile());
-    }
-
     public function testCanAddFiles()
     {
         $document1 = $this->getDocument1();
