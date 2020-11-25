@@ -12,7 +12,8 @@
 >
     <testsuites>
         <testsuite name="phppdftk Test Suite">
-            <directory>./tests/</directory>
+            <directory phpVersion="7.2.0" phpVersionOperator=">=">./tests/phpunit89</directory>
+            <directory phpVersion="7.2.0" phpVersionOperator="lt">./tests/phpunit4567</directory>
         </testsuite>
     </testsuites>
 </phpunit>

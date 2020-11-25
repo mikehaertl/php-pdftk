@@ -2,3 +2,4 @@ phpunit.xml
 composer.lock
 /vendor/
 *.swp
+.phpunit.result.cache
