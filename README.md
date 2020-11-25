@@ -28,12 +28,14 @@ A PDF conversion and form utility based on pdftk.
  * The `pdftk` command must be installed and working on your system
  * This library is written for pdftk 2.x versions. You should be able to use it with pdftk 1.x but not all methods will work there.
    For details consult the man page of pdftk on your system.
- * There is a [known issue](issues/150) on Ubuntu if you installed the `pdftk` package from snap. This
-   version has no permission to write to the `/tmp` directory. You can either
-   set another temporay directory as described below or use another package.
-   For Ubuntu 18.10 there's also a `pdftk-jave` package available in apt which
-   should work fine. For Ubuntu 18.04 you can also install this package if
-   you download it manually. Also check [this answer](https://askubuntu.com/a/1028983/175814) on askubuntu.
+ * There is a [known issue](https://github.com/mikehaertl/php-pdftk/issues/150)
+   on Ubuntu if you installed the `pdftk` package from snap. This version has
+   no permission to write to the `/tmp` directory. You can either set another
+   temporay directory as described below or use another package.  For Ubuntu
+   18.10 there's also a `pdftk-java` package available via apt which should work
+   fine. You can also install this package on Ubuntu 18.04 if you download it
+   manually. Also check [this answer](https://askubuntu.com/a/1028983/175814)
+   on askubuntu.
 
 > **Note:** The pdftk version from the alternative PPA `ppa:malteworld/ppa` is
 > no longer available. The author instead now points to his answer on askubuntu
