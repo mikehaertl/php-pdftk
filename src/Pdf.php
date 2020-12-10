@@ -153,8 +153,13 @@ class Pdf
      *      ->cat('end', 5, 'B')            // pages 5 to end of file B in reverse order
      *      ->cat(null, null, 'B', 'east')  // All pages from file B rotated by 90 degree
      *      ->saveAs('out.pdf');
+     * or
+     *  $files = ['file1.pdf', 'file2.pdf', 'file3.pdf'];
+     *  $pdf = new Pdf($files);
+     *  $pdf->cat()                         // all all files, all pages
+     *      ->saveAs('out.pdf');
      *
-     * @param int|string|array $start the start page number or an array of page
+     * @param int|string|array|null $start the start page number or an array of page
      * numbers. If an array, the other arguments will be ignored. $start can
      * also be bigger than $end for pages in reverse order.
      * @param int|string|null $end the end page number or null for single page
@@ -166,7 +171,7 @@ class Pdf
      * @param string $rotation the rotation to apply to the pages.
      * @return Pdf the pdf instance for method chaining
      */
-    public function cat($start, $end = null, $handle = null, $qualifier = null, $rotation = null)
+    public function cat($start = null, $end = null, $handle = null, $qualifier = null, $rotation = null)
     {
         $this->getCommand()
             ->setOperation('cat')
