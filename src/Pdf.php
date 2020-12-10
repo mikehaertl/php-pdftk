@@ -156,7 +156,7 @@ class Pdf
      * or
      *  $files = ['file1.pdf', 'file2.pdf', 'file3.pdf'];
      *  $pdf = new Pdf($files);
-     *  $pdf->cat()                         // all all files, all pages
+     *  $pdf->cat()                         // all files, all pages
      *      ->saveAs('out.pdf');
      *
      * @param int|string|array|null $start the start page number or an array of page
