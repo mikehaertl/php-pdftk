@@ -161,7 +161,8 @@ class Pdf
      *
      * @param int|string|array|null $start the start page number or an array of page
      * numbers. If an array, the other arguments will be ignored. $start can
-     * also be bigger than $end for pages in reverse order.
+     * also be bigger than $end for pages in reverse order. If $start is null all
+     * pages of all files will be added.
      * @param int|string|null $end the end page number or null for single page
      * (or list if $start is an array)
      * @param string|null $handle the handle of the file to use. Can be null if
