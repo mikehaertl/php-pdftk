@@ -91,8 +91,8 @@ For all operations you can either save the PDF locally through `saveAs($name)` o
 browser with `send()`. If you pass a filename to `send($name)` the client browser will open a download
 dialogue whereas without a filename it will usually display the PDF inline.
 
-**IMPORTANT:** You can always only perform **one** of the following operations on a single PDF instance.
-Below you can find a workaround if you need multiple operations.
+**IMPORTANT: You can always only perform *one* of the following operations on a single PDF instance.
+Below you can find a workaround if you need multiple operations.**
 
 #### Fill Form
 
