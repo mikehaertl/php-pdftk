@@ -77,7 +77,12 @@ FDF;
                     }
                     $target = & $target[$part];
                 }
-                $target[$final] = $sanitizedValue;
+                
+                if (is_string($target)) {
+                    $target = $sanitizedValue;
+                } else {
+                    $target[$final] = $sanitizedValue;
+                }
             }
         }
 
