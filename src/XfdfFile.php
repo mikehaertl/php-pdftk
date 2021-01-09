@@ -44,43 +44,84 @@ FDF;
         if ($directory === null) {
             $directory = self::getTempDir();
         }
-        $suffix = '.xfdf';
-        $prefix = 'php_pdftk_xfdf_';
+        if ($suffix === null) {
+            $suffix = '.xfdf';
+        }
+        if ($prefix === null) {
+            $prefix = 'php_pdftk_xfdf_';
+        }
 
-        $this->_fileName = tempnam($directory, $prefix);
-        $newName = $this->_fileName . $suffix;
-        rename($this->_fileName, $newName);
-        $this->_fileName = $newName;
+        $tempfile = tempnam($directory, $prefix);
+        $this->_fileName = $tempfile . $suffix;
+        rename($tempfile, $this->_fileName);
 
-        $fields = array();
+        $fields = $this->parseData($data, $encoding);
+        $this->writeXml($fields);
+    }
+
+    /**
+     * Parses an array of key/value data that may contain keys in dot notation.
+     *
+     * For example an array like this:
+     *
+     * ```
+     * [
+     *     'a' => 'value a',
+     *     'b.a' => 'value b.a',
+     *     'b.b' => 'value b.b',
+     * ]
+     * ```
+     *
+     * Will become:
+     *
+     * ```
+     * [
+     *     'a' => 'value a',
+     *     'b' => [
+     *         'a' => 'value b.a',
+     *         'b' => 'value b.a',
+     *     ],
+     * ]
+     *
+     *
+     * @param mixed $data the data to parse
+     * @param string the encoding of the data
+     * @return array the result array in UTF-8 encoding with dot keys converted
+     * to nested arrays
+     */
+    protected function parseData($data, $encoding)
+    {
+        $result = array();
         foreach ($data as $key => $value) {
-            // Always convert to UTF-8
             if ($encoding !== 'UTF-8' && function_exists('mb_convert_encoding')) {
-                $value = mb_convert_encoding($value, 'UTF-8', $encoding);
                 $key = mb_convert_encoding($key, 'UTF-8', $encoding);
+                $value = mb_convert_encoding($value, 'UTF-8', $encoding);
             }
-
-            //Sanitize input for use in XML
-            $sanitizedKey = defined('ENT_XML1') ? htmlspecialchars($key, ENT_XML1, 'UTF-8') : htmlspecialchars($key);
-            $sanitizedValue = defined('ENT_XML1') ? htmlspecialchars($value, ENT_XML1, 'UTF-8') : htmlspecialchars($value);
-
-            // Key can be in dot notation like 'Address.name'
-            $keys = explode('.', $sanitizedKey);
-            $final = array_pop($keys);
-            if (count($keys) === 0) {
-                $fields[$final] = $sanitizedValue;
+            $keyParts = explode('.', $key);
+            $lastPart = array_pop($keyParts);
+            if (count($keyParts) === 0) {
+                $result[$lastPart] = $value;
             } else {
-                $target = & $fields;
-                foreach ($keys as $part) {
+                $target = &$result;
+                foreach ($keyParts as $part) {
                     if (!isset($target[$part])) {
                         $target[$part] = array();
                     }
-                    $target = & $target[$part];
+                    $target = &$target[$part];
                 }
-                $target[$final] = $sanitizedValue;
+                $target[$lastPart] = $value;
             }
         }
+        return $result;
+    }
 
+    /**
+     * Write the given fields to an XML file
+     *
+     * @param array $fields the fields in a nested array structure
+     */
+    protected function writeXml($fields)
+    {
         // Use fwrite, since file_put_contents() messes around with character encoding
         $fp = fopen($this->_fileName, 'w');
         fwrite($fp, self::XFDF_HEADER);
@@ -94,19 +135,31 @@ FDF;
      *
      * @param int $fp
      * @param mixed[] $fields an array of field values. A value can also be
-     * another array
-     * in which case a nested field is written.
+     * another array in which case a nested field is written.
      */
     protected function writeFields($fp, $fields)
     {
         foreach ($fields as $key => $value) {
+            $key = $this->xmlEncode($key);
+            fwrite($fp, "<field name=\"$key\">\n");
             if (is_array($value)) {
-                fwrite($fp, "<field name=\"$key\">\n");
                 $this->writeFields($fp, $value);
-                fwrite($fp, "</field>\n");
             } else {
-                fwrite($fp, "<field name=\"$key\">\n<value>$value</value>\n</field>\n");
+                $value = $this->xmlEncode($value);
+                fwrite($fp, "<value>$value</value>\n");
             }
+            fwrite($fp, "</field>\n");
         }
+    }
+
+    /**
+     * @param string $value the value to encode
+     * @return string the value correctly encoded for use in a XML document
+     */
+    protected function xmlEncode($value)
+    {
+        return defined('ENT_XML1') ?
+            htmlspecialchars($value, ENT_XML1, 'UTF-8') :
+            htmlspecialchars($value);
     }
 }
