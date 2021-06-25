@@ -76,10 +76,10 @@ class Pdf
     protected $_dataFields_utf8;
 
     /**
-     * @var Pdf|null if the input was an instance, we keep a reference here, so
-     * that it won't get unlinked before this object gets destroyed
+     * @var Pdf[]|null if the input was an instance, we keep a reference here,
+     * so that it won't get unlinked before this object gets destroyed
      */
-    protected $_pdf;
+    protected $_pdfs;
 
     /**
      * @param string|Pdf|array $pdf a pdf filename or Pdf instance or an array
@@ -124,7 +124,7 @@ class Pdf
         }
         if ($name instanceof Pdf) {
             // Keep a reference to the object to prevent unlinking
-            $this->_pdf = $name;
+            $this->_pdfs[] = $name;
             if (!$name->getCommand()->getExecuted()) {
                 // @todo: Catch errors!
                 $name->execute();
