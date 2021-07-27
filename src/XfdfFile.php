@@ -9,6 +9,42 @@ use mikehaertl\tmp\File;
  * This class represents a temporary XFDF file that can be used to fill a PDF
  * form with valid unicode characters.
  *
+ * Form data must be passed to the constructor as an array in this form:
+ *
+ * ```
+ * [
+ *     // Field name => field value
+ *     'Firstname' => 'John',
+ *
+ *     // Hierarchical/nested fields in dot notation
+ *     'Address.Street' => 'Some Street',
+ *     'Address.City' => 'Any City',
+ *
+ *     // Multi value fields
+ *     'Pets' => ['Cat', 'Mouse'],
+ * ]
+ * ```
+ *
+ * This will result in the following XML structure (header/footer omitted):
+ *
+ * ```
+ * <field name="Firstname">
+ *   <Value>John</Value>
+ * </field>
+ * <field name="Address">
+ *   <field name="Street">
+ *     <Value>Some Street</Value>
+ *   </field>
+ *   <field name="City">
+ *     <Value>Any City</Value>
+ *   </field>
+ * </field>
+ * <field name="Pets">
+ *   <Value>Cat</Value>
+ *   <Value>Mouse</Value>
+ * </field>
+ * ```
+ *
  * @author Tomas Holy <holy@interconnect.cz>
  * @author Michael Härtl <haertl.mike@gmail.com>
  * @license http://www.opensource.org/licenses/MIT
@@ -20,20 +56,23 @@ class XfdfFile extends File
 <?xml version="1.0" encoding="UTF-8"?>
 <xfdf xmlns="http://ns.adobe.com/xfdf/" xml:space="preserve">
 <fields>
+
 FDF;
 
     // XFDF file footer
     const XFDF_FOOTER = <<<FDF
 </fields>
 </xfdf>
+
 FDF;
 
     /**
      * Constructor
      *
+     *
      * @param array $data the form data as name => value
      * @param string|null $suffix the optional suffix for the tmp file
-     * @param string|null $suffix the optional prefix for the tmp file. If null
+     * @param string|null $prefix the optional prefix for the tmp file. If null
      * 'php_tmpfile_' is used.
      * @param string|null $directory directory where the file should be
      * created. Autodetected if not provided.
@@ -142,11 +181,18 @@ FDF;
         foreach ($fields as $key => $value) {
             $key = $this->xmlEncode($key);
             fwrite($fp, "<field name=\"$key\">\n");
-            if (is_array($value)) {
-                $this->writeFields($fp, $value);
+            if (!is_array($value)) {
+                $value = array($value);
+            }
+            if (isset($value[0])) {
+                // Numeric keys: single or multi-value field
+                foreach($value as $val) {
+                    $val = $this->xmlEncode($val);
+                    fwrite($fp, "<value>$val</value>\n");
+                }
             } else {
-                $value = $this->xmlEncode($value);
-                fwrite($fp, "<value>$value</value>\n");
+                // String keys: nested/hierarchical fields
+                $this->writeFields($fp, $value);
             }
             fwrite($fp, "</field>\n");
         }

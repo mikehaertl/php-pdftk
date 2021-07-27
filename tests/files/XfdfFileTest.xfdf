@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xfdf xmlns="http://ns.adobe.com/xfdf/" xml:space="preserve">
-<fields><field name="name">
+<fields>
+<field name="name">
 <value>Jürgen čárka čČćĆđĐ мирано</value>
 </field>
 <field name="email">
@@ -44,6 +45,19 @@
 </field>
 <field name="€ key">
 <value>special in key</value>
+</field>
+<field name="multivalue1">
+<value>val1</value>
+<value>val2</value>
+</field>
+<field name="nested">
+<field name="dummy">
+<value>valX</value>
+</field>
+<field name="multivalue2">
+<value>val3</value>
+<value>val4</value>
+</field>
 </field>
 </fields>
 </xfdf>

@@ -16,12 +16,15 @@ class XfdfFileTest extends TestCase
             'checkbox 2' => 0,
             'radio 1' => 2,
             'address.street' => 'some street',
-            "umlauts-in-value" => "öäüÖÄÜ",
+            "umlauts-in-value" => 'öäüÖÄÜ',
             'some.other.value' => 'val1',
             'some.other.value2' => 'val2',
-            "öäüÖÄÜ" => "umlauts in key",
-            "special-in-value" => "€ß&()",
-            "€ key" => "special in key",
+            'öäüÖÄÜ' => "umlauts in key",
+            'special-in-value' => '€ß&()',
+            '€ key' => 'special in key',
+            'multivalue1' => array('val1', 'val2'),
+            'nested.dummy' => 'valX',
+            'nested.multivalue2' => array('val3', 'val4'),
         );
 
         $oXfdfFile = new XfdfFile($data, null, null, __DIR__);
