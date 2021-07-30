@@ -25,6 +25,7 @@ class XfdfFileTest extends TestCase
             'multivalue1' => array('val1', 'val2'),
             'nested.dummy' => 'valX',
             'nested.multivalue2' => array('val3', 'val4'),
+            'nullValue' => null,
         );
 
         $oXfdfFile = new XfdfFile($data, null, null, __DIR__);
