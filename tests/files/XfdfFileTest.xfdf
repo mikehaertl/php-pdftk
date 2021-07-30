@@ -59,5 +59,8 @@
 <value>val4</value>
 </field>
 </field>
+<field name="nullValue">
+<value></value>
+</field>
 </fields>
 </xfdf>

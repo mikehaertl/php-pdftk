@@ -184,7 +184,7 @@ FDF;
             if (!is_array($value)) {
                 $value = array($value);
             }
-            if (isset($value[0])) {
+            if (array_key_exists(0, $value)) {
                 // Numeric keys: single or multi-value field
                 foreach($value as $val) {
                     $val = $this->xmlEncode($val);
