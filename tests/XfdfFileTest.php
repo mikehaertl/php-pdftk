@@ -17,6 +17,7 @@ class XfdfFileTest extends TestCase
             'radio 1' => 2,
             'address.street' => 'some street',
             "umlauts-in-value" => 'öäüÖÄÜ',
+            'some.other.0' => 'val0',
             'some.other.value' => 'val1',
             'some.other.value2' => 'val2',
             'öäüÖÄÜ' => "umlauts in key",

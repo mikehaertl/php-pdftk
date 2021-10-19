@@ -29,6 +29,9 @@
 </field>
 <field name="some">
 <field name="other">
+<field name="0">
+<value>val0</value>
+</field>
 <field name="value">
 <value>val1</value>
 </field>
