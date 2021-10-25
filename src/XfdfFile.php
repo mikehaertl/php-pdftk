@@ -99,15 +99,25 @@ FDF;
     }
 
     /**
-     * Parses an array of key/value data that may contain keys in dot notation.
+     * Parses an array of key/value data into a nested array structure.
+     *
+     * The data may use keys in dot notation (#55). Values can also be arrays in
+     * case of multi value fields (#148). To make both distinguishable in the
+     * result array keys that represent field names are prefixed with `_`. This
+     * also allows for numeric field names (#260).
      *
      * For example an array like this:
      *
      * ```
      * [
      *     'a' => 'value a',
-     *     'b.a' => 'value b.a',
-     *     'b.b' => 'value b.b',
+     *     'b.x' => 'value b.x',
+     *     'b.y' => 'value b.y',
+     *
+     *     'c.0' => 'val c.0',
+     *     'c.1' => 'val c.1',
+     *
+     *     'd' => ['m1', 'm2'],
      * ]
      * ```
      *
@@ -115,10 +125,19 @@ FDF;
      *
      * ```
      * [
-     *     'a' => 'value a',
-     *     'b' => [
-     *         'a' => 'value b.a',
-     *         'b' => 'value b.a',
+     *     '_a' => 'value a',
+     *     '_b' => [
+     *         '_x' => 'value b.x',
+     *         '_y' => 'value b.y',
+     *     ],
+     *     '_c' => [
+     *         '_0' => 'value c.0',
+     *         '_1' => 'value c.1',
+     *     ],
+     *     '_d' => [
+     *         // notice the missing underscore in the keys
+     *         0 => 'm1',
+     *         1 => 'm2',
      *     ],
      * ]
      *
@@ -136,19 +155,19 @@ FDF;
                 $key = mb_convert_encoding($key, 'UTF-8', $encoding);
                 $value = mb_convert_encoding($value, 'UTF-8', $encoding);
             }
-            $keyParts = explode('.', $key);
-            $lastPart = array_pop($keyParts);
-            if (count($keyParts) === 0) {
-                $result[$lastPart] = $value;
+            if (strpos($key, '.') === false) {
+                $result['_' . $key] = $value;
             } else {
                 $target = &$result;
+                $keyParts = explode('.', $key);
+                $lastPart = array_pop($keyParts);
                 foreach ($keyParts as $part) {
-                    if (!isset($target[$part])) {
-                        $target[$part] = array();
+                    if (!isset($target['_' . $part])) {
+                        $target['_' . $part] = array();
                     }
-                    $target = &$target[$part];
+                    $target = &$target['_' . $part];
                 }
-                $target[$lastPart] = $value;
+                $target['_' . $lastPart] = $value;
             }
         }
         return $result;
@@ -173,13 +192,13 @@ FDF;
      * Write the fields to the given filepointer
      *
      * @param int $fp
-     * @param mixed[] $fields an array of field values. A value can also be
-     * another array in which case a nested field is written.
+     * @param mixed[] $fields an array of field values as returned by
+     * `parseData()`.
      */
     protected function writeFields($fp, $fields)
     {
         foreach ($fields as $key => $value) {
-            $key = $this->xmlEncode($key);
+            $key = $this->xmlEncode(substr($key,1));
             fwrite($fp, "<field name=\"$key\">\n");
             if (!is_array($value)) {
                 $value = array($value);
