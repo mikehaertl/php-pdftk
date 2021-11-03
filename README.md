@@ -261,6 +261,35 @@ if ($result === false) {
 }
 ```
 
+#### Attach Files
+
+Add file attachments to the document or to a specific page.
+
+```php
+use mikehaertl\pdftk\Pdf;
+
+$files = [
+    '/path/to/file1',
+    '/path/to/file2',
+]
+
+// Add files at the document level
+$pdf = new Pdf('/path/my.pdf');
+$result = $pdf->attachFiles($files)
+    ->saveAs('/path/withfiles.pdf');
+if ($result === false) {
+    $error = $pdf->getError();
+}
+
+// Add files to a specific page
+$pdf = new Pdf('/path/my.pdf');
+$page = 7;
+$result = $pdf->attachFiles($files, $page)
+    ->saveAs('/path/withfiles.pdf');
+if ($result === false) {
+    $error = $pdf->getError();
+}
+```
 #### Unpack Files
 
 Copy file attachments from a PDF to the given directory.
