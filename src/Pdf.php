@@ -232,6 +232,27 @@ class Pdf
     }
 
     /**
+     * Attach files to the PDF
+     *
+     * @param array $files the list of full paths to the files to attach
+     * @param string $toPage the page to add the attachment to. If omitted the
+     * files are attached at the document level.
+     * @return bool whether the operation was successful
+     */
+    public function attachFiles($files, $toPage = null)
+    {
+        $this->constrainSingleFile();
+        if ($toPage !== null) {
+            $files[] = 'to_page';
+            $files[] = $toPage;
+        }
+        $this->getCommand()
+            ->setOperation('attach_files')
+            ->setOperationArgument($files, true);
+        return $this;
+    }
+
+    /**
      * Copy all attachments from the PDF to the given directory
      *
      * @param string|null $dir the output directory

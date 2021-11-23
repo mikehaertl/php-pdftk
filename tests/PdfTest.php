@@ -207,6 +207,7 @@ class PdfTest extends TestCase
         $this->assertFileExists($file);
 
         $tmpFile = (string) $pdf->getTmpFile();
+        $this->assertFileExists($file);
         $this->assertEquals(
             "pdftk 'A'='$document1' 'B'='$document2' shuffle A1-5 2 3 4 Bend-2even A3-5east B4-8eveneast A1south 'output' '$tmpFile'",
             (string) $pdf->getCommand()
@@ -245,6 +246,46 @@ class PdfTest extends TestCase
             @unlink($filename);
         }
         @unlink($dir . '/doc_data.txt');
+    }
+
+    public function testAttachFiles()
+    {
+        $document = $this->getDocument1();
+        $file = $this->getOutFile();
+
+        $attachment1 = __DIR__ . '/files/testfile1.txt';
+        $attachment2 = __DIR__ . '/files/testfile2.txt';
+        $attachments = array($attachment1, $attachment2);
+
+        $pdf = new Pdf($document);
+        $this->assertInstanceOf('mikehaertl\pdftk\Pdf', $pdf->attachFiles($attachments));
+        $this->assertTrue($pdf->saveAs($file));
+        $this->assertFileExists($file);
+        $tmpFile = (string) $pdf->getTmpFile();
+        $this->assertEquals(
+            "pdftk 'A'='$document' 'attach_files' '$attachment1' '$attachment2' 'output' '$tmpFile'",
+            (string) $pdf->getCommand()
+        );
+    }
+
+    public function testAttachFilesToPage()
+    {
+        $document = $this->getDocument1();
+        $file = $this->getOutFile();
+
+        $attachment1 = __DIR__ . '/files/testfile1.txt';
+        $attachment2 = __DIR__ . '/files/testfile2.txt';
+        $attachments = array($attachment1, $attachment2);
+
+        $pdf = new Pdf($document);
+        $this->assertInstanceOf('mikehaertl\pdftk\Pdf', $pdf->attachFiles($attachments, 1));
+        $this->assertTrue($pdf->saveAs($file));
+        $this->assertFileExists($file);
+        $tmpFile = (string) $pdf->getTmpFile();
+        $this->assertEquals(
+            "pdftk 'A'='$document' 'attach_files' '$attachment1' '$attachment2' 'to_page' '1' 'output' '$tmpFile'",
+            (string) $pdf->getCommand()
+        );
     }
 
     public function testUnpackFiles()
