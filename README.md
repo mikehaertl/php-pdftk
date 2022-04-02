@@ -129,6 +129,19 @@ This will make sure, that the PDF reader takes care of using the right fonts for
 something that pdftk can't do for you. Also note that `flatten()` doesn't really work well
 if you have special characters in your data.
 
+If you use `pdftk-java` >= 3.3.0 and the embedded font does not support UTF-8
+characters you can also replace it with a local font:
+
+```php
+use mikehaertl\pdftk\Pdf;
+
+// Fill form with data array
+$pdf = new Pdf('/full/path/to/form.pdf');
+$result = $pdf->fillForm($data)
+    ->replacementFont('/usr/share/fonts/dejavu/DejaVuSans.ttf')
+    ->saveAs('filled.pdf');
+```
+
 #### Create a XFDF/FDF file from a PHP array
 
 This is a bonus feature that is not available from `pdftk`.

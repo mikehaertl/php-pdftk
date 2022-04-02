@@ -589,6 +589,23 @@ class Pdf
     }
 
     /**
+     * Replace embedded font with a local font when filling a form.
+     *
+     * This option is only available for pdftk-java >= 3.3.0. It is useful when
+     * filling a form with non-ASCII text that is not supported by the fonts
+     * included in the input PDF.
+     *
+     * @param string $fontName the path to the font or the name of a font family.
+     * @return Pdf the pdf instance for method chaining
+     */
+    public function replacementFont($path)
+    {
+        $this->getCommand()
+            ->addOption('replacement_font', $path);
+        return $this;
+    }
+
+    /**
      * Execute the operation and save the output file
      *
      * @param string $name of output file
