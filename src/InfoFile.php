@@ -14,6 +14,15 @@ use mikehaertl\tmp\File;
  */
 class InfoFile extends File
 {
+    static private function encode(string $value, $encoding)
+    {
+        // Always convert to UTF-8
+        if ($encoding !== 'UTF-8' && function_exists('mb_convert_encoding')) {
+            $value = mb_convert_encoding($value, 'UTF-8', $encoding);
+            $value = defined('ENT_XML1') ? htmlspecialchars($value, ENT_XML1, 'UTF-8') : htmlspecialchars($value);
+        }
+        return $value;
+    }
 
     /**
      * Constructor
@@ -43,14 +52,31 @@ class InfoFile extends File
 
         $fields = '';
         foreach ($data as $key => $value) {
-            // Always convert to UTF-8
-            if ($encoding !== 'UTF-8' && function_exists('mb_convert_encoding')) {
-                $value = mb_convert_encoding($value, 'UTF-8', $encoding);
-                $key = mb_convert_encoding($key, 'UTF-8', $encoding);
-                $value = defined('ENT_XML1') ? htmlspecialchars($key, ENT_XML1, 'UTF-8') : htmlspecialchars($key);
-                $key = defined('ENT_XML1') ? htmlspecialchars($value, ENT_XML1, 'UTF-8') : htmlspecialchars($value);
+            $key = self::encode($key, $encoding);
+            if (is_array($value)) {
+                if ($key == 'Info') {
+                    // Info is special, undo that
+                    $data = [];
+                    foreach ($value as $subKey => $subValue) {
+                        $data[] = [
+                            'Key' => $subKey,
+                            'Value' => $subValue,
+                        ];
+                    }
+                    $value = $data;
+                }
+                foreach ($value as $item) {
+                    $fields .= "${key}Begin\n";
+                    foreach ($item as $subKey => $subValue) {
+                        // Always convert to UTF-8
+                        $subKey = self::encode($subKey, $encoding);
+                        $subValue = self::encode($subValue, $encoding);
+                        $fields .= "${key}${subKey}: ${subValue}\n";
+                    }
+                }
+            } else{
+                $fields .= "${key}: ${value}\n";
             }
-            $fields .= "InfoBegin\nInfoKey: $key\nInfoValue: $value\n";
         }
 
         // Use fwrite, since file_put_contents() messes around with character encoding
