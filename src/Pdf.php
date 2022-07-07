@@ -653,6 +653,10 @@ class Pdf
     {
         if ($this->_command === null) {
             $this->_command = new Command;
+            $this->_command->procEnv = [
+                'LANG' => 'C.UTF-8',
+                'LC_ALL' => 'C.UTF-8',
+            ];
         }
         return $this->_command;
     }
