@@ -321,7 +321,7 @@ class Pdf
     public function updateInfo($data, $encoding = 'UTF-8')
     {
         $this->constrainSingleFile();
-        if (is_array($data)) {
+        if (is_array($data) || $data instanceof InfoFields) {
             $data = new InfoFile($data, null, null, $this->tempDir, $encoding);
         }
         $this->getCommand()
