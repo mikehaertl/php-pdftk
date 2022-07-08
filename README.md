@@ -446,6 +446,28 @@ $pdf = new Pdf('/path/my.pdf', [
 ]);
 ```
 
+#### Solve issues with UTF-8 characters in filenames or infofile content
+
+If you have files with UTF-8 encoded characters in their filename or if you
+pass an infofile with such characters to `updateInfo()` you should supply the
+correct locale when excuting `pdftk`. You can therefore add these options:
+
+```php
+$pdf = new Pdf($file, [
+    'locale' => 'en_US.utf8',
+    'procEnv' => [
+        'LANG' => 'en_US.utf-8',
+    ],
+]);
+```
+
+> **Note:** You need to ensure that the locale you set here is available on
+> your system. On Linux you can check with `locale -a` which locales are
+> installed. [This article](https://wiki.archlinux.org/title/locale) explains
+> the concept in more detail.
+
+
+
 ### Temporary File
 
 Internally a temporary file is created via [php-tmpfile](https://github.com/mikehaertl/php-tmpfile).
