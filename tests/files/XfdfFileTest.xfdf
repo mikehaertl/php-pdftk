@@ -65,5 +65,10 @@
 <field name="nullValue">
 <value></value>
 </field>
+<field name="multilinefield">
+<value>line1
+line2
+line3</value>
+</field>
 </fields>
 </xfdf>
