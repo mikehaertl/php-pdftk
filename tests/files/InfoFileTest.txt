@@ -4,3 +4,24 @@ InfoValue: php-pdftk
 InfoBegin
 InfoKey: Subject
 InfoValue: öäüÖÄÜ
+InfoBegin
+InfoKey: Title
+InfoValue: Title x
+BookmarkBegin
+BookmarkTitle: Title 1
+BookmarkLevel: 1
+BookmarkPageNumber: 1
+BookmarkBegin
+BookmarkTitle: Title 2
+BookmarkLevel: 2
+BookmarkPageNumber: 10
+PageMediaBegin
+PageMediaNumber: 1
+PageMediaRotation: 0
+PageMediaRect: 0 0 595 842
+PageMediaDimensions: 595 842
+PageLabelBegin
+PageLabelNewIndex: 1
+PageLabelStart: 1
+PageLabelPrefix: some name 1
+PageLabelNumStyle: NoNumber

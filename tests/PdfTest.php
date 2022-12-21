@@ -606,6 +606,30 @@ class PdfTest extends TestCase
         $this->assertEquals($this->formDataArray, (array)$data);
     }
 
+    public function testCanUpdateInfoFromDumpedData()
+    {
+        $document1 = $this->getDocument1();
+        $file = $this->getOutFile();
+
+        $pdf = new Pdf($document1);
+        $data = $pdf->getData();
+        $this->assertInstanceOf('\mikehaertl\pdftk\InfoFields', $data);
+        $this->assertEquals($this->formDataArray, (array)$data);
+
+        $data['Info']['Creator'] = 'php-pdftk';
+
+        $pdf = new Pdf($document1);
+        $this->assertInstanceOf('mikehaertl\pdftk\Pdf', $pdf->updateInfo($data));
+
+        $this->assertTrue($pdf->saveAs($file));
+
+        $this->assertFileExists($file);
+
+        $pdf = new Pdf($file);
+        $data = $pdf->getData();
+        $this->assertEquals('php-pdftk', $data['Info']['Creator']);
+    }
+
     public function testCanGetDataFields()
     {
         $form = $this->getForm();
