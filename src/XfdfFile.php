@@ -223,6 +223,10 @@ FDF;
      */
     protected function xmlEncode($value)
     {
+        if (null === $value) {
+            return $value;
+        }
+
         return defined('ENT_XML1') ?
             htmlspecialchars($value, ENT_XML1, 'UTF-8') :
             htmlspecialchars($value);
