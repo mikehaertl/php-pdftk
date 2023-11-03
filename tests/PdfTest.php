@@ -331,7 +331,8 @@ class PdfTest extends TestCase
         $this->assertFileExists($file);
 
         $tmpFile = (string) $pdf->getTmpFile();
-        $regex = "#pdftk 'A'='$form' 'fill_form' '/tmp/[^ ]+\.xfdf' 'output' '$tmpFile' 'drop_xfa' 'need_appearances'#";
+        $tmpBasePath = substr($tmpFile, 0, strpos($tmpFile, '/', 1));
+        $regex = "#pdftk 'A'='$form' 'fill_form' '$tmpBasePath/[^ ]+\.xfdf' 'output' '$tmpFile' 'drop_xfa' 'need_appearances'#";
         $command = (string) $pdf->getCommand();
         if (phpUnitVersion('<', 9)) {
             $this->assertRegExp($regex, $command);
