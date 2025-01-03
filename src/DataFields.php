@@ -49,6 +49,31 @@ class DataFields extends ArrayObject
     }
 
     /**
+     * Get a block with a certain FieldName
+     * 
+     * @param string $name
+     * @return array|false
+     */
+    public function getBlockWithName($name) {
+        $iterator = $this->getIterator();
+        while ($iterator->valid()) {
+            $block = $iterator->current();
+
+            if (! is_array($block)) {
+                break;
+            }
+
+            if (array_key_exists('FieldName', $block) && $block['FieldName'] === $name) {
+                return $block;
+            }
+
+            $iterator->next();
+        }
+
+        return false;
+    }
+
+    /**
      * Parse the output of dump_data_fields into an array.
      *
      * The string to parse can either be a single block of `Xyz:value` lines

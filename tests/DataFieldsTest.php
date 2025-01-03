@@ -12,6 +12,25 @@ class DataFieldsTest extends TestCase
         $this->assertEquals($this->_parsedResult, $dataFields->__toArray());
     }
 
+    public function testGetBlockWithExistingName()
+    {
+        $dataFields = new DataFields($this->_testInput);
+        $this->assertEquals($dataFields->getBlockWithName('field2'), array(
+            'FieldType' => 'Text',
+            'FieldName' => 'field2',
+            'FieldNameAlt' => 'field2_alt',
+            'FieldFlags' => 0,
+            'FieldValue' => 'value:with:colons',
+            'FieldJustification' => 'Left',
+        ));
+    }
+
+    public function testGetBlockWithNonExistingName()
+    {
+        $dataFields = new DataFields($this->_testInput);
+        $this->assertEquals($dataFields->getBlockWithName('field0'), false);
+    }
+
     protected $_testInput = <<<DATA
 ---
 FieldType: Text
@@ -82,6 +101,13 @@ FieldJustification: Left
 FieldStateOption: -- Another value with dashes --
 FieldStateOption: Value 2
 FieldStateOption: Value 3
+---
+FieldType: Button
+FieldName: field8
+FieldFlags: 0
+FieldJustification: Left
+FieldStateOption: Yes
+FieldStateOption: Off
 DATA;
 
     protected $_parsedResult = array(
@@ -144,6 +170,16 @@ DATA;
                 'Value 3',
             ),
             'FieldJustification' => 'Left',
+        ),
+        array(
+            'FieldType' => 'Button',
+            'FieldName' => 'field8',
+            'FieldFlags' => 0,
+            'FieldJustification' => 'Left',
+            'FieldStateOption' => array(
+                'Yes',
+                'Off',
+            ),
         ),
     );
 }
