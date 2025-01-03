@@ -30,6 +30,11 @@ trailer
 FDF;
 
     /**
+     * @var DataFields|false the DataFields object of the file
+     */
+    protected $_dataFields;
+
+    /**
      * Constructor
      *
      * @param array $data the form data as name => value
@@ -39,8 +44,9 @@ FDF;
      * @param string|null $directory directory where the file should be
      * created. Autodetected if not provided.
      * @param string|null $encoding of the data. Default is 'UTF-8'.
+     * @param DataFields|bool $dataFields of the current file
      */
-    public function __construct($data, $suffix = null, $prefix = null, $directory = null, $encoding = 'UTF-8')
+    public function __construct($data, $suffix = null, $prefix = null, $directory = null, $encoding = 'UTF-8', $dataFields = false)
     {
         if ($directory === null) {
             $directory = self::getTempDir();
@@ -53,12 +59,24 @@ FDF;
         rename($this->_fileName, $newName);
         $this->_fileName = $newName;
 
+        $this->_dataFields = $dataFields;
+
         if (!function_exists('mb_convert_encoding')) {
             throw new \Exception('MB extension required.');
         }
 
+        $this->_dataFields = $dataFields;
+
         $fields = '';
         foreach ($data as $key => $value) {
+            if (is_bool($value) && $this->_dataFields) {
+                $fieldBlock = $this->_dataFields->getBlockWithName($key);
+                if ($fieldBlock && array_key_exists('FieldStateOption', $fieldBlock)) {
+                    $idx = $value ? 0 : 1;
+                    $value = $fieldBlock['FieldStateOption'][$idx];
+                }
+            }
+
             // Create UTF-16BE string encode as ASCII hex
             // See http://blog.tremily.us/posts/PDF_forms/
             $utf16Value = mb_convert_encoding($value, 'UTF-16BE', $encoding);

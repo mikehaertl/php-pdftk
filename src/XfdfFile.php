@@ -67,6 +67,11 @@ FDF;
 FDF;
 
     /**
+     * @var DataFields|false the DataFields object of the file
+     */
+    protected $_dataFields;
+
+    /**
      * Constructor
      *
      *
@@ -77,8 +82,9 @@ FDF;
      * @param string|null $directory directory where the file should be
      * created. Autodetected if not provided.
      * @param string|null $encoding of the data. Default is 'UTF-8'.
+     * @param DataFields|bool $dataFields of the current file
      */
-    public function __construct($data, $suffix = null, $prefix = null, $directory = null, $encoding = 'UTF-8')
+    public function __construct($data, $suffix = null, $prefix = null, $directory = null, $encoding = 'UTF-8', $dataFields = false)
     {
         if ($directory === null) {
             $directory = self::getTempDir();
@@ -95,6 +101,9 @@ FDF;
         rename($tempfile, $this->_fileName);
 
         $fields = $this->parseData($data, $encoding);
+
+        $this->_dataFields = $dataFields;
+
         $this->writeXml($fields);
     }
 
@@ -202,10 +211,17 @@ FDF;
             fwrite($fp, "<field name=\"$key\">\n");
             if (!is_array($value)) {
                 $value = array($value);
-            }
+            }            
             if (array_key_exists(0, $value)) {
                 // Numeric keys: single or multi-value field
                 foreach($value as $val) {
+                    if (is_bool($val) && $this->_dataFields) {
+                        $fieldBlock = $this->_dataFields->getBlockWithName($key);
+                        if ($fieldBlock && array_key_exists('FieldStateOption', $fieldBlock)) {
+                            $idx = $val ? 0 : 1;
+                            $val = $fieldBlock['FieldStateOption'][$idx];
+                        }
+                    }
                     $val = $this->xmlEncode($val);
                     fwrite($fp, "<value>$val</value>\n");
                 }
