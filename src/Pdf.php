@@ -297,8 +297,12 @@ class Pdf
     {
         $this->constrainSingleFile();
         if (is_array($data)) {
+            $command = clone $this->_command;
+            $dataFields = $this->getDataFields($encoding == 'UTF-8');
+            $this->_command = $command;
+
             $className = '\mikehaertl\pdftk\\' . ($format === 'xfdf' ? 'XfdfFile' : 'FdfFile');
-            $data = new $className($data, null, null, $this->tempDir, $encoding);
+            $data = new $className($data, null, null, $this->tempDir, $encoding, $dataFields);
         }
         $this->getCommand()
             ->setOperation('fill_form')
