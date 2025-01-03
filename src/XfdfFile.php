@@ -211,7 +211,7 @@ FDF;
             fwrite($fp, "<field name=\"$key\">\n");
             if (!is_array($value)) {
                 $value = array($value);
-            }            
+            }
             if (array_key_exists(0, $value)) {
                 // Numeric keys: single or multi-value field
                 foreach($value as $val) {
