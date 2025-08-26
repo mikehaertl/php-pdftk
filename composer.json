@@ -42,8 +42,20 @@
         "test:coverage": "XDEBUG_MODE=coverage vendor/bin/phpunit"
     },
     "config": {
+        "optimize-autoloader": true,
+        "classmap-authoritative": true,
+        "sort-packages": true,
         "allow-plugins": {
             "bamarni/composer-bin-plugin": true
+        },
+        "platform": {
+            "php": "8.1"
+        }
+    },
+    "extra": {
+        "bamarni-bin": {
+            "bin-links": true,
+            "forward-command": true
         }
     }
 }
