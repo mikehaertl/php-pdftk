@@ -18,8 +18,8 @@ jobs:
       - name: Install pdftk
         run: |
           cd /tmp
-          sudo wget http://mirrors.kernel.org/ubuntu/pool/universe/p/pdftk-java/pdftk-java_3.0.9-1_all.deb
-          sudo apt install -y -q ./pdftk-java_3.0.9-1_all.deb
+          sudo wget https://mirrors.edge.kernel.org/ubuntu/pool/universe/p/pdftk-java/pdftk-java_3.3.3-2_all.deb
+          sudo apt install -y -q ./pdftk-java_3.3.3-2_all.deb
           pdftk --version
 
       - name: Install PHP
