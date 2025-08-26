@@ -5,7 +5,7 @@
          backupStaticProperties="false"
          beStrictAboutCoverageMetadata="true"
          beStrictAboutOutputDuringTests="true"
-         bootstrap="./tests/bootstrap.php"
+         bootstrap="vendor/autoload.php"
          cacheDirectory=".phpunit.result.cache"
          colors="true"
          displayDetailsOnTestsThatTriggerWarnings="true"
