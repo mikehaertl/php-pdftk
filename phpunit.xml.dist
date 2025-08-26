@@ -19,4 +19,15 @@
             <directory suffix="Test.php">./tests/unit</directory>
         </testsuite>
     </testsuites>
+    <coverage>
+        <report>
+            <clover outputFile="./tests/logs/clover.xml"/>
+            <html outputDirectory="./tests/logs/html-coverage" lowUpperBound="50" highLowerBound="90"/>
+        </report>
+    </coverage>
+    <source>
+        <include>
+            <directory suffix=".php">src</directory>
+        </include>
+    </source>
 </phpunit>

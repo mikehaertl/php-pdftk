@@ -4,3 +4,4 @@ composer.lock
 /vendor-bin/**/vendor/
 *.swp
 .phpunit.result.cache
+/tests/logs
