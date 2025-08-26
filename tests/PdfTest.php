@@ -799,16 +799,16 @@ FieldName: checkbox 1
 FieldFlags: 0
 FieldValue: On
 FieldJustification: Left
-FieldStateOption: Off
 FieldStateOption: On
+FieldStateOption: Off
 ---
 FieldType: Button
 FieldName: checkbox 2
 FieldFlags: 0
 FieldValue: On
 FieldJustification: Left
-FieldStateOption: Off
 FieldStateOption: On
+FieldStateOption: Off
 ---
 FieldType: Button
 FieldName: radio 1
@@ -816,8 +816,8 @@ FieldFlags: 49152
 FieldValue: 2
 FieldJustification: Left
 FieldStateOption: 1
-FieldStateOption: 2
 FieldStateOption: Off
+FieldStateOption: 2
 ---
 FieldType: Text
 FieldName: email
@@ -837,7 +837,7 @@ EOD;
             'FieldFlags' => '0',
             'FieldValue' => 'On',
             'FieldJustification' => 'Left',
-            'FieldStateOption' => array('Off', 'On'),
+            'FieldStateOption' => array('On', 'Off'),
         ),
         array(
             'FieldType' => 'Button',
@@ -845,7 +845,7 @@ EOD;
             'FieldFlags' => '0',
             'FieldValue' => 'On',
             'FieldJustification' => 'Left',
-            'FieldStateOption' => array('Off', 'On'),
+            'FieldStateOption' => array('On', 'Off'),
         ),
         array(
             'FieldType' => 'Button',
@@ -853,7 +853,7 @@ EOD;
             'FieldFlags' => '49152',
             'FieldValue' => '2',
             'FieldJustification' => 'Left',
-            'FieldStateOption' => array('1', '2', 'Off'),
+            'FieldStateOption' => array('1', 'Off', '2'),
         ),
         array(
             'FieldType' => 'Text',

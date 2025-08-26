@@ -1,19 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
-<phpunit backupGlobals="false"
-         backupStaticAttributes="false"
-         colors="true"
-         convertErrorsToExceptions="true"
-         convertNoticesToExceptions="true"
-         convertWarningsToExceptions="true"
-         processIsolation="false"
-         stopOnFailure="false"
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.5/phpunit.xsd"
+         backupGlobals="false"
+         backupStaticProperties="false"
+         beStrictAboutCoverageMetadata="true"
+         beStrictAboutOutputDuringTests="true"
          bootstrap="./tests/bootstrap.php"
->
+         cacheDirectory=".phpunit.result.cache"
+         colors="true"
+         displayDetailsOnTestsThatTriggerWarnings="true"
+         failOnNotice="true"
+         failOnRisky="true"
+         failOnWarning="true"
+         processIsolation="false"
+         stopOnFailure="false">
     <testsuites>
         <testsuite name="phppdftk Test Suite">
-            <directory phpVersion="7.2.0" phpVersionOperator=">=">./tests/phpunit89</directory>
-            <directory phpVersion="7.2.0" phpVersionOperator="lt">./tests/phpunit4567</directory>
+            <directory suffix="Test.php">./tests/phpunit89</directory>
+            <directory suffix="Test.php">./tests/phpunit4567</directory>
         </testsuite>
     </testsuites>
 </phpunit>

@@ -24,5 +24,26 @@
         "psr-4": {
             "tests\\": "tests"
         }
+    },
+    "require-dev": {
+        "bamarni/composer-bin-plugin": "^1.8"
+    },
+    "scripts": {
+        "bin": "echo 'bin not installed'",
+        "lint": "find . -name \\*.php -not -path './vendor/*' -not -path './vendor-bin/*' -print0 | xargs -0 -n1 php -l",
+        "post-install-cmd": [
+            "@composer bin all install --ansi",
+            "composer dump-autoload"
+        ],
+        "post-update-cmd": [
+            "composer dump-autoload"
+        ],
+        "test:unit": "vendor/bin/phpunit --no-coverage --colors=always --fail-on-warning --fail-on-risky --display-deprecations --display-phpunit-deprecations",
+        "test:coverage": "XDEBUG_MODE=coverage vendor/bin/phpunit"
+    },
+    "config": {
+        "allow-plugins": {
+            "bamarni/composer-bin-plugin": true
+        }
     }
 }
