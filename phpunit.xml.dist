@@ -16,8 +16,7 @@
          stopOnFailure="false">
     <testsuites>
         <testsuite name="phppdftk Test Suite">
-            <directory suffix="Test.php">./tests/phpunit89</directory>
-            <directory suffix="Test.php">./tests/phpunit4567</directory>
+            <directory suffix="Test.php">./tests/unit</directory>
         </testsuite>
     </testsuites>
 </phpunit>

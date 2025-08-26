@@ -24,6 +24,6 @@ class FdfFileTest extends TestCase
         $sFdfFilename = $oFdfFile->getFileName();
 
         $this->assertFileExists($sFdfFilename);
-        $this->assertFileEquals(__DIR__ . "/files/FdfFileTest.fdf", $sFdfFilename);
+        $this->assertFileEquals(realpath(__DIR__ . '/../files/FdfFileTest.fdf'), $sFdfFilename);
     }
 }
