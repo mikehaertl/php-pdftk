@@ -3,9 +3,18 @@ namespace tests;
 
 use PHPUnit\Framework\TestCase;
 use mikehaertl\pdftk\Command;
+use mikehaertl\tmp\File;
 
 class CommandTest extends TestCase
 {
+    private string $tempOutputFile;
+
+    public function setUp(): void
+    {
+        $tempDir = File::getTempDir();
+        $this->tempOutputFile = tempnam($tempDir, 'pdftk-test-');
+    }
+
     public function testCanAddFiles()
     {
         $document1 = $this->getDocument1();
@@ -85,21 +94,21 @@ class CommandTest extends TestCase
 
     protected function getDocument1()
     {
-        return __DIR__ . '/files/document1.pdf';
+        return realpath(__DIR__ . '/../files/document1.pdf');
     }
 
     protected function getDocument2()
     {
-        return __DIR__ . '/files/document2.pdf';
+        return realpath(__DIR__ . '/../files/document2.pdf');
     }
 
     protected function getForm()
     {
-        return __DIR__ . '/files/form.pdf';
+        return realpath(__DIR__ . '/../files/form.pdf');
     }
 
     protected function getOutFile()
     {
-        return __DIR__ . '/test.pdf';
+        return $this->tempOutputFile;
     }
 }

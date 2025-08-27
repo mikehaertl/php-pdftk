@@ -1,19 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
-<phpunit backupGlobals="false"
-         backupStaticAttributes="false"
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.5/phpunit.xsd"
+         backupGlobals="false"
+         backupStaticProperties="false"
+         beStrictAboutCoverageMetadata="true"
+         beStrictAboutOutputDuringTests="true"
+         bootstrap="vendor/autoload.php"
+         cacheDirectory=".phpunit.result.cache"
          colors="true"
-         convertErrorsToExceptions="true"
-         convertNoticesToExceptions="true"
-         convertWarningsToExceptions="true"
+         displayDetailsOnTestsThatTriggerWarnings="true"
+         failOnNotice="true"
+         failOnRisky="true"
+         failOnWarning="true"
          processIsolation="false"
-         stopOnFailure="false"
-         bootstrap="./tests/bootstrap.php"
->
+         stopOnFailure="false">
     <testsuites>
         <testsuite name="phppdftk Test Suite">
-            <directory phpVersion="7.2.0" phpVersionOperator=">=">./tests/phpunit89</directory>
-            <directory phpVersion="7.2.0" phpVersionOperator="lt">./tests/phpunit4567</directory>
+            <directory suffix="Test.php">./tests/unit</directory>
         </testsuite>
     </testsuites>
+    <coverage>
+        <report>
+            <clover outputFile="./tests/logs/clover.xml"/>
+            <html outputDirectory="./tests/logs/html-coverage" lowUpperBound="50" highLowerBound="90"/>
+        </report>
+    </coverage>
+    <source>
+        <include>
+            <directory suffix=".php">src</directory>
+        </include>
+    </source>
 </phpunit>

@@ -1,5 +1,7 @@
 phpunit.xml
 composer.lock
 /vendor/
+/vendor-bin/**/vendor/
 *.swp
 .phpunit.result.cache
+/tests/logs

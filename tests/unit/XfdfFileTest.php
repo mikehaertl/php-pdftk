@@ -34,6 +34,6 @@ class XfdfFileTest extends TestCase
         $sXfdfFilename = $oXfdfFile->getFileName();
 
         $this->assertFileExists($sXfdfFilename);
-        $this->assertFileEquals(__DIR__ . "/files/XfdfFileTest.xfdf", $sXfdfFilename);
+        $this->assertFileEquals(__DIR__ . '/../files/XfdfFileTest.xfdf', $sXfdfFilename);
     }
 }

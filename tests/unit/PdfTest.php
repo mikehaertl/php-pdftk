@@ -3,9 +3,18 @@ namespace tests;
 
 use PHPUnit\Framework\TestCase;
 use mikehaertl\pdftk\Pdf;
+use mikehaertl\tmp\File;
 
 class PdfTest extends TestCase
 {
+    private string $tempOutputFile;
+
+    public function setUp(): void
+    {
+        $tempDir = File::getTempDir();
+        $this->tempOutputFile = tempnam($tempDir, 'pdftk-test-');
+    }
+
     public function testCanPassDocumentToConstructor()
     {
         $document = $this->getDocument1();
@@ -253,8 +262,8 @@ class PdfTest extends TestCase
         $document = $this->getDocument1();
         $file = $this->getOutFile();
 
-        $attachment1 = __DIR__ . '/files/testfile1.txt';
-        $attachment2 = __DIR__ . '/files/testfile2.txt';
+        $attachment1 = realpath(__DIR__ . '/../files/testfile1.txt');
+        $attachment2 = realpath(__DIR__ . '/../files/testfile2.txt');
         $attachments = array($attachment1, $attachment2);
 
         $pdf = new Pdf($document);
@@ -273,8 +282,8 @@ class PdfTest extends TestCase
         $document = $this->getDocument1();
         $file = $this->getOutFile();
 
-        $attachment1 = __DIR__ . '/files/testfile1.txt';
-        $attachment2 = __DIR__ . '/files/testfile2.txt';
+        $attachment1 = realpath(__DIR__ . '/../files/testfile1.txt');
+        $attachment2 = realpath(__DIR__ . '/../files/testfile2.txt');
         $attachments = array($attachment1, $attachment2);
 
         $pdf = new Pdf($document);
@@ -334,11 +343,7 @@ class PdfTest extends TestCase
         $tmpBasePath = substr($tmpFile, 0, strpos($tmpFile, '/', 1));
         $regex = "#pdftk 'A'='$form' 'fill_form' '$tmpBasePath/[^ ]+\.xfdf' 'output' '$tmpFile' 'drop_xfa' 'need_appearances'#";
         $command = (string) $pdf->getCommand();
-        if (phpUnitVersion('<', 9)) {
-            $this->assertRegExp($regex, $command);
-        } else {
-            $this->assertMatchesRegularExpression($regex, $command);
-        }
+        $this->assertMatchesRegularExpression($regex, $command);
     }
 
     public function testCanFillFormFromFile()
@@ -357,11 +362,7 @@ class PdfTest extends TestCase
         $tmpFile = (string) $pdf->getTmpFile();
         $regex = "#pdftk 'A'='$form' 'fill_form' '$fdf' 'output' '$tmpFile' 'drop_xfa' 'need_appearances'#";
         $command = (string) $pdf->getCommand();
-        if (phpUnitVersion('<', 9)) {
-            $this->assertRegExp($regex, $command);
-        } else {
-            $this->assertMatchesRegularExpression($regex, $command);
-        }
+        $this->assertMatchesRegularExpression($regex, $command);
     }
 
     public function testCanUpdateInfo()
@@ -638,13 +639,8 @@ class PdfTest extends TestCase
         $pdf = new Pdf($form);
         $data = $pdf->getDataFields();
         $this->assertInstanceOf('\mikehaertl\pdftk\DataFields', $data);
-        if (phpUnitVersion('<', 9)) {
-            $this->assertInternalType('string', $data->__toString());
-            $this->assertInternalType('array', $data->__toArray());
-        } else {
-            $this->assertIsString($data->__toString());
-            $this->assertIsArray($data->__toArray());
-        }
+        $this->assertIsString($data->__toString());
+        $this->assertIsArray($data->__toArray());
         $this->assertEquals($this->formDataFields, $data->__toString());
         $this->assertEquals($this->formDataFieldsArray, $data->__toArray());
     }
@@ -676,36 +672,36 @@ class PdfTest extends TestCase
 
     protected function getDocument1()
     {
-        return __DIR__ . '/files/document1.pdf';
+        return realpath(__DIR__ . '/../files/document1.pdf');
     }
 
     protected function getDocument2()
     {
-        return __DIR__ . '/files/document2.pdf';
+        return realpath(__DIR__ . '/../files/document2.pdf');
     }
 
     protected function getForm()
     {
         // Empty form
-        return __DIR__ . '/files/form.pdf';
+        return realpath(__DIR__ . '/../files/form.pdf');
     }
 
     protected function getFilledForm()
     {
         // Form filled with data from testCanFillFormFromData()
-        return __DIR__ . '/files/filledform.pdf';
+        return realpath(__DIR__ . '/../files/filledform.pdf');
     }
 
     protected function getFdf()
     {
         // Data from testCanFillFormFromData()
-        return __DIR__ . '/files/data.fdf';
+        return realpath(__DIR__ . '/../files/data.fdf');
     }
 
     protected function getOutFile()
     {
         // tmp out file
-        return __DIR__ . '/test.pdf';
+        return $this->tempOutputFile;
     }
 
     protected $formData = <<<EOD
@@ -799,16 +795,16 @@ FieldName: checkbox 1
 FieldFlags: 0
 FieldValue: On
 FieldJustification: Left
-FieldStateOption: Off
 FieldStateOption: On
+FieldStateOption: Off
 ---
 FieldType: Button
 FieldName: checkbox 2
 FieldFlags: 0
 FieldValue: On
 FieldJustification: Left
-FieldStateOption: Off
 FieldStateOption: On
+FieldStateOption: Off
 ---
 FieldType: Button
 FieldName: radio 1
@@ -816,8 +812,8 @@ FieldFlags: 49152
 FieldValue: 2
 FieldJustification: Left
 FieldStateOption: 1
-FieldStateOption: 2
 FieldStateOption: Off
+FieldStateOption: 2
 ---
 FieldType: Text
 FieldName: email
@@ -837,7 +833,7 @@ EOD;
             'FieldFlags' => '0',
             'FieldValue' => 'On',
             'FieldJustification' => 'Left',
-            'FieldStateOption' => array('Off', 'On'),
+            'FieldStateOption' => array('On', 'Off'),
         ),
         array(
             'FieldType' => 'Button',
@@ -845,7 +841,7 @@ EOD;
             'FieldFlags' => '0',
             'FieldValue' => 'On',
             'FieldJustification' => 'Left',
-            'FieldStateOption' => array('Off', 'On'),
+            'FieldStateOption' => array('On', 'Off'),
         ),
         array(
             'FieldType' => 'Button',
@@ -853,7 +849,7 @@ EOD;
             'FieldFlags' => '49152',
             'FieldValue' => '2',
             'FieldJustification' => 'Left',
-            'FieldStateOption' => array('1', '2', 'Off'),
+            'FieldStateOption' => array('1', 'Off', '2'),
         ),
         array(
             'FieldType' => 'Text',

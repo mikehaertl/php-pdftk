@@ -51,7 +51,7 @@ class InfoFileTest extends TestCase
         $sInfoFilename = $oInfoFile->getFileName();
 
         $this->assertFileExists($sInfoFilename);
-        $this->assertFileEquals(__DIR__ . '/files/InfoFileTest.txt', $sInfoFilename);
+        $this->assertFileEquals(realpath(__DIR__ . '/../files/InfoFileTest.txt'), $sInfoFilename);
     }
 
     public function testInfoFileCreationFromLegacyFormat()
@@ -101,6 +101,6 @@ class InfoFileTest extends TestCase
         $sInfoFilename = $oInfoFile->getFileName();
 
         $this->assertFileExists($sInfoFilename);
-        $this->assertFileEquals(__DIR__ . '/files/InfoFileTest.txt', $sInfoFilename);
+        $this->assertFileEquals(realpath(__DIR__ . '/../files/InfoFileTest.txt'), $sInfoFilename);
     }
 }
