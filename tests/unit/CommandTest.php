@@ -1,4 +1,5 @@
 <?php
+
 namespace tests;
 
 use PHPUnit\Framework\TestCase;
@@ -21,7 +22,7 @@ class CommandTest extends TestCase
         $document2 = $this->getDocument2();
         $file = $this->getOutFile();
 
-        $command = new Command;
+        $command = new Command();
         $this->assertEquals(0, $command->getFileCount());
         $this->assertInstanceOf('mikehaertl\pdftk\Command', $command->addFile($document1, 'A'));
         $this->assertInstanceOf('mikehaertl\pdftk\Command', $command->addFile($document2, 'B', 'complex\'"password'));
@@ -37,7 +38,7 @@ class CommandTest extends TestCase
         $document1 = $this->getDocument1();
         $file = $this->getOutFile();
 
-        $command = new Command;
+        $command = new Command();
         $this->assertInstanceOf('mikehaertl\pdftk\Command', $command->addFile($document1, 'A'));
         $this->assertInstanceOf('mikehaertl\pdftk\Command', $command->addOption('encrypt_40bit'));
         $this->assertInstanceOf('mikehaertl\pdftk\Command', $command->addOption('allow', 'Printing', false));
@@ -53,7 +54,7 @@ class CommandTest extends TestCase
         $document1 = $this->getDocument1();
         $file = $this->getOutFile();
 
-        $command = new Command;
+        $command = new Command();
         $this->assertInstanceOf('mikehaertl\pdftk\Command', $command->addFile($document1, 'A'));
         $this->assertInstanceOf('mikehaertl\pdftk\Command', $command->setOperation('cat'));
         $this->assertInstanceOf('mikehaertl\pdftk\Command', $command->setOperationArgument('A'));
@@ -70,7 +71,7 @@ class CommandTest extends TestCase
         $document1 = $this->getDocument1();
         $file = $this->getOutFile();
 
-        $command = new Command;
+        $command = new Command();
         $this->assertInstanceOf('mikehaertl\pdftk\Command', $command->addFile($document1, 'A'));
         $this->assertInstanceOf('mikehaertl\pdftk\Command', $command->setOperation('cat'));
         $this->assertInstanceOf('mikehaertl\pdftk\Command', $command->addPageRange(1));

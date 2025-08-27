@@ -1,4 +1,5 @@
 <?php
+
 namespace tests;
 
 use PHPUnit\Framework\TestCase;
@@ -118,7 +119,7 @@ class PdfTest extends TestCase
         $document2 = $this->getDocument2();
         $file = $this->getOutFile();
 
-        $pdf = new Pdf;
+        $pdf = new Pdf();
         $this->assertInstanceOf('mikehaertl\pdftk\Pdf', $pdf->addFile($document1, null, 'complex\'"password'));
         $this->assertInstanceOf('mikehaertl\pdftk\Pdf', $pdf->addFile($document2, 'D'));
         $this->assertTrue($pdf->saveAs($file));
@@ -136,7 +137,7 @@ class PdfTest extends TestCase
         $document1 = $this->getDocument1();
         $file = $this->getOutFile();
 
-        $pdf = new Pdf;
+        $pdf = new Pdf();
         $this->assertInstanceOf('mikehaertl\pdftk\Pdf', $pdf->addFile($document1, null, 'complex\'"password'));
         $this->assertTrue($pdf->saveAs($file));
         $this->assertFileExists($file);
