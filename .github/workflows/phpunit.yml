@@ -1,5 +1,13 @@
-name: Tests
+name: PHPUnit
 on: pull_request
+
+permissions:
+  contents: read
+
+concurrency:
+  group: phpunit-sqlite-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
 jobs:
   phpunit:
     name: PHP ${{ matrix.php }}
