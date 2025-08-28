@@ -10,12 +10,13 @@ use ArrayObject;
  *
  * @author Burak USGURLU <burak@uskur.com.tr>
  * @license http://www.opensource.org/licenses/MIT
+ * @extends ArrayObject<string, mixed>
  */
 class InfoFields extends ArrayObject
 {
-    private $_string;
+    private string $_string;
 
-    private $_array;
+    private array $_array;
 
     /**
      * InfoFields constructor.
@@ -24,26 +25,23 @@ class InfoFields extends ArrayObject
      * @param int $flags
      * @param string $iterator_class
      */
-    public function __construct($input = null, $flags = 0, $iterator_class = "ArrayIterator")
-    {
+    public function __construct(
+        ?string $input = null,
+        int $flags = 0,
+        string $iterator_class = "ArrayIterator",
+    ) {
         $this->_string = $input ?: '';
         $this->_array = $this->parseData($this->_string);
 
-        return parent::__construct($this->_array, $flags, $iterator_class);
+        parent::__construct($this->_array, $flags, $iterator_class);
     }
 
-    /**
-     * @return string
-     */
-    public function __toString()
+    public function __toString(): string
     {
         return $this->_string;
     }
 
-    /**
-     * @return array
-     */
-    public function __toArray()
+    public function __toArray(): array
     {
         return $this->_array;
     }
@@ -70,11 +68,8 @@ class InfoFields extends ArrayObject
      * BookmarkTitle: Second bookmark
      * BookmarkLevel: 1
      * BookmarkPageNumber: 2
-     *
-     * @param $dataString
-     * @return array
      */
-    private function parseData($dataString)
+    private function parseData(string $dataString): array
     {
         $output = array();
         foreach (explode(PHP_EOL, $dataString) as $line) {

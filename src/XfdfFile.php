@@ -54,18 +54,18 @@ class XfdfFile extends File
 {
     // XFDF file header
     private const XFDF_HEADER = <<<FDF
-<?xml version="1.0" encoding="UTF-8"?>
-<xfdf xmlns="http://ns.adobe.com/xfdf/" xml:space="preserve">
-<fields>
+        <?xml version="1.0" encoding="UTF-8"?>
+        <xfdf xmlns="http://ns.adobe.com/xfdf/" xml:space="preserve">
+        <fields>
 
-FDF;
+        FDF;
 
     // XFDF file footer
     private const XFDF_FOOTER = <<<FDF
-</fields>
-</xfdf>
+        </fields>
+        </xfdf>
 
-FDF;
+        FDF;
 
     /**
      * Constructor
@@ -79,8 +79,13 @@ FDF;
      * created. Autodetected if not provided.
      * @param string|null $encoding of the data. Default is 'UTF-8'.
      */
-    public function __construct($data, $suffix = null, $prefix = null, $directory = null, $encoding = 'UTF-8')
-    {
+    public function __construct(
+        array $data,
+        ?string $suffix = null,
+        ?string $prefix = null,
+        ?string $directory = null,
+        ?string $encoding = 'UTF-8',
+    ) {
         if ($directory === null) {
             $directory = self::getTempDir();
         }
@@ -91,9 +96,7 @@ FDF;
             $prefix = 'php_pdftk_xfdf_';
         }
 
-        $tempfile = tempnam($directory, $prefix);
-        $this->_fileName = $tempfile . $suffix;
-        rename($tempfile, $this->_fileName);
+        parent::__construct('', $suffix, $prefix, $directory);
 
         $fields = $this->parseData($data, $encoding);
         $this->writeXml($fields);
@@ -142,23 +145,27 @@ FDF;
      *     ],
      * ]
      *
-     *
      * @param mixed $data the data to parse
      * @param string the encoding of the data
+     * @param null|string $encoding
+     *
      * @return array the result array in UTF-8 encoding with dot keys converted
      * to nested arrays
      */
-    protected function parseData($data, $encoding)
+    protected function parseData($data, ?string $encoding): array
     {
+        $willConvert = $encoding !== 'UTF-8' && function_exists('mb_convert_encoding');
         $result = array();
         foreach ($data as $key => $value) {
-            if ($encoding !== 'UTF-8' && function_exists('mb_convert_encoding')) {
+            $key = (string) $key;
+            if ($willConvert) {
                 $key = mb_convert_encoding($key, 'UTF-8', $encoding);
                 $value = mb_convert_encoding($value, 'UTF-8', $encoding);
             }
             if (strpos($key, '.') === false) {
                 $result['_' . $key] = $value;
             } else {
+                /** @var array<string, mixed> $target */
                 $target = &$result;
                 $keyParts = explode('.', $key);
                 $lastPart = array_pop($keyParts);
@@ -166,6 +173,7 @@ FDF;
                     if (!isset($target['_' . $part])) {
                         $target['_' . $part] = array();
                     }
+                    /** @var array<string, mixed> $target */
                     $target = &$target['_' . $part];
                 }
                 $target['_' . $lastPart] = $value;
@@ -179,7 +187,7 @@ FDF;
      *
      * @param array $fields the fields in a nested array structure
      */
-    protected function writeXml($fields)
+    protected function writeXml(array $fields): void
     {
         // Use fwrite, since file_put_contents() messes around with character encoding
         $fp = fopen($this->_fileName, 'w');
@@ -192,11 +200,11 @@ FDF;
     /**
      * Write the fields to the given filepointer
      *
-     * @param int $fp
+     * @param resource $fp
      * @param mixed[] $fields an array of field values as returned by
      * `parseData()`.
      */
-    protected function writeFields($fp, $fields)
+    protected function writeFields($fp, array $fields): void
     {
         foreach ($fields as $key => $value) {
             $key = $this->xmlEncode(substr($key, 1));
@@ -222,7 +230,7 @@ FDF;
      * @param string|null $value the value to encode
      * @return string|null the value correctly encoded for use in a XML document
      */
-    protected function xmlEncode($value)
+    protected function xmlEncode(?string $value): ?string
     {
         if ($value === null) {
             return null;

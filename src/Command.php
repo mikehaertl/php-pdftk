@@ -3,6 +3,8 @@
 namespace mikehaertl\pdftk;
 
 use mikehaertl\shellcommand\Command as BaseCommand;
+use mikehaertl\tmp\File;
+use Override;
 
 /**
  * Command
@@ -16,38 +18,35 @@ use mikehaertl\shellcommand\Command as BaseCommand;
 class Command extends BaseCommand
 {
     /**
-     * @var string the pdftk binary
+     * The pdftk binary
      */
     protected $_command = 'pdftk';
 
     /**
-     * @var array list of input files to process as array('name' => $filename,
+     * List of input files to process as array('name' => $filename,
      * 'password' => $pw) indexed by handle
      */
-    protected $_files = array();
+    protected array $_files = array();
 
     /**
-     * @var array list of command options, either strings or array with
-     * arguments to addArg()
+     * List of command options, either strings or array with arguments to addArg()
      */
-    protected $_options = array();
+    protected array $_options = array();
 
     /**
-     * @var string the operation to perform
+     * The operation to perform
      */
-    protected $_operation;
+    protected ?string $_operation = null;
 
     /**
-     * @var string|array operation arguments, e.g. a list of page ranges or a
-     * filename or tmp file instance
+     * Operation arguments, e.g. a list of page ranges or a filename or tmp file instance
      */
-    protected $_operationArgument = array();
+    protected string|array|File $_operationArgument = array();
 
     /**
-     * @var bool whether to force escaping of the operation argument e.g. for
-     * filenames
+     * Whether to force escaping of the operation argument e.g. for filenames
      */
-    protected $_escapeOperationArgument = false;
+    protected bool $_escapeOperationArgument = false;
 
     /**
      * @param string $name the PDF file to add for processing
@@ -57,7 +56,7 @@ class Command extends BaseCommand
      * @return Command the command instance for method chaining
      * @throws \Exception
      */
-    public function addFile($name, $handle, $password = null)
+    public function addFile($name, $handle, $password = null): self
     {
         $this->checkExecutionStatus();
         $file = array(
@@ -76,7 +75,7 @@ class Command extends BaseCommand
      * use Command default setting.
      * @return Command the command instance for method chaining
      */
-    public function addOption($option, $argument = null, $escape = null)
+    public function addOption($option, $argument = null, ?bool $escape = null): self
     {
         $this->_options[] = $argument === null ? $option : array($option, $argument, $escape);
         return $this;
@@ -86,7 +85,7 @@ class Command extends BaseCommand
      * @param string $operation the operation to perform
      * @return Command the command instance for method chaining
      */
-    public function setOperation($operation)
+    public function setOperation($operation): self
     {
         $this->checkExecutionStatus();
         $this->_operation = $operation;
@@ -102,11 +101,11 @@ class Command extends BaseCommand
     }
 
     /**
-     * @param string $value the operation argument
+     * @param string|array $value the operation argument
      * @param bool $escape whether to escape the operation argument
      * @return Command the command instance for method chaining
      */
-    public function setOperationArgument($value, $escape = false)
+    public function setOperationArgument(string|array|File $value, bool $escape = false): self
     {
         $this->checkExecutionStatus();
         $this->_operationArgument = $value;
@@ -118,7 +117,7 @@ class Command extends BaseCommand
      * @return string|array|null the current operation argument as string or
      * array or null if none set
      */
-    public function getOperationArgument()
+    public function getOperationArgument(): string|array|null
     {
         // Typecast to string in case we have a File instance as argument
         return is_array($this->_operationArgument) ? $this->_operationArgument : (string) $this->_operationArgument;
@@ -127,7 +126,7 @@ class Command extends BaseCommand
     /**
      * @return int the number of files added to the command
      */
-    public function getFileCount()
+    public function getFileCount(): int
     {
         return count($this->_files);
     }
@@ -144,17 +143,20 @@ class Command extends BaseCommand
      * only a single file was added.
      * @param string|null $qualifier the page number qualifier, either 'even'
      * or 'odd' or null for none
-     * @param string $rotation the rotation to apply to the pages.
+     * @param string|null $rotation the rotation to apply to the pages.
      * @return Command the command instance for method chaining
      */
-    public function addPageRange($start, $end = null, $handle = null, $qualifier = null, $rotation = null)
-    {
+    public function addPageRange(
+        int|string|array $start,
+        int|string|null $end = null,
+        string|null $handle = null,
+        string|null $qualifier = null,
+        string|null $rotation = null,
+    ) {
         $this->checkExecutionStatus();
         if (is_array($start)) {
             if ($handle !== null) {
-                $start = array_map(function ($p) use ($handle) {
-                    return $handle . $p;
-                }, $start);
+                $start = array_map(fn ($p) => $handle . $p, $start);
             }
             $range = implode(' ', $start);
         } else {
@@ -163,6 +165,13 @@ class Command extends BaseCommand
                 $range .= '-' . $end;
             }
             $range .= $qualifier . $rotation;
+        }
+        if (!is_array($this->_operationArgument)) {
+            if (!empty($this->_operationArgument)) {
+                $this->_operationArgument = array($this->_operationArgument);
+            } else {
+                $this->_operationArgument = array();
+            }
         }
         $this->_operationArgument[] = $range;
         return $this;
@@ -173,6 +182,7 @@ class Command extends BaseCommand
      * null if none
      * @return bool whether the command was executed successfully
      */
+    #[Override]
     public function execute($filename = null)
     {
         $this->checkExecutionStatus();
@@ -185,7 +195,7 @@ class Command extends BaseCommand
     /**
      * Process input PDF files and create respective command arguments
      */
-    protected function processInputFiles()
+    protected function processInputFiles(): void
     {
         $passwords = array();
         foreach ($this->_files as $handle => $file) {
@@ -204,10 +214,11 @@ class Command extends BaseCommand
 
     /**
      * Process options and create respective command arguments
+     *
      * @param string|null $filename if provided an 'output' option will be
      * added
      */
-    protected function processOptions($filename = null)
+    protected function processOptions($filename = null): void
     {
         // output must be first option after operation
         if ($filename !== null) {
@@ -225,13 +236,10 @@ class Command extends BaseCommand
     /**
      * Process opearation and create respective command arguments
      */
-    protected function processOperation()
+    protected function processOperation(): void
     {
         if ($this->_operation !== null) {
             $value = $this->_operationArgument ? $this->_operationArgument : null;
-            if ($value instanceof TmpFile) {
-                $value = (string) $value;
-            }
             $this->addArg($this->_operation, $value, $this->_escapeOperationArgument);
         }
     }
@@ -239,9 +247,10 @@ class Command extends BaseCommand
     /**
      * Ensure that the command was not exectued yet. Throws exception
      * otherwise.
+     *
      * @throws \Exception
      */
-    protected function checkExecutionStatus()
+    protected function checkExecutionStatus(): void
     {
         if ($this->getExecuted()) {
             throw new \Exception('Operation was already executed');
