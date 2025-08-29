@@ -3,5 +3,6 @@ composer.lock
 /vendor/
 /vendor-bin/**/vendor/
 *.swp
+.php-cs-fixer.cache
 .phpunit.result.cache
 /tests/logs

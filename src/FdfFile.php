@@ -1,4 +1,5 @@
 <?php
+
 namespace mikehaertl\pdftk;
 
 use mikehaertl\tmp\File;
@@ -15,13 +16,13 @@ use mikehaertl\tmp\File;
 class FdfFile extends File
 {
     // FDF file header
-    const FDF_HEADER = <<<FDF
+    private const FDF_HEADER = <<<FDF
 %FDF-1.2
 1 0 obj<</FDF<< /Fields[
 FDF;
 
     // FDF file footer
-    const FDF_FOOTER = <<<FDF
+    private const FDF_FOOTER = <<<FDF
 ] >> >>
 endobj
 trailer

@@ -1,4 +1,5 @@
 <?php
+
 namespace mikehaertl\pdftk;
 
 use mikehaertl\tmp\File;
@@ -18,7 +19,7 @@ use mikehaertl\tmp\File;
 class Pdf
 {
     // The prefix for temporary files
-    const TMP_PREFIX = 'tmp_php_pdftk_';
+    private const TMP_PREFIX = 'tmp_php_pdftk_';
 
     /**
      * @var bool whether to ignore any errors if some non-empty output file was
@@ -669,7 +670,7 @@ class Pdf
     public function getCommand()
     {
         if ($this->_command === null) {
-            $this->_command = new Command;
+            $this->_command = new Command();
         }
         return $this->_command;
     }

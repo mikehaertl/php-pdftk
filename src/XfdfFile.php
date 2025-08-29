@@ -1,4 +1,5 @@
 <?php
+
 namespace mikehaertl\pdftk;
 
 use mikehaertl\tmp\File;
@@ -52,7 +53,7 @@ use mikehaertl\tmp\File;
 class XfdfFile extends File
 {
     // XFDF file header
-    const XFDF_HEADER = <<<FDF
+    private const XFDF_HEADER = <<<FDF
 <?xml version="1.0" encoding="UTF-8"?>
 <xfdf xmlns="http://ns.adobe.com/xfdf/" xml:space="preserve">
 <fields>
@@ -60,7 +61,7 @@ class XfdfFile extends File
 FDF;
 
     // XFDF file footer
-    const XFDF_FOOTER = <<<FDF
+    private const XFDF_FOOTER = <<<FDF
 </fields>
 </xfdf>
 
@@ -198,14 +199,14 @@ FDF;
     protected function writeFields($fp, $fields)
     {
         foreach ($fields as $key => $value) {
-            $key = $this->xmlEncode(substr($key,1));
+            $key = $this->xmlEncode(substr($key, 1));
             fwrite($fp, "<field name=\"$key\">\n");
             if (!is_array($value)) {
                 $value = array($value);
             }
             if (array_key_exists(0, $value)) {
                 // Numeric keys: single or multi-value field
-                foreach($value as $val) {
+                foreach ($value as $val) {
                     $val = $this->xmlEncode($val);
                     fwrite($fp, "<value>$val</value>\n");
                 }
