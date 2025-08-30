@@ -41,8 +41,13 @@ FDF;
      * created. Autodetected if not provided.
      * @param string|null $encoding of the data. Default is 'UTF-8'.
      */
-    public function __construct($data, $suffix = null, $prefix = null, $directory = null, $encoding = 'UTF-8')
-    {
+    public function __construct(
+        array $data,
+        ?string $suffix = null,
+        ?string $prefix = null,
+        ?string $directory = null,
+        ?string $encoding = 'UTF-8',
+    ) {
         if ($directory === null) {
             $directory = self::getTempDir();
         }

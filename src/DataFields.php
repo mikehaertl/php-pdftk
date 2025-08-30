@@ -11,11 +11,12 @@ use ArrayObject;
  * @author Ray Holland <raymondaholland+php-pdftk@gmail.com>
  * @author Michael Härtl <haertl.mike@gmail.com>
  * @license http://www.opensource.org/licenses/MIT
+ * @extends ArrayObject<string, mixed>
  */
 class DataFields extends ArrayObject
 {
-    private $_string;
-    private $_array;
+    private string $_string;
+    private array $_array;
 
     /**
      * DataFields constructor.
@@ -24,26 +25,23 @@ class DataFields extends ArrayObject
      * @param int $flags
      * @param string $iterator_class
      */
-    public function __construct($input = null, $flags = 0, $iterator_class = "ArrayIterator")
-    {
+    public function __construct(
+        ?string $input = null,
+        int $flags = 0,
+        string $iterator_class = "ArrayIterator",
+    ) {
         $this->_string = $input ?: '';
         $this->_array = self::parse($this->_string);
 
-        return parent::__construct($this->_array, $flags, $iterator_class);
+        parent::__construct($this->_array, $flags, $iterator_class);
     }
 
-    /**
-     * @return string
-     */
-    public function __toString()
+    public function __toString(): string
     {
         return $this->_string;
     }
 
-    /**
-     * @return array
-     */
-    public function __toArray()
+    public function __toArray(): array
     {
         return $this->_array;
     }
@@ -78,7 +76,7 @@ class DataFields extends ArrayObject
      * @param $input the string to parse
      * @return array the parsed result
      */
-    public static function parse($input)
+    public static function parse(string $input): array
     {
         if (strncmp('---', $input, 3) === 0) {
             // Split blocks only if '---' is followed by 'FieldType'
@@ -105,7 +103,7 @@ class DataFields extends ArrayObject
      * @param string $block the block to parse
      * @return array the parsed block values indexed by respective names
      */
-    public static function parseBlock($block)
+    public static function parseBlock(string $block): array
     {
         $data = array();
         $lines = preg_split("/(\r\n|\n|\r)/", trim($block));
@@ -156,7 +154,7 @@ class DataFields extends ArrayObject
      * 'FieldValueDefault' can span multiple lines
      * @return bool whether the value continues in line n + 1
      */
-    protected static function lineContinues($lines, $n, $key)
+    protected static function lineContinues(array $lines, int $n, string $key): bool
     {
         return
             in_array($key, array('FieldValue', 'FieldValueDefault')) &&

@@ -3,6 +3,7 @@
 namespace mikehaertl\pdftk;
 
 use Exception;
+use mikehaertl\pdftk\InfoFields;
 use mikehaertl\tmp\File;
 
 /**
@@ -70,7 +71,7 @@ class InfoFile extends File
      *  or 'PdfID0' are ignored as those are not part of the PDF's metadata.
      *  All array elements are optional.
      * @param string|null $suffix the optional suffix for the tmp file
-     * @param string|null $suffix the optional prefix for the tmp file. If null
+     * @param string|null $prefix the optional prefix for the tmp file. If null
      * 'php_tmpfile_' is used.
      * @param string|null $directory directory where the file should be
      * created. Autodetected if not provided.
@@ -80,8 +81,13 @@ class InfoFile extends File
      * @throws Exception on invalid data format or if mbstring extension is
      * missing and data must be converted
      */
-    public function __construct($data, $suffix = null, $prefix = null, $directory = null, $encoding = 'UTF-8')
-    {
+    public function __construct(
+        array|InfoFields $data,
+        ?string $suffix = null,
+        ?string $prefix = null,
+        ?string $directory = null,
+        ?string $encoding = 'UTF-8',
+    ) {
         if ($suffix === null) {
             $suffix = '.txt';
         }
@@ -102,7 +108,7 @@ class InfoFile extends File
         }
 
         $fields = '';
-        $normalizedData = self::normalize($data);
+        $normalizedData = self::normalize((array) $data);
 
         foreach ($normalizedData as $block => $items) {
             $fields .= self::renderBlock($block, $items, $encoding);
@@ -123,7 +129,7 @@ class InfoFile extends File
      * @param array $data the data to normalize
      * @return array a normalized array in the format described in the constructor
      */
-    private static function normalize($data)
+    private static function normalize(array $data): array
     {
         $normalized = array();
         foreach ($data as $key => $value) {
@@ -147,7 +153,7 @@ class InfoFile extends File
      * @param string $encoding the encoding of the item data
      * @return string the rendered fields
      */
-    private static function renderBlock($block, $items, $encoding)
+    private static function renderBlock(string $block, array $items, string $encoding): string
     {
         $fields = '';
         foreach ($items as $key => $value) {
@@ -173,8 +179,13 @@ class InfoFile extends File
      * @param bool $isInfo whether it's an 'Info' field
      * @return string the rendered field
      */
-    private static function renderField($prefix, $key, $value, $encoding, $isInfo)
-    {
+    private static function renderField(
+        string $prefix,
+        string $key,
+        string $value,
+        string $encoding,
+        bool $isInfo,
+    ): string {
         if ($encoding !== 'UTF-8') {
             $value = mb_convert_encoding($value, 'UTF-8', $encoding);
             $key = mb_convert_encoding($key, 'UTF-8', $encoding);
