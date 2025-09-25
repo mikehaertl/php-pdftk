@@ -181,8 +181,12 @@ class Pdf
         ?string $rotation = null,
     ): self {
         $this->getCommand()
-            ->setOperation('cat')
-            ->addPageRange($start, $end, $handle, $qualifier, $rotation);
+            ->setOperation('cat');
+
+        if ($start !== null) {
+            $this->getCommand()
+                ->addPageRange($start, $end, $handle, $qualifier, $rotation);
+        }
         return $this;
     }
 
