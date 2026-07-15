@@ -189,8 +189,8 @@ class InfoFile extends File
         if ($encoding !== 'UTF-8') {
             $value = mb_convert_encoding($value, 'UTF-8', $encoding);
             $key = mb_convert_encoding($key, 'UTF-8', $encoding);
-            $value = defined('ENT_XML1') ? htmlspecialchars($key, ENT_XML1, 'UTF-8') : htmlspecialchars($key);
-            $key = defined('ENT_XML1') ? htmlspecialchars($value, ENT_XML1, 'UTF-8') : htmlspecialchars($value);
+            $value = defined('ENT_XML1') ? htmlspecialchars($value, ENT_XML1, 'UTF-8') : htmlspecialchars($value);
+            $key = defined('ENT_XML1') ? htmlspecialchars($key, ENT_XML1, 'UTF-8') : htmlspecialchars($key);
         }
         if ($isInfo) {
             return "InfoBegin\nInfoKey: $key\nInfoValue: $value\n";
